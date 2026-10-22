@@ -51,7 +51,6 @@ export const CollectionDetailsCreatedAtCell = ({
                       <AddNewCollectionItemButton
                         form={form}
                         insertAtIndex={rowIndex + 1}
-                        text="Another"
                       />
                     )}
                   </>
