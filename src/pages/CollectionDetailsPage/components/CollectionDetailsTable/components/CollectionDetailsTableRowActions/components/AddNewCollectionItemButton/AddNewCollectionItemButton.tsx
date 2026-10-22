@@ -11,7 +11,6 @@ import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/h
 import { useCreateNewCollectionItem } from '../../../../../../CollectionDetailsPage.form';
 
 export const AddNewCollectionItemButton = ({
-  children: _children,
   form,
   insertAtIndex,
   ...buttonProps
@@ -53,7 +52,6 @@ export const AddNewCollectionItemButton = ({
               addToEditingRowIds(newCollectionItem.id);
             }}
             ref={addAnotherBtnRef}
-            text="Another"
             variant="secondary"
             {...buttonProps}
           />

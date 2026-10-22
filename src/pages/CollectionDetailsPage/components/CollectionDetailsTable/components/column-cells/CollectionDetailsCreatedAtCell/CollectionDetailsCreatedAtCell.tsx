@@ -70,7 +70,9 @@ export const CollectionDetailsCreatedAtCell = ({
                       <AddNewCollectionItemButton
                         form={form}
                         insertAtIndex={rowIndex + 1}
-                      />
+                      >
+                        <span className="sr-only md:not-sr-only">Another</span>
+                      </AddNewCollectionItemButton>
                     )}
                   </>
                 ) : (
