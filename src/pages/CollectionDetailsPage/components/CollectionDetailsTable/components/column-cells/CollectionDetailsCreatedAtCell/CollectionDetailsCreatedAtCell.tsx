@@ -1,5 +1,7 @@
 import ClearIcon from '@mui/icons-material/Clear';
+import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import formatDate, { masks } from 'dateformat';
+import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
@@ -28,6 +30,22 @@ export const CollectionDetailsCreatedAtCell = ({
 
   const showNewRecordButtons = isEditingRow && getHasNewRecord();
 
+  const removeBtnRef = useRef<HTMLButtonElement>(null);
+
+  const appHotkeys = useAppHotkeys();
+
+  useHotkeys([
+    {
+      callback: () => {
+        removeBtnRef.current?.click();
+      },
+      hotkey: appHotkeys['app.remove-last'],
+      options: {
+        enabled: showNewRecordButtons && isLastNewRecordIndex,
+      },
+    },
+  ]);
+
   return (
     <form.ArrayField name="collectionItems">
       {(collectionItemsField) => {
@@ -43,6 +61,7 @@ export const CollectionDetailsCreatedAtCell = ({
                         collectionItemsField.removeValue(rowIndex);
                         removeFromEditingRowIds(String(value.id));
                       }}
+                      ref={removeBtnRef}
                       text="Remove"
                       variant="mono"
                     />

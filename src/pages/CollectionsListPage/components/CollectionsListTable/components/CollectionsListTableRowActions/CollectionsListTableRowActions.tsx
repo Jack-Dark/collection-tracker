@@ -1,7 +1,7 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useHotkeys } from '@tanstack/react-hotkeys';
+import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
@@ -12,7 +12,6 @@ import { Button } from '#/components/Button';
 import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { Popover } from '#/components/Popover';
-import { hotkeys } from '#/constants/hotkeys';
 import { pluralize } from '#/helpers/pluralize';
 import { useUserContext } from '#/hooks/use-user-context';
 import { verifyEmailMessage } from '#/layout';
@@ -79,17 +78,14 @@ export const CollectionsListTableRowActions = (props: {
 
   const addNewBtnRef = useRef<HTMLButtonElement>(null);
 
+  const appHotkeys = useAppHotkeys();
+
   useHotkeys([
     {
-      callback: async () => {
+      callback: () => {
         addNewBtnRef.current?.click();
       },
-      hotkey: hotkeys.new,
-      options: {
-        ignoreInputs: false,
-        preventDefault: true,
-        stopPropagation: true,
-      },
+      hotkey: appHotkeys['app.new'],
     },
   ]);
 

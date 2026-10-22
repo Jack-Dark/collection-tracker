@@ -1,12 +1,11 @@
 import AddIcon from '@mui/icons-material/Add';
-import { useHotkeys } from '@tanstack/react-hotkeys';
+import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useRef } from 'react';
 
 import type { ButtonPropsDef } from '#/components/Button';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { Button } from '#/components/Button';
-import { hotkeys } from '#/constants/hotkeys';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 import { useCreateNewCollectionItem } from '../../../../../../CollectionDetailsPage.form';
@@ -26,17 +25,14 @@ export const AddNewCollectionItemButton = ({
 
   const addAnotherBtnRef = useRef<HTMLButtonElement>(null);
 
+  const appHotkeys = useAppHotkeys();
+
   useHotkeys([
     {
-      callback: async () => {
+      callback: () => {
         addAnotherBtnRef.current?.click();
       },
-      hotkey: hotkeys.new,
-      options: {
-        ignoreInputs: false,
-        preventDefault: true,
-        stopPropagation: true,
-      },
+      hotkey: appHotkeys['app.new'],
     },
   ]);
 
