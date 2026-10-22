@@ -22,13 +22,13 @@ export const createCollectionDbQuery = async ({
   }
 
   const userId = context.user.id;
+  const isAdmin = context.user.role === 'admin';
 
   return await db.transaction(async (tx) => {
     // ! temporarily cap the maximum allowed collections to avoid service fees
-    const totalCollections = await tx.$count(
-      collectionsTable,
-      eq(collectionsTable.userId, userId),
-    );
+    const totalCollections = isAdmin
+      ? 0
+      : await tx.$count(collectionsTable, eq(collectionsTable.userId, userId));
 
     const maxAllowed = 20;
     const numAdditionalCollectionsAllowed = Math.max(
@@ -36,7 +36,7 @@ export const createCollectionDbQuery = async ({
       maxAllowed - totalCollections,
     );
 
-    if (!numAdditionalCollectionsAllowed) {
+    if (!isAdmin && !numAdditionalCollectionsAllowed) {
       return {
         warning: `You have reached the maximum number of collections currently allowed for free (${maxAllowed}).`,
       };
