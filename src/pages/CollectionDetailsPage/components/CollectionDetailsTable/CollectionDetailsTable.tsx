@@ -49,7 +49,9 @@ export const CollectionDetailsTable = ({
   const { pagination } = data;
 
   const onCancel = async () => {
-    // ? invalidate to solve issue of deleting a currently applied custom field value and then cancelling your changes leaving the old custom field value in the table
+    // ? Reset form to immediately clear changes
+    form.reset();
+    // ? invalidate to solve edge case of deleting a currently applied custom field value and then cancelling your changes leaving the old custom field value in the table
     invalidateGetCollectionDetailsById();
 
     resetEditingRowIds();

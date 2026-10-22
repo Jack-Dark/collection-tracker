@@ -38,7 +38,9 @@ export const CollectionsListTable = ({
   const { pagination } = data;
 
   const onCancel = () => {
-    // ? invalidate to solve issue of deleting a currently applied custom field and then cancelling your changes leaving the old field data in the table
+    // ? Reset form to immediately clear changes
+    form.reset();
+    // ? invalidate to solve edge case of deleting a currently applied custom field and then cancelling your changes leaving the old field data in the table
     invalidateGetPaginatedCollections();
 
     resetEditingRowIds();
