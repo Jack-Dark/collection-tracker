@@ -217,7 +217,8 @@ export const Table = <TData extends RowData>({
                 </thead>
                 <tbody className="overflow-auto min-h-100">
                   {table.getRowModel().rows.map((row) => {
-                    const trClassName = 'not-last:*:border-b';
+                    const trClassName =
+                      'hover:bg-primary-950 not-last:*:border-b';
 
                     const onCheckedChange = (checked: boolean) => {
                       const { rows } = table.getRowModel();
