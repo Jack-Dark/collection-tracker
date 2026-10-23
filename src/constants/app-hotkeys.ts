@@ -12,6 +12,7 @@ export const appHotkeys = defineAppHotkeys({
     hotkey: 'Control+Alt+N',
     meta: { group: 'App', name: 'New record' },
     options: {
+      conflictBehavior: 'replace',
       ignoreInputs: false,
       preventDefault: true,
       stopPropagation: true,
@@ -21,6 +22,7 @@ export const appHotkeys = defineAppHotkeys({
     hotkey: 'Control+Alt+Backspace',
     meta: { group: 'App', name: 'Remove last new record' },
     options: {
+      conflictBehavior: 'replace',
       ignoreInputs: false,
       preventDefault: true,
       stopPropagation: true,
