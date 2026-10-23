@@ -71,9 +71,9 @@ export const getCollectionItemsTableColumns = (
         id: String(customField.id),
         minSize:
           customField.type === 'boolean'
-            ? 50
+            ? 100
             : customField.type === 'number'
-              ? 150
+              ? 100
               : 250,
       });
     }),
