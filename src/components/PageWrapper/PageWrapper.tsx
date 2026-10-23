@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 
 import CoffeeIcon from '@mui/icons-material/Coffee';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -19,12 +19,18 @@ import { SiteNavMenu, useSiteNavMenuItems } from './components/SiteNavMenu';
 import { ThemeToggles } from './components/SiteNavMenu/components/ThemeToggles';
 
 type PageWrapperPropsDef = PropsWithChildren<{
+  suspenseFallback?: ReactNode;
   title?: string;
   wideOnMobile?: boolean;
 }>;
 
 export const PageWrapper = (props: PageWrapperPropsDef) => {
-  const { children, title = 'Collection Tracker', wideOnMobile } = props;
+  const {
+    children,
+    suspenseFallback = 'Loading...',
+    title = 'Collection Tracker',
+    wideOnMobile,
+  } = props;
 
   const { accountNavItems, primaryNavItems } = useSiteNavMenuItems();
 
@@ -127,13 +133,11 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
           {({ reset }) => {
             return (
               <SimpleErrorBoundary onReset={reset}>
-                <Suspense fallback="Loading...">
-                  <div className="size-full relative top-0 right-0 bottom-0 left-0">
-                    <div className="size-full absolute top-0 right-0 bottom-0 left-0">
-                      {children}
-                    </div>
+                <div className="size-full relative top-0 right-0 bottom-0 left-0">
+                  <div className="size-full absolute top-0 right-0 bottom-0 left-0">
+                    <Suspense fallback={suspenseFallback}>{children}</Suspense>
                   </div>
-                </Suspense>
+                </div>
               </SimpleErrorBoundary>
             );
           }}
