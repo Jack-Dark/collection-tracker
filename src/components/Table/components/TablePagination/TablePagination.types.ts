@@ -8,4 +8,5 @@ export type TablePaginationPropsDef = {
     onChange: (limit: number) => void | Promise<void>;
     value: number;
   };
+  totalRecords: number;
 };
