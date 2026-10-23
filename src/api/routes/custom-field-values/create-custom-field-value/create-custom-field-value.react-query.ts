@@ -1,5 +1,3 @@
-import { useServerFn } from '@tanstack/react-start';
-
 import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generic-mutate-query/use-generic-mutate-query.types';
 
 import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
@@ -21,13 +19,11 @@ export const useCreateCustomFieldValues = <
     TTransformedData
   >,
 ) => {
-  const serverFn = useServerFn(createCustomFieldValuesServerFn);
-
   const { onMutate: onCreateCustomFieldValues, ...rest } =
     useGenericMutateQuery({
       fallbackErrorMessage: 'Unable to create custom field value(s).',
       mutationFn: (data) => {
-        return serverFn({ data });
+        return createCustomFieldValuesServerFn({ data });
       },
       mutationKey: [reactMutationKeys.customFieldValues('create')],
       ...props,
