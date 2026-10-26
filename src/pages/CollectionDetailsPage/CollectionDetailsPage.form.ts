@@ -1,5 +1,5 @@
 import { formOptions } from '@tanstack/react-form';
-import { createAtom, useAtom } from '@tanstack/react-store';
+import { createStore } from '@tanstack/react-store';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CreateCollectionItemsFormDataSchemaDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
@@ -11,20 +11,21 @@ import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections
 import type { CreateOrUpdateCollectionItemFormDataDef } from './CollectionDetailsPage.types';
 
 import { createOrUpdateCollectionItemsFormSchema } from './CollectionDetailsPage.schema';
+import { useEnableAutoPopulateCustomFieldValues } from './components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-enable-auto-populate-custom-field-values';
 
 export const useCreateNewCollectionItem =
   (): (() => CreateCollectionItemsFormDataSchemaDef) => {
     const { id } = CollectionDetailsRoute.useParams();
     const collectionId = Number(id);
 
-    const { autoPopulateCustomFieldValues, lastAddedCustomFieldValues } =
-      useLastAddedCustomFieldValues();
+    const { enableAutoPopulateCustomFieldValues } =
+      useEnableAutoPopulateCustomFieldValues();
 
     return () => {
       return {
         collectionId,
-        customFieldValues: autoPopulateCustomFieldValues
-          ? lastAddedCustomFieldValues
+        customFieldValues: enableAutoPopulateCustomFieldValues
+          ? autoPopulateCustomFieldValuesStore.get()
           : {},
         editionDetails: '',
         id: uuidv4(),
@@ -36,27 +37,22 @@ export const useCreateNewCollectionItem =
     };
   };
 
-const autoPopulateCustomFieldValuesAtom =
-  createAtom<CustomFieldValuesByFieldId>({});
+const autoPopulateCustomFieldValuesStore =
+  createStore<CustomFieldValuesByFieldId>({});
 
 export const useLastAddedCustomFieldValues = () => {
-  const [lastAddedCustomFieldValues, setLastAddedCustomFieldValues] = useAtom(
-    autoPopulateCustomFieldValuesAtom,
-  );
-
-  const { id } = CollectionDetailsRoute.useParams();
   const searchQueries = CollectionDetailsRoute.useSearch();
+  const routeParams = CollectionDetailsRoute.useParams();
+  const collectionId = Number(routeParams.id);
 
-  const { autoPopulateCustomFieldValues } =
-    CollectionDetailsRoute.useLoaderData();
-
-  const collectionId = Number(id);
+  const { enableAutoPopulateCustomFieldValues } =
+    useEnableAutoPopulateCustomFieldValues();
 
   const updateLastAddedCustomFieldValues = (
     partialCustomFieldValuesByCustomFieldId: CustomFieldValuesByFieldId,
   ) => {
-    if (autoPopulateCustomFieldValues) {
-      setLastAddedCustomFieldValues((prev) => {
+    if (enableAutoPopulateCustomFieldValues) {
+      autoPopulateCustomFieldValuesStore.setState((prev) => {
         return { ...prev, ...partialCustomFieldValuesByCustomFieldId };
       });
     }
@@ -64,17 +60,15 @@ export const useLastAddedCustomFieldValues = () => {
 
   useGetCollectionDetailsById({
     onSuccess: (data) => {
-      if (autoPopulateCustomFieldValues) {
-        setLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
+      if (enableAutoPopulateCustomFieldValues) {
+        updateLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
       }
     },
     requestArgs: { collectionId, params: searchQueries },
   });
 
   return {
-    autoPopulateCustomFieldValues,
-    lastAddedCustomFieldValues,
-    setLastAddedCustomFieldValues,
+    enableAutoPopulateCustomFieldValues,
     updateLastAddedCustomFieldValues,
   };
 };

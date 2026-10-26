@@ -5,89 +5,82 @@ import CloseIcon from '@mui/icons-material/Close';
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
 import { useRouter } from '@tanstack/react-router';
-import { createServerFn } from '@tanstack/react-start';
-import { getCookie, setCookie } from '@tanstack/react-start/server';
 import { useMemo } from 'react';
-import z from 'zod';
 
 import type { MenuItemDef } from '#/components/MoreMenu/MoreMenu.types';
 import type { TableSettingsMenuPropsDef } from '#/components/Table/components/TableSettingsMenu/TableSettingsMenu.types';
 
-import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
-
 import { useOnUpdateCollectionItemsQueries } from '../../../../hooks/use-on-update-collection-items-queries';
-
-const articlesToIgnore = ['the', 'a', 'an'];
+import { useEnableAutoPopulateCustomFieldValues } from './hooks/use-enable-auto-populate-custom-field-values';
+import {
+  articlesToIgnore,
+  useIgnoreSortArticles,
+} from './hooks/use-ignore-sort-articles';
 
 export const useCollectionDetailsSettingsProps = () => {
-  const { onUpdateCollectionItemsQueries, searchQueries } =
-    useOnUpdateCollectionItemsQueries();
-
-  const onClickIgnoreSortArticles = (ignoreSortArticles: boolean) => {
-    onUpdateCollectionItemsQueries({ ignoreSortArticles });
-  };
+  const { ignoreSortArticles, setIgnoreSortArticles } = useIgnoreSortArticles();
 
   const MemoizedIgnoreSortArticlesLabel = useMemo(() => {
     return IgnoreSortArticlesLabel;
   }, []);
 
-  const MemoizedAutoPopulateCustomFieldValues = useMemo(() => {
-    return AutoPopulateCustomFieldValues;
+  const MemoizedEnableAutoPopulateCustomFieldValuesLabel = useMemo(() => {
+    return EnableAutoPopulateCustomFieldValuesLabel;
   }, []);
 
-  const { autoPopulateCustomFieldValues } =
-    CollectionDetailsRoute.useLoaderData();
+  const {
+    enableAutoPopulateCustomFieldValues,
+    setEnableAutoPopulateCustomFieldValues,
+  } = useEnableAutoPopulateCustomFieldValues();
 
   const router = useRouter();
 
-  const items = useMemo(() => {
-    return [
-      {
-        active: searchQueries.ignoreSortArticles,
-        closeOnClick: false,
-        key: 'ignore-sort-articles',
-        Label: <MemoizedIgnoreSortArticlesLabel />,
-        onClick: () => {
-          onClickIgnoreSortArticles?.(!searchQueries.ignoreSortArticles);
-        },
+  const items = [
+    {
+      active: ignoreSortArticles,
+      closeOnClick: false,
+      key: 'ignore-sort-articles',
+      Label: MemoizedIgnoreSortArticlesLabel,
+      onClick: () => {
+        setIgnoreSortArticles(!ignoreSortArticles);
       },
-      {
-        active: autoPopulateCustomFieldValues,
-        closeOnClick: false,
-        key: 'auto-populate',
-        Label: <MemoizedAutoPopulateCustomFieldValues />,
+    },
+    {
+      active: enableAutoPopulateCustomFieldValues,
+      closeOnClick: false,
+      key: 'auto-populate',
+      Label: MemoizedEnableAutoPopulateCustomFieldValuesLabel,
 
-        onClick: async () => {
-          await setAutoPopulateCustomFieldValuesServerFn({
-            data: !autoPopulateCustomFieldValues,
-          });
-          router.invalidate();
-        },
+      onClick: async () => {
+        setEnableAutoPopulateCustomFieldValues(
+          !enableAutoPopulateCustomFieldValues,
+        );
+        router.invalidate();
       },
-      {
-        disabled: true,
-        key: 'download-data',
-        Label: (
-          // TODO - FUTURE FEATURE: ADD DOWNLOAD DATA SUPPORT
-          <FormatLabelWithIcon Icon={DownloadIcon}>
-            <p>Download collection into CSV</p>
-            <p>(coming soon)</p>
-          </FormatLabelWithIcon>
-        ),
-      },
-      {
-        disabled: true,
-        key: 'upload-data',
-        Label: (
-          // TODO - FUTURE FEATURE: ADD UPLOAD DATA SUPPORT
-          <FormatLabelWithIcon Icon={UploadIcon}>
-            <p>Upload CSV into collection</p>
-            <p>(coming soon)</p>
-          </FormatLabelWithIcon>
-        ),
-      },
-    ] satisfies MenuItemDef[];
-  }, [autoPopulateCustomFieldValues, searchQueries.ignoreSortArticles]);
+    },
+    {
+      disabled: true,
+      key: 'download-data',
+      Label: (
+        // TODO - FUTURE FEATURE: ADD DOWNLOAD DATA SUPPORT
+        <FormatLabelWithIcon Icon={DownloadIcon}>
+          <p>Download collection into CSV</p>
+          <p>(coming soon)</p>
+        </FormatLabelWithIcon>
+      ),
+    },
+    {
+      disabled: true,
+      key: 'upload-data',
+      Label: (
+        // TODO - FUTURE FEATURE: ADD UPLOAD DATA SUPPORT
+        <FormatLabelWithIcon Icon={UploadIcon}>
+          <p>Upload CSV into collection</p>
+          <p>(coming soon)</p>
+        </FormatLabelWithIcon>
+      ),
+    },
+  ] satisfies MenuItemDef[];
 
   return {
     items,
@@ -158,12 +151,16 @@ const IgnoreSortArticlesLabel = () => {
   );
 };
 
-const AutoPopulateCustomFieldValues = () => {
-  const { autoPopulateCustomFieldValues } =
-    CollectionDetailsRoute.useLoaderData();
+const EnableAutoPopulateCustomFieldValuesLabel = () => {
+  const { enableAutoPopulateCustomFieldValues } =
+    useEnableAutoPopulateCustomFieldValues();
+  console.log(
+    'AutoPopulateCustomFieldValues enableAutoPopulateCustomFieldValues:',
+    enableAutoPopulateCustomFieldValues,
+  );
 
   return (
-    <FormatLabelWithStatusIcon active={autoPopulateCustomFieldValues}>
+    <FormatLabelWithStatusIcon active={enableAutoPopulateCustomFieldValues}>
       <p>
         Auto-populate new items with the last entered custom field values for
         this collection.
@@ -171,41 +168,3 @@ const AutoPopulateCustomFieldValues = () => {
     </FormatLabelWithStatusIcon>
   );
 };
-
-const autoPopulateCustomFieldValuesSchema = z
-  .union([z.stringbool(), z.boolean()])
-  .optional()
-  .default(false);
-
-const autoPopulateCustomFieldValuesCookieKey =
-  '_auto-populate-custom-field-values';
-
-export const getAutoPopulateCustomFieldValuesServerFn =
-  createServerFn().handler(async () => {
-    const cookieValue = getCookie(autoPopulateCustomFieldValuesCookieKey);
-
-    const { data, error, success } =
-      autoPopulateCustomFieldValuesSchema.safeParse(cookieValue);
-
-    if (success) {
-      return data;
-    } else {
-      console.error(error);
-    }
-  });
-
-export const setAutoPopulateCustomFieldValuesServerFn = createServerFn({
-  method: 'POST',
-})
-  .validator(autoPopulateCustomFieldValuesSchema)
-  .handler(async ({ data }) => {
-    const stringValue = String(data);
-    const { error, success } =
-      autoPopulateCustomFieldValuesSchema.safeParse(stringValue);
-
-    if (success) {
-      setCookie(autoPopulateCustomFieldValuesCookieKey, stringValue);
-    } else {
-      console.error(error);
-    }
-  });
