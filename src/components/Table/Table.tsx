@@ -30,11 +30,13 @@ import { TableActions } from './components/TableActions';
 import { TablePagination } from './components/TablePagination';
 import { TableSettingsMenu } from './components/TableSettingsMenu';
 
-export const tableCellClasses = twJoin(
+const tableCellClasses = twJoin(
   'text-left px-2 py-1 border-b z-0 min-h-9',
   'first:sticky first:left-0 first:z-1 first:border-r first:border-r-transparent first:group-data-overflow-x-start:border-r-theme-surface-3',
   'last:sticky last:right-0 last:z-1 last:border-l last:border-l-transparent last:group-data-overflow-x-end:border-l-theme-surface-3',
 );
+
+const tableRowClasses = 'h-8 hover:bg-primary-950 not-last:*:border-b';
 
 export type AboveTableComponentDef<
   TTableFeatures extends TableFeatures,
@@ -160,7 +162,7 @@ export const Table = <TData extends RowData>({
                 <thead className="sticky top-0 z-2 group-data-overflow-y-start:shadow-[0_0_2rem_rgba(0,0,0,.25)]">
                   {table.getHeaderGroups().map((hg) => {
                     return (
-                      <tr key={hg.id}>
+                      <tr className={tableRowClasses} key={hg.id}>
                         {hg.headers.map((header, index) => {
                           const showSelectionCheckbox =
                             index === 0 && showRowSelection;
@@ -217,9 +219,6 @@ export const Table = <TData extends RowData>({
                 </thead>
                 <tbody className="overflow-auto min-h-100">
                   {table.getRowModel().rows.map((row) => {
-                    const trClassName =
-                      'hover:bg-primary-950 not-last:*:border-b';
-
                     const onCheckedChange = (checked: boolean) => {
                       const { rows } = table.getRowModel();
                       const rowId = row.id;
@@ -263,7 +262,7 @@ export const Table = <TData extends RowData>({
 
                     return (
                       <tr
-                        className={trClassName}
+                        className={tableRowClasses}
                         data-row-id={row.id}
                         key={row.id}
                       >
