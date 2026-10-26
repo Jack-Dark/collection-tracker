@@ -124,7 +124,7 @@
 
   [data-them="light"] {
 
-    /* // TODO - IMPROVEMENT: AUTOFILL COLORS ARE NOT MATCHING THEME */
+    /* // TODO - IMPROVEMENT: INPUT AUTOFILL COLORS ARE NOT MATCHING THEME */
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
