@@ -1,8 +1,8 @@
-import type { ZoomableImagePropsDef } from '#/components/ZoomableThumbnail/ZoomableThumbnail.types';
+import type { BaseImagePropsDef } from '#/components/Image/Images.types';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
-import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
+import { ZoomableThumbnailGallery } from '#/components/ZoomableThumbnailGallery/ZoomableThumbnailGallery';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 import { CollectionDetailsImagesField } from './components/CollectionDetailsImagesField';
@@ -19,7 +19,7 @@ export const CollectionDetailsImagesCell = (props: {
   const isEditingRow = getIsEditingRowId(rowId);
 
   return (
-    <div className="flex flex-wrap gap-1 items-center">
+    <div className="flex flex-wrap gap-1 items-end">
       {isEditingRow ? (
         <CollectionDetailsImagesField form={form} rowIndex={rowIndex} />
       ) : (
@@ -28,6 +28,16 @@ export const CollectionDetailsImagesCell = (props: {
             return (
               <form.Field name={`collectionItems[${rowIndex}].images`}>
                 {(imagesField) => {
+                  const formattedImages = imagesField.value.map((data) => {
+                    const isPublicId = typeof data === 'string';
+
+                    const image: BaseImagePropsDef = isPublicId
+                      ? { publicId: data }
+                      : { src: data.previewUrl };
+
+                    return image;
+                  });
+
                   return imagesField.value.length ? (
                     <>
                       {imagesField.value.map((data, index) => {
@@ -35,27 +45,24 @@ export const CollectionDetailsImagesCell = (props: {
 
                         const key: string = isPublicId ? data : data.previewUrl;
 
-                        const image: ZoomableImagePropsDef = isPublicId
-                          ? { publicId: data }
-                          : { src: data.previewUrl };
-
-                        const thumbnail: ZoomableImagePropsDef = isPublicId
+                        const thumbnail: BaseImagePropsDef = isPublicId
                           ? {
+                              cropMode: 'pad',
                               height: thumbnailSize,
                               publicId: data,
                               width: thumbnailSize,
                             }
                           : { src: data.previewUrl };
 
-                        // TODO - IMPROVEMENT: UPDATE TO SLIDESHOW
                         return (
                           <div
                             className="p-1 size-14 border border-theme-divider-3 bg-theme-surface-2 text-theme-t2 hover:border-theme-link-hover hover:text-theme-link-hover"
                             key={key}
                           >
-                            <ZoomableThumbnail
-                              alt={`${nameField.value} image ${index + 1}`}
-                              image={image}
+                            <ZoomableThumbnailGallery
+                              alt={`${nameField.value} image`}
+                              images={formattedImages}
+                              index={index}
                               thumbnail={thumbnail}
                             />
                           </div>

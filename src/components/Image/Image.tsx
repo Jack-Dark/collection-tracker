@@ -5,6 +5,7 @@ import type { ImagePropsDef } from './Images.types';
 export const Image = (props: ImagePropsDef) => {
   const {
     alt,
+    cropMode,
     height,
     onClick,
     publicId,
@@ -18,6 +19,7 @@ export const Image = (props: ImagePropsDef) => {
   if (publicId) {
     imgSrc = createCloudinaryUrl(
       {
+        cropMode,
         height,
         publicId,
         width,
