@@ -1,3 +1,4 @@
+import { useForm } from '@tanstack/react-form';
 import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
@@ -5,6 +6,7 @@ import {
   useGetCollectionDetailsById,
   useInvalidateGetCollectionDetailsById,
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { useGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
 import { Table } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
@@ -12,10 +14,15 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../CollectionDetailsPage.types';
 
 import { useEditingCollectionItemsRowIds } from '../../hooks/use-editing-collection-items-row-ids';
+import { useOnUpdateCollectionItemsQueries } from '../../hooks/use-on-update-collection-items-queries';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
-import { useCollectionDetailsFiltersProps } from './hooks/use-collection-details-filters-props';
+import {
+  collectionItemsFiltersFormOptions,
+  getIsFilterValueApplied,
+  useCollectionDetailsFiltersProps_NEW,
+} from './hooks/use-collection-details-filters-props';
 import { useCollectionDetailsPaginationProps } from './hooks/use-collection-details-pagination-props';
 import { useCollectionDetailsSearchProps } from './hooks/use-collection-details-search-props';
 import { useCollectionDetailsSettingsProps } from './hooks/use-collection-details-settings-props';
@@ -71,8 +78,42 @@ export const CollectionDetailsTable = ({
     });
   }, [data?.collection?.customFields]);
 
-  const { form: filtersForm, ...filtersProps } =
-    useCollectionDetailsFiltersProps();
+  const { onUpdateCollectionItemsQueries } =
+    useOnUpdateCollectionItemsQueries();
+
+  const filtersForm = useForm({
+    ...collectionItemsFiltersFormOptions,
+    defaultValues: { filters: search.filters },
+    onSubmit: ({ value }) => {
+      // ? Only include non-empty filters
+      const submissionValues = Object.entries(value.filters).reduce<
+        typeof value.filters
+      >((acc, [customFieldStringId, filterValue]) => {
+        const customFieldId = Number(customFieldStringId);
+        const isApplied = getIsFilterValueApplied(filterValue);
+
+        if (isApplied) {
+          return { ...acc, [customFieldId]: filterValue };
+        } else {
+          return acc;
+        }
+      }, {});
+
+      onUpdateCollectionItemsQueries({
+        filters: submissionValues,
+      });
+    },
+  });
+
+  // TODO - BUG: THIS HOOK NOT NECESSARY, BUT ENTIRE PAGE LOCKS UP IF REMOVED
+  useGetFiltersForCollection({
+    placeholderData: [],
+    requestArgs: { id: collectionId },
+  });
+
+  const filtersProps = useCollectionDetailsFiltersProps_NEW({
+    form: filtersForm,
+  });
   const searchProps = useCollectionDetailsSearchProps();
   const paginationProps = useCollectionDetailsPaginationProps({ pagination });
   const sortProps = useCollectionDetailsSortProps();

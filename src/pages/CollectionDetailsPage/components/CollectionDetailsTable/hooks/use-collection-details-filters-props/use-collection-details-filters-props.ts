@@ -1,16 +1,17 @@
 import type { ReactFormType } from '@tanstack/react-form';
 
-import { formOptions, useForm } from '@tanstack/react-form';
-import _ from 'lodash';
+import { formOptions } from '@tanstack/react-form';
 import z from 'zod';
 
+import type { collectionDetailsFilterValueSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
 import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
 
 import { collectionDetailsFiltersSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
-import { useGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
 import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
-import { useOnUpdateCollectionItemsQueries } from '../../../../hooks/use-on-update-collection-items-queries';
+export type CollectionItemsFilterValueSchemaDef = z.output<
+  typeof collectionDetailsFilterValueSchema
+>;
 
 const collectionItemFiltersFormSchema = z.object({
   filters: collectionDetailsFiltersSchema,
@@ -20,7 +21,7 @@ export type CollectionItemsFiltersFormSchemaDef = z.output<
   typeof collectionItemFiltersFormSchema
 >;
 
-const collectionItemsFiltersFormEmptyDefaults: CollectionItemsFiltersFormSchemaDef =
+export const collectionItemsFiltersFormEmptyDefaults: CollectionItemsFiltersFormSchemaDef =
   { filters: {} };
 
 export const collectionItemsFiltersFormOptions = formOptions({
@@ -38,129 +39,38 @@ export type CollectionItemsFiltersFormDef = ReactFormType<
   typeof collectionItemsFiltersFormOptions
 >;
 
-type UseCreateFiltersFormValuesPropsDef = {
-  startingValues: CollectionItemsFiltersFormSchemaDef['filters'];
-};
-
-const useCreateCollectionFiltersFormValues = (
-  props: UseCreateFiltersFormValuesPropsDef,
+export const getIsFilterValueApplied = (
+  filterValue: CollectionItemsFilterValueSchemaDef,
 ) => {
-  const { startingValues = {} } = props;
+  const { items, range, value } = filterValue;
 
-  const { id } = CollectionDetailsRoute.useParams();
-  const collectionId = Number(id);
-
-  const { data: filterOptions } = useGetFiltersForCollection({
-    placeholderData: [],
-    requestArgs: { id: collectionId },
-  });
-
-  const formFullResetValues: CollectionItemsFiltersFormSchemaDef['filters'] =
-    filterOptions.reduce<
-      Record<number, CollectionItemsFiltersFormSchemaDef['filters'][number]>
-    >((acc, { id, range, type }) => {
-      if (acc[id]) {
-        return acc;
-      } else {
-        if (type === 'string') {
-          const emptyItems: string[] = [];
-
-          return {
-            ...acc,
-            [id]: {
-              items: emptyItems,
-              range: undefined,
-              type,
-              value: undefined,
-            } satisfies CollectionItemsFiltersFormSchemaDef['filters'][number],
-          };
-        }
-        if (type === 'number') {
-          return {
-            ...acc,
-            [id]: {
-              items: undefined,
-              range,
-              type,
-              value: undefined,
-            } satisfies CollectionItemsFiltersFormSchemaDef['filters'][number],
-          };
-        }
-        if (type === 'boolean') {
-          return {
-            ...acc,
-            [id]: {
-              items: undefined,
-              range: undefined,
-              type,
-              value: null,
-            } satisfies CollectionItemsFiltersFormSchemaDef['filters'][number],
-          };
-        }
-      }
-
-      return acc;
-    }, startingValues);
-
-  return formFullResetValues;
+  return !!items?.length || !!range || (value !== null && value !== undefined);
 };
 
-export const useCollectionDetailsFiltersProps = () => {
+export const useCollectionDetailsFiltersProps_NEW = (props: {
+  form: CollectionItemsFiltersFormDef;
+}) => {
+  const { form } = props;
   const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
 
-  const emptyFilters = useCreateCollectionFiltersFormValues({
-    startingValues: {},
-  });
-  const currentlyAppliedFilters = useCreateCollectionFiltersFormValues({
-    startingValues: searchQueryFilters,
-  });
-
-  const form = useForm({
-    ...collectionItemsFiltersFormOptions,
-    defaultValues: { filters: currentlyAppliedFilters },
-    onSubmit: ({ value }) => {
-      // ? Only include filters not matching the empty state
-      const submissionValues = Object.entries(value.filters).reduce<
-        typeof value.filters
-      >((acc, [customFieldStringId, filterValues]) => {
-        const customFieldId = Number(customFieldStringId);
-        const matchesDefaultValues = _.isEqual(
-          filterValues,
-          emptyFilters[customFieldId],
-        );
-
-        if (matchesDefaultValues) {
-          return acc;
-        } else {
-          return { ...acc, [customFieldId]: filterValues };
-        }
-      }, {});
-
-      onUpdateCollectionItemsQueries({
-        filters: submissionValues,
-      });
-    },
-  });
-
-  const numApplied = [].filter(Boolean).length;
-
-  const { onUpdateCollectionItemsQueries } =
-    useOnUpdateCollectionItemsQueries();
+  const numApplied = Object.values(searchQueryFilters).filter(
+    getIsFilterValueApplied,
+  ).length;
 
   return {
-    form,
     numApplied,
     onCancel: () => {
-      form.setFieldValue('filters', currentlyAppliedFilters);
+      form.setFieldValue('filters', searchQueryFilters);
     },
     onReset: async () => {
-      form.setFieldValue('filters', {});
+      form.setFieldValue(
+        'filters',
+        collectionItemsFiltersFormEmptyDefaults.filters,
+      );
       await form.handleSubmit();
     },
     onSubmit: async () => {
       await form.handleSubmit();
     },
-  } satisfies Omit<FiltersButtonPropsDef, 'FiltersContent'> & {
-    form: CollectionItemsFiltersFormDef;
-  };
+  } satisfies Omit<FiltersButtonPropsDef, 'FiltersContent'>;
 };

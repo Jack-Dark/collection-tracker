@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 
 import { Slider } from '@base-ui/react';
 import InfoIcon from '@mui/icons-material/Info';
-import { useLayoutEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import type { GetFiltersForCollectionResponseDef } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.types';
 import type { DefaultSelectItemDef } from '#/components/Fields/SelectField/SelectField.types';
@@ -130,10 +130,6 @@ export const CollectionDetailsFiltersContent = (
     placeholderData: [],
     requestArgs: { id: collectionId },
   });
-
-  useLayoutEffect(() => {
-    form.reset();
-  }, []);
 
   return (
     <div className="grid gap-5">
