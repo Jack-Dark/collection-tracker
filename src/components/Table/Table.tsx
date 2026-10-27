@@ -177,7 +177,10 @@ export const Table = <TData extends RowData>({
 
                           return (
                             <th
-                              className={`text-left px-2 py-1 ${tableCellClasses}`}
+                              className={twJoin(
+                                'text-left px-2 py-1 whitespace-nowrap md:whitespace-normal',
+                                tableCellClasses,
+                              )}
                               colSpan={header.colSpan}
                               key={header.id}
                               style={{ width: `${header.getSize()}px` }}
