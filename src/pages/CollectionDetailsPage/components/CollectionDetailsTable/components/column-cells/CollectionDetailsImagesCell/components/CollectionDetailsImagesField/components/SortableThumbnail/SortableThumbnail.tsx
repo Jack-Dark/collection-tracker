@@ -24,10 +24,11 @@ export const SortableThumbnail = (props: SortableThumbnailPropsDef) => {
     >
       <SimpleErrorBoundary>
         <div
-          className="flex items-center justify-between gap-1 p-0.5 bg-theme-surface-2 border-b border-theme-divider-3"
+          className="h-6 flex items-center justify-between gap-1 px-0.5 bg-theme-surface-2 border-b border-theme-divider-3"
           onClick={onDelete}
         >
           <DragIndicatorIcon
+            aria-label="Drag and drop handle"
             className="text-theme-t3 cursor-grab active:cursor-grabbing"
             fontSize="inherit"
             ref={handleRef}
@@ -41,7 +42,7 @@ export const SortableThumbnail = (props: SortableThumbnailPropsDef) => {
           />
         </div>
 
-        <div className="size-14 p-0.5">
+        <div className="size-18 p-0.5">
           <Image alt={altText} src={src} />
         </div>
       </SimpleErrorBoundary>

@@ -19,7 +19,7 @@ export const CollectionDetailsImagesCell = (props: {
   const isEditingRow = getIsEditingRowId(rowId);
 
   return (
-    <div className="flex flex-wrap gap-1 items-end">
+    <div className="flex flex-wrap gap-1 items-end min-w-45">
       {isEditingRow ? (
         <CollectionDetailsImagesField form={form} rowIndex={rowIndex} />
       ) : (
