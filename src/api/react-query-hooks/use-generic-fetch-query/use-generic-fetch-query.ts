@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useLayoutEffect } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
@@ -41,6 +41,7 @@ export const useGenericFetchQuery = <
 ) => {
   const {
     fallbackErrorMessage,
+    loadClientSide,
     onError,
     onSuccess,
     requestArgs,
@@ -56,6 +57,10 @@ export const useGenericFetchQuery = <
     ...configs,
     requestArgs,
   });
+
+  const useQueryMethod = loadClientSide
+    ? (useQuery as typeof useSuspenseQuery)
+    : useSuspenseQuery;
 
   const context = useSuspenseQuery({ ...configuredQueryOptions, select });
 

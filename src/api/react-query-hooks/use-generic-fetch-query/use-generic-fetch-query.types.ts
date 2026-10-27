@@ -18,6 +18,8 @@ export type GenericFetchProps<
     'queryFn' | 'queryKey' | 'placeholderData'
   >
 > & {
+  /** If `true`, uses `useQuery` instead of `useSuspenseQuery` to fetch client-side. */
+  loadClientSide?: boolean;
   onError?: (error: string, requestArgs?: TRequestArgs) => void;
   /** NOT called when returning a cached response. */
   onStart?: () => void | Promise<void>;
