@@ -11,7 +11,7 @@ import type {
 
 import { getCollectionsWithCustomFieldsServerFn } from './get-collections-with-custom-field.serverFn';
 
-// TODO - IMPROVEMENT: RENAME TO BE MORE APPROPRIATE TO ITS USAGE
+// TODO - REFACTOR: RENAME TO BE MORE APPROPRIATE TO ITS USAGE
 export const useGetCollectionsWithCustomFields = <
   TTransformedData = GetCollectionsWithCustomFieldsResponseDef,
 >(
