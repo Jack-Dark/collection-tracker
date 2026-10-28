@@ -30,7 +30,7 @@ export const TableActions = <TData extends RowData>(
   }, [!!filters, !!search, !!sort]);
 
   return (
-    <div className={`grid ${actionsColumns} items-stretch gap-4`}>
+    <div className={`grid ${actionsColumns} items-stretch gap-2 md:gap-4`}>
       {filters && <FilterButton {...filters} />}
       {search && <Search {...search} />}
       {sort ? (

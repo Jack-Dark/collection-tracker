@@ -50,6 +50,7 @@ export const FilterButton = (props: FiltersButtonPropsDef) => {
   return (
     <Button
       aria-label={`Filters (${numApplied})`}
+      className="btn-xs md:btn-md"
       Icon={() => {
         return (
           <div>
@@ -58,7 +59,7 @@ export const FilterButton = (props: FiltersButtonPropsDef) => {
         );
       }}
       onClick={showFilters}
-      variant="mono"
+      variant={numApplied ? 'secondary' : 'mono'}
     >
       <span className="hidden md:inline">
         Filters{numApplied ? ` (${numApplied})` : ''}
