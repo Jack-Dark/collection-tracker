@@ -81,8 +81,8 @@ export const CollectionsListCustomFieldsCell = (props: {
 
   const [updateItemsTimestamp, setUpdateItemsTimestamp] = useState<number>(0);
 
-  // TODO - IMPROVEMENT: wrap inside conditional with Suspense so data is only fetched when editing a row
   const { data: customFieldsInDb, isSuccess } = useGetCustomFields({
+    enabled: isEditingRow,
     placeholderData: [],
     requestArgs: {},
   });
@@ -432,7 +432,6 @@ export const AddOrEditCustomFieldDialog = (props: {
   const isNewRecord =
     typeof lastEditedCustomField.data?.customField.id === 'string';
 
-  // TODO - IMPROVEMENT: wrap inside conditional with Suspense so data is only fetched when editing a row
   const { data: customFieldsInDb = [] } = useGetCustomFields({
     placeholderData: [],
     requestArgs: {},
