@@ -1,7 +1,7 @@
 import { createStore, useSelector } from '@tanstack/react-store';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
-export const spinnerStore = createStore({ isSpinning: false });
+const spinnerStore = createStore({ isSpinning: false });
 
 export const useSpinner = () => {
   const { isSpinning } = useSelector(spinnerStore);
@@ -100,4 +100,16 @@ export const useSpinner = () => {
     showSpinner,
     toggleSpinner,
   };
+};
+
+export const useShowSpinner = (isLoading: boolean) => {
+  const { hideSpinner, isSpinning, showSpinner } = useSpinner();
+
+  useLayoutEffect(() => {
+    if (isLoading && !isSpinning) {
+      showSpinner();
+    } else if (!isLoading && isSpinning) {
+      hideSpinner();
+    }
+  }, [isLoading]);
 };

@@ -22,7 +22,7 @@ export const CollectionDetailsImagesField = (
   return (
     <form.ArrayField name={`collectionItems[${rowIndex}].images`}>
       {(field) => {
-        return (
+        return field.value ? (
           <>
             <DragDropProvider
               onDragEnd={(event) => {
@@ -103,7 +103,7 @@ export const CollectionDetailsImagesField = (
               </FieldWrapper>
             </SimpleErrorBoundary>
           </>
-        );
+        ) : null;
       }}
     </form.ArrayField>
   );

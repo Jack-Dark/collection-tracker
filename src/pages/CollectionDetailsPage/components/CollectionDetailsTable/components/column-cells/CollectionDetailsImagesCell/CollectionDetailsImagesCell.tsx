@@ -28,6 +28,9 @@ export const CollectionDetailsImagesCell = (props: {
             return (
               <form.Field name={`collectionItems[${rowIndex}].images`}>
                 {(imagesField) => {
+                  if (!imagesField.value) {
+                    return null;
+                  }
                   const formattedImages = imagesField.value.map((data) => {
                     const isPublicId = typeof data === 'string';
 

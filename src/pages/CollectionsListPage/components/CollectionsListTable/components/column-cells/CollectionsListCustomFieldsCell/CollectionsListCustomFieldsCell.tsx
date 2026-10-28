@@ -4,7 +4,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { createAtom, useAtom } from '@tanstack/react-store';
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
@@ -82,13 +82,16 @@ export const CollectionsListCustomFieldsCell = (props: {
   const [updateItemsTimestamp, setUpdateItemsTimestamp] = useState<number>(0);
 
   // TODO - IMPROVEMENT: wrap inside conditional with Suspense so data is only fetched when editing a row
-  const { data: customFieldsInDb = [] } = useGetCustomFields({
-    onSuccess: () => {
-      setUpdateItemsTimestamp(Date.now());
-    },
+  const { data: customFieldsInDb, isSuccess } = useGetCustomFields({
     placeholderData: [],
     requestArgs: {},
   });
+
+  useLayoutEffect(() => {
+    if (isSuccess) {
+      setUpdateItemsTimestamp(Date.now());
+    }
+  }, [isSuccess, customFieldsInDb]);
 
   const [showAddOrEditCustomFieldsDialog, hideAddOrEditCustomFieldsDialog] =
     useDialog(() => {

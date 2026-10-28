@@ -1,10 +1,6 @@
 import { createFileRoute, isRedirect } from '@tanstack/react-router';
 
-import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
-import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
-import { getNavMenuCollectionsServerFn } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.serverFn';
 import { ensureSession } from '#/auth/auth-middleware';
-import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/_protected')({
@@ -35,16 +31,4 @@ export const Route = createFileRoute('/_protected')({
     }
   },
   component: Layout,
-  errorComponent: SimpleErrorBoundaryContent,
-  loader: async ({ context }) => {
-    if (context?.user?.id) {
-      const queryOptions = getGenericFetchQueryOptions({
-        queryFn: getNavMenuCollectionsServerFn,
-        queryKey: [reactQueryKeys.getNavMenuCollections],
-        requestArgs: {},
-      });
-
-      return await context.queryClient.query(queryOptions);
-    }
-  },
 });

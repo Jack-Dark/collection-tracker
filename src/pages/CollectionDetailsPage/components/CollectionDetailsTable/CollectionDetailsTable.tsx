@@ -1,19 +1,16 @@
 import { useForm } from '@tanstack/react-form';
 import { Suspense, useEffect, useMemo } from 'react';
 
-import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
-import {
-  useGetCollectionDetailsById,
-  useInvalidateGetCollectionDetailsById,
-} from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
-import { useGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
+import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
 import { LoadingSpinner } from '#/components/FullPageLoadingSpinner/components/LoadingSpinner';
 import { Table } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../CollectionDetailsPage.types';
-
+import {
+  useCollectionDetailsForm,
+  useHandleGetCollectionDetailsById,
+} from '../../CollectionDetailsPage';
 import { useEditingCollectionItemsRowIds } from '../../hooks/use-editing-collection-items-row-ids';
 import { useOnUpdateCollectionItemsQueries } from '../../hooks/use-on-update-collection-items-queries';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
@@ -29,11 +26,7 @@ import { useCollectionDetailsSearchProps } from './hooks/use-collection-details-
 import { useCollectionDetailsSettingsProps } from './hooks/use-collection-details-settings-props';
 import { useCollectionDetailsSortProps } from './hooks/use-collection-details-sort-props';
 
-export const CollectionDetailsTable = ({
-  form,
-}: {
-  form: CreateOrUpdateCollectionItemFormTypeDef;
-}) => {
+export const CollectionDetailsTable = () => {
   const { id } = CollectionRoute.useParams();
   const collectionId = Number(id);
   const search = CollectionRoute.useSearch();
@@ -41,30 +34,24 @@ export const CollectionDetailsTable = ({
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
-  const { data } = useGetCollectionDetailsById({
-    placeholderData: {
-      collection: {
-        customFields: [],
-      },
-      pagination: getPaginationMetadataDefaults(),
-    },
-    requestArgs: { collectionId, params: search },
-  });
+  const { data } = useHandleGetCollectionDetailsById();
 
   const { onDeleteUnusedCustomFieldValues } =
     useDeleteUnusedCustomFieldValues();
 
-  const { pagination } = data;
+  const { form, resetForm } = useCollectionDetailsForm();
 
   const onCancel = async () => {
-    // ? Reset form to immediately clear changes
-    form.reset();
-    // ? invalidate to solve edge case of deleting a currently applied custom field value and then cancelling your changes leaving the old custom field value in the table
-    invalidateGetCollectionDetailsById();
-
     resetEditingRowIds();
+    // ? Reset form to immediately clear changes
+    resetForm();
 
-    await onDeleteUnusedCustomFieldValues({ collectionId });
+    await Promise.all([
+      // TODO - IMPROVEMENT: CREATE SEPARATE `shouldInvalidate` state which will trigger the invalidation conditionally
+      // ? invalidate to solve edge case of deleting a currently applied custom field value and then cancelling your changes leaving the old custom field value in the table
+      invalidateGetCollectionDetailsById(),
+      onDeleteUnusedCustomFieldValues({ collectionId }),
+    ]);
   };
 
   const { addToEditingRowIds, isEditing, resetEditingRowIds } =
@@ -72,12 +59,12 @@ export const CollectionDetailsTable = ({
 
   const columns = useMemo(() => {
     return getCollectionItemsTableColumns({
-      customFields: data?.collection?.customFields || [],
+      customFields: data.collection?.customFields || [],
       form,
       onCancel,
       onEditClick: addToEditingRowIds,
     });
-  }, [data?.collection?.customFields]);
+  }, [data.collection?.customFields]);
 
   const { onUpdateCollectionItemsQueries } =
     useOnUpdateCollectionItemsQueries();
@@ -106,16 +93,13 @@ export const CollectionDetailsTable = ({
     },
   });
 
-  // TODO - BUG: THIS QUERY IS NOT NECESSARY, BUT ENTIRE PAGE LOCKS UP IF REMOVED
-  useGetFiltersForCollection({
-    requestArgs: { id: collectionId },
-  });
-
   const filtersProps = useCollectionDetailsFiltersProps({
     form: filtersForm,
   });
   const searchProps = useCollectionDetailsSearchProps();
-  const paginationProps = useCollectionDetailsPaginationProps({ pagination });
+  const paginationProps = useCollectionDetailsPaginationProps({
+    pagination: data.pagination,
+  });
   const sortProps = useCollectionDetailsSortProps();
   const settingsProps = useCollectionDetailsSettingsProps();
 

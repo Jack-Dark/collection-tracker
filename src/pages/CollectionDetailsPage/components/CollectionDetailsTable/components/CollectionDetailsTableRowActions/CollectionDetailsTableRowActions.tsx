@@ -46,10 +46,11 @@ export const CollectionDetailsTableRowActions = ({
 
   const { onDeleteCollectionItemsByIds } = useDeleteCollectionItemsByIds({
     onSuccess: async () => {
+      resetRowSelection();
+
       await invalidateGetCollectionDetailsById({
         id: collectionId,
       });
-      resetRowSelection();
     },
   });
 
@@ -129,7 +130,11 @@ export const CollectionDetailsTableRowActions = ({
             <Button
               className="btn-sm md:btn-md"
               Icon={ClearIcon}
-              onClick={onCancel}
+              onClick={async () => {
+                resetRowSelection();
+
+                await onCancel();
+              }}
               text="Cancel"
               variant="mono"
             />

@@ -18,12 +18,10 @@ import type { UseGenericMutateQueryProps } from './use-generic-mutate-query.type
  *     TTransformedData
  *   >,
  * ) => {
- *  const serverFn = useServerFn(YOUR_SERVER_FUNCTION);
- *
  * const { onMutate: YOUR_RETURNED_FUNCTION_NAME, ...rest } = useGenericMutateQuery({
  *     fallbackErrorMessage: 'Unable to ___________.',
  *     mutationFn: (data) => {
- *       return serverFn({ data });
+ *       return YOUR_SERVER_FUNCTION({ data });
  *     },
  *     ...props,
  * });

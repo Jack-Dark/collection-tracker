@@ -1,7 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useLayoutEffect } from 'react';
 
-import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications/useNotifications';
 
 import type { UseGenericFetchProps } from './use-generic-fetch-query.types';
@@ -39,17 +38,8 @@ export const useGenericFetchQuery = <
 >(
   props: UseGenericFetchProps<TRequestArgs, TResponseDef, TTransformedData>,
 ) => {
-  const {
-    fallbackErrorMessage,
-    onError,
-    onSuccess,
-    requestArgs,
-    select,
-    showLoading,
-    ...configs
-  } = props;
+  const { fallbackErrorMessage, requestArgs, select, ...configs } = props;
 
-  const { hideSpinner, isSpinning, showSpinner } = useSpinner();
   const { notifyError } = useNotifications();
 
   const configuredQueryOptions = getGenericFetchQueryOptions({
@@ -59,35 +49,13 @@ export const useGenericFetchQuery = <
 
   const context = useSuspenseQuery({ ...configuredQueryOptions, select });
 
-  const { data, error, isError, isFetching, isSuccess } = context;
-
-  useLayoutEffect(() => {
-    if (showLoading) {
-      if (isFetching) {
-        showSpinner();
-      } else if (isSpinning) {
-        hideSpinner();
-      }
-    }
-  }, [isFetching]);
-
-  useLayoutEffect(() => {
-    if (isSuccess) {
-      onSuccess?.(data, requestArgs);
-    }
-  }, [
-    isSuccess,
-    // ? Providing context.data ensures that onSuccess is executed any time the data changes, even if provided from a cached response
-    data,
-  ]);
+  const { error, isError } = context;
 
   useLayoutEffect(() => {
     if (isError) {
       const errorMsg = error?.message || fallbackErrorMessage;
 
       notifyError(errorMsg);
-
-      onError?.(errorMsg, requestArgs);
     }
   }, [isError, error, fallbackErrorMessage]);
 

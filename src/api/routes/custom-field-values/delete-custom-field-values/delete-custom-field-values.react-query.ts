@@ -1,5 +1,3 @@
-import { useServerFn } from '@tanstack/react-start';
-
 import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generic-mutate-query/use-generic-mutate-query.types';
 
 import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
@@ -21,13 +19,11 @@ export const useDeleteCustomFieldValues = <
     TTransformedData
   >,
 ) => {
-  const serverFn = useServerFn(deleteCustomFieldValuesServerFn);
-
   const { onMutate: onDeleteCustomFieldValues, ...rest } =
     useGenericMutateQuery({
       fallbackErrorMessage: 'Unable to delete custom field value(s).',
       mutationFn: (data) => {
-        return serverFn({ data });
+        return deleteCustomFieldValuesServerFn({ data });
       },
       mutationKey: [reactMutationKeys.customFieldValues('delete')],
       ...props,

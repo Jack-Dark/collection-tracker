@@ -1,5 +1,3 @@
-import { useServerFn } from '@tanstack/react-start';
-
 import type { GenericFetchProps } from '#/api/react-query-hooks/use-generic-fetch-query/use-generic-fetch-query.types';
 
 import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
@@ -22,11 +20,9 @@ export const useGetCustomFieldValuesByCustomFieldId = <
     TTransformedData
   >,
 ) => {
-  const serverFn = useServerFn(getCustomFieldValuesByCustomFieldIdServerFn);
-
   return useGenericFetchQuery({
     fallbackErrorMessage: 'Unable to retrieve custom field values.',
-    queryFn: serverFn,
+    queryFn: getCustomFieldValuesByCustomFieldIdServerFn,
     queryKey: [
       reactQueryKeys.getCustomFieldValuesByCustomFieldId,
       props.requestArgs.id,

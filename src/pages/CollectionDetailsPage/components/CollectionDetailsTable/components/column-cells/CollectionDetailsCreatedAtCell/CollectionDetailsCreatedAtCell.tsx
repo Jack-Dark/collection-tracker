@@ -53,6 +53,10 @@ export const CollectionDetailsCreatedAtCell = ({
           <div className="grid gap-2 justify-start">
             <form.Field name={`collectionItems[${rowIndex}]`}>
               {({ value }) => {
+                if (!value) {
+                  return null;
+                }
+
                 return showNewRecordButtons ? (
                   <>
                     <Button

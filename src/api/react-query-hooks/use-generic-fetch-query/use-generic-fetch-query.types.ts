@@ -18,19 +18,10 @@ export type GenericFetchProps<
     'queryFn' | 'queryKey' | 'placeholderData'
   >
 > & {
-  onError?: (error: string, requestArgs?: TRequestArgs) => void;
-  /** NOT called when returning a cached response. */
-  onStart?: () => void | Promise<void>;
-  /** This is called on the response every time, even if it's returned from cache. */
-  onSuccess?: (
-    response: TTransformedData,
-    requestArgs: TRequestArgs,
-  ) => Promise<void> | void;
   placeholderData?:
     | DeepPartial<TResponseDef>
     | PlaceholderDataFunction<DeepPartial<TResponseDef>>;
   requestArgs: TRequestArgs;
-  showLoading?: boolean;
 };
 
 // ? This type def applies specifically to the hook's props

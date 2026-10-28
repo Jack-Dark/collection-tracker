@@ -28,38 +28,17 @@ export const Route = createFileRoute('/_protected/collections/$id')({
       requestArgs,
     });
 
-    const collectionDetails = await context.queryClient.query(queryOptions);
-
-    return collectionDetails;
-  },
-  head: ({ loaderData }) => {
-    const title = `${loaderData?.collection?.name || 'Collection Details'}: Collection Tracker`;
-
-    const maxItems = 3;
-    const numRecords = loaderData?.items?.length || 0;
-    const numRecordsToList = Math.min(maxItems, numRecords);
-    const hasMoreRecords = numRecords > maxItems;
-
-    const description = loaderData?.items
-      ?.slice(0, numRecordsToList)
-      ?.reduce((acc, item, index) => {
-        const isLastIndex = index === numRecordsToList - 1;
-
-        if (isLastIndex) {
-          if (hasMoreRecords) {
-            return `${acc}${item.name}, etc...`;
-          } else {
-            return `${acc}${item.name}`;
-          }
-        } else {
-          return `${acc}${item.name}, `;
-        }
-      }, '');
+    const data = await context.queryClient.query(queryOptions);
 
     return {
+      collectionName: data?.collection?.name,
+      totalRecords: data?.pagination?.totalRecords || 0,
+    };
+  },
+  head: ({ loaderData }) => {
+    return {
       meta: createMetaTags({
-        title,
-        description,
+        title: `${loaderData ? `${loaderData.collectionName} (${loaderData.totalRecords})` : 'Collection Details'}: Collection Tracker`,
       }),
     };
   },

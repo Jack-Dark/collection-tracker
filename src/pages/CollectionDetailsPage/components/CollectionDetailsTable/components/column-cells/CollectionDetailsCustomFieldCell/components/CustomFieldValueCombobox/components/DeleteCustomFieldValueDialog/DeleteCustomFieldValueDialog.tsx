@@ -1,5 +1,7 @@
 import type { AnyFieldApi } from '@tanstack/react-form';
 
+import { useLayoutEffect } from 'react';
+
 import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 
 import { useGetCollectionItemsWithCustomFieldValue } from '#/api/routes/collection-items/get-collection-items-with-custom-field-value/get-collection-items-with-custom-field-value.react-query';
@@ -48,17 +50,7 @@ export const DeleteCustomFieldValueDialog = <
     return affectedCollections.length <= 1 && numAffectedCollectionItems <= 1;
   };
 
-  const { data } = useGetCollectionItemsWithCustomFieldValue({
-    onSuccess: async ({ affectedCollections, numAffectedCollectionItems }) => {
-      const shouldAutoDelete = getShouldAutoDelete({
-        affectedCollections,
-        numAffectedCollectionItems,
-      });
-
-      if (shouldAutoDelete) {
-        await onDelete();
-      }
-    },
+  const { data, isSuccess } = useGetCollectionItemsWithCustomFieldValue({
     placeholderData: (_data) => {
       return {
         affectedCollections: [],
@@ -99,6 +91,16 @@ export const DeleteCustomFieldValueDialog = <
     affectedCollections,
     numAffectedCollectionItems,
   });
+
+  useLayoutEffect(() => {
+    if (isSuccess) {
+      const shouldAutoDelete = getShouldAutoDelete(data);
+
+      if (shouldAutoDelete) {
+        onDelete();
+      }
+    }
+  }, [isSuccess, data]);
 
   return shouldAutoDelete ? null : (
     <ConfirmDeleteDialog hideDialog={onClose} onConfirm={onDelete}>

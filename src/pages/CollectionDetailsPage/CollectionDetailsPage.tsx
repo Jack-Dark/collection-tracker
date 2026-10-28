@@ -3,10 +3,12 @@ import type { RouteComponent } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useBlocker } from '@tanstack/react-router';
+import { useLayoutEffect } from 'react';
 
 import type { CreateCollectionItemsRequestArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
 
+import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import { useCreateCollectionItems } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
 import {
   useGetCollectionDetailsById,
@@ -26,8 +28,18 @@ import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import { useEditingCollectionItemsRowIds } from './hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsPage: RouteComponent = () => {
+  const { collectionName, totalRecords } =
+    CollectionDetailsRoute.useLoaderData();
+
+  return (
+    <PageWrapper title={`${collectionName} (${totalRecords})`} wideOnMobile>
+      <CollectionDetailsTable />
+    </PageWrapper>
+  );
+};
+
+export const useCollectionDetailsForm = () => {
   const { id } = CollectionDetailsRoute.useParams();
-  const searchQueries = CollectionDetailsRoute.useSearch();
 
   const collectionId = Number(id);
 
@@ -59,28 +71,15 @@ export const CollectionDetailsPage: RouteComponent = () => {
   const { onDeleteUnusedCustomFieldValues } =
     useDeleteUnusedCustomFieldValues();
 
-  const { data } = useGetCollectionDetailsById({
-    onSuccess: () => {
-      form.reset();
-    },
-    placeholderData: {
-      collection: {
-        name: '-',
-      },
-      items: [],
-      pagination: {
-        totalRecords: 0,
-      },
-    },
-    requestArgs: { collectionId, params: searchQueries },
-  });
+  const { data, isSuccess } = useHandleGetCollectionDetailsById();
 
   const { getIsEditingRowId, isEditing, resetEditingRowIds } =
     useEditingCollectionItemsRowIds();
 
   const form = useForm({
     ...createOrUpdateCollectionItemsFormOptions,
-    defaultValues: { collectionItems: data.items },
+    defaultValues: { collectionItems: [] },
+    // defaultValues: { collectionItems: data.items },
     onSubmit: async ({ value: { collectionItems } }) => {
       onInterceptRequest(async () => {
         const editedRecords = collectionItems.filter(({ id }) => {
@@ -118,6 +117,16 @@ export const CollectionDetailsPage: RouteComponent = () => {
     },
   });
 
+  const resetForm = () => {
+    form.setFieldValue('collectionItems', data.items);
+  };
+
+  useLayoutEffect(() => {
+    if (isSuccess) {
+      resetForm();
+    }
+  }, [data, isSuccess]);
+
   const appHotkeys = useAppHotkeys();
 
   useHotkeys([
@@ -147,12 +156,25 @@ export const CollectionDetailsPage: RouteComponent = () => {
     },
   });
 
-  return (
-    <PageWrapper
-      title={`${data?.collection?.name || '-'} (${data?.pagination.totalRecords})`}
-      wideOnMobile
-    >
-      <CollectionDetailsTable form={form} />
-    </PageWrapper>
-  );
+  return { form, resetForm };
+};
+
+export const useHandleGetCollectionDetailsById = () => {
+  const searchQueries = CollectionDetailsRoute.useSearch();
+  const routeParams = CollectionDetailsRoute.useParams();
+  const collectionId = Number(routeParams.id);
+
+  const context = useGetCollectionDetailsById({
+    placeholderData: {
+      collection: {
+        customFields: [],
+      },
+      items: [],
+      lastAddedCustomFieldValues: {},
+      pagination: getPaginationMetadataDefaults(),
+    },
+    requestArgs: { collectionId, params: searchQueries },
+  });
+
+  return context;
 };

@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 
 import { Slider } from '@base-ui/react';
 import InfoIcon from '@mui/icons-material/Info';
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 
 import type { GetFiltersForCollectionResponseDef } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.types';
 import type { DefaultSelectItemDef } from '#/components/Fields/SelectField/SelectField.types';
@@ -75,9 +75,13 @@ export const CollectionDetailsFiltersContent = (
 
   const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
 
-  // TODO - IMPROVEMENT: WRAP IN SUSPENSE SO REQUEST IS MADE ON DEMAND
-  const { data: filterOptions } = useGetFiltersForCollection({
-    onSuccess: (filterOptions) => {
+  const { data: filterOptions, isSuccess } = useGetFiltersForCollection({
+    placeholderData: [],
+    requestArgs: { id: collectionId },
+  });
+
+  useLayoutEffect(() => {
+    if (isSuccess) {
       const filtersFormDefaultValues: CollectionItemsFiltersFormSchemaDef['filters'] =
         filterOptions.reduce<
           Record<number, CollectionItemsFiltersFormSchemaDef['filters'][number]>
@@ -126,10 +130,8 @@ export const CollectionDetailsFiltersContent = (
         }, searchQueryFilters);
 
       form.setFieldValue('filters', filtersFormDefaultValues);
-    },
-    placeholderData: [],
-    requestArgs: { id: collectionId },
-  });
+    }
+  }, [isSuccess, filterOptions]);
 
   return (
     <div className="grid gap-5">

@@ -21,7 +21,7 @@ import { getSession } from '#/auth/auth-middleware';
 import { Button } from '#/components/Button';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { PageWrapper } from '#/components/PageWrapper';
-import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
+import { RouteCatchBoundary } from '#/components/RouteCatchBoundary';
 import { ThemeProvider } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
 import { githubUrl } from '#/constants/githubUrl';
@@ -43,7 +43,13 @@ export const Route = createRootRouteWithContext<{
     };
   },
   component: RootComponent,
-  errorComponent: SimpleErrorBoundaryContent,
+  errorComponent: (props) => {
+    return (
+      <RootDocument>
+        <RouteCatchBoundary {...props} />
+      </RootDocument>
+    );
+  },
   loader: async () => {
     const theme = await getThemeServerFn();
 

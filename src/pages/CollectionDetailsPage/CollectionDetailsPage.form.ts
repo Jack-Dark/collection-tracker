@@ -1,15 +1,16 @@
 import { formOptions } from '@tanstack/react-form';
 import { createStore } from '@tanstack/react-store';
+import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CreateCollectionItemsFormDataSchemaDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { CustomFieldValuesByFieldId } from '#/api/routes/custom-field-values/custom-field-values.types';
 
-import { useGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
 import type { CreateOrUpdateCollectionItemFormDataDef } from './CollectionDetailsPage.types';
 
+import { useHandleGetCollectionDetailsById } from './CollectionDetailsPage';
 import { createOrUpdateCollectionItemsFormSchema } from './CollectionDetailsPage.schema';
 import { useEnableAutoPopulateCustomFieldValues } from './components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-enable-auto-populate-custom-field-values';
 
@@ -41,10 +42,6 @@ const autoPopulateCustomFieldValuesStore =
   createStore<CustomFieldValuesByFieldId>({});
 
 export const useLastAddedCustomFieldValues = () => {
-  const searchQueries = CollectionDetailsRoute.useSearch();
-  const routeParams = CollectionDetailsRoute.useParams();
-  const collectionId = Number(routeParams.id);
-
   const { enableAutoPopulateCustomFieldValues } =
     useEnableAutoPopulateCustomFieldValues();
 
@@ -58,14 +55,13 @@ export const useLastAddedCustomFieldValues = () => {
     }
   };
 
-  useGetCollectionDetailsById({
-    onSuccess: (data) => {
-      if (enableAutoPopulateCustomFieldValues) {
-        updateLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
-      }
-    },
-    requestArgs: { collectionId, params: searchQueries },
-  });
+  const { data, isSuccess } = useHandleGetCollectionDetailsById();
+
+  useEffect(() => {
+    if (isSuccess && enableAutoPopulateCustomFieldValues) {
+      updateLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
+    }
+  }, [data, isSuccess]);
 
   return {
     enableAutoPopulateCustomFieldValues,
