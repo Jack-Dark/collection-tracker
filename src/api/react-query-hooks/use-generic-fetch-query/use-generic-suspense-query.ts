@@ -18,7 +18,7 @@ import { getGenericFetchQueryOptions } from './get-generic-fetch-query-options';
  *     TTransformedData
  *   >,
  * ) => {
- *  return useGenericFetchQuery({
+ *  return useGenericSuspenseQuery({
  *    fallbackErrorMessage: 'Unable to retrieve __________.',
  *    queryKey: [YOUR_UNIQUE_GROUP_NAME, props.requestArgs],
  *    query: YOUR_SERVER_FUNCTION,
@@ -31,7 +31,7 @@ import { getGenericFetchQueryOptions } from './get-generic-fetch-query-options';
  *     YOUR_UNIQUE_GROUP_NAME
  *   );
  */
-export const useGenericFetchQuery = <
+export const useGenericSuspenseQuery = <
   TRequestArgs extends Record<string, any>,
   TResponseDef extends Record<any, any>,
   TTransformedData = TResponseDef,

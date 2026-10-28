@@ -20,9 +20,7 @@ import type { UseGenericMutateQueryProps } from './use-generic-mutate-query.type
  * ) => {
  * const { onMutate: YOUR_RETURNED_FUNCTION_NAME, ...rest } = useGenericMutateQuery({
  *     fallbackErrorMessage: 'Unable to ___________.',
- *     mutationFn: (data) => {
- *       return YOUR_SERVER_FUNCTION({ data });
- *     },
+ *     mutationFn: YOUR_SERVER_FUNCTION,
  *     ...props,
  * });
  *
@@ -67,7 +65,9 @@ export const useGenericMutateQuery = <
     unknown,
     TRequestArgs
   >({
-    mutationFn: handleMutationFn,
+    mutationFn: (data) => {
+      return handleMutationFn({ data });
+    },
     onError: async (error, requestArgs) => {
       const message =
         error instanceof Error || isAPIError(error)

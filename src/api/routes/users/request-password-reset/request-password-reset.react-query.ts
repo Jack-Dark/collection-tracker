@@ -21,9 +21,7 @@ export const useRequestPasswordReset = <
 ) => {
   const { onMutate: onRequestPasswordReset, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to request password reset.',
-    mutationFn: (data) => {
-      return requestPasswordResetServerFn({ data });
-    },
+    mutationFn: requestPasswordResetServerFn,
     mutationKey: [reactMutationKeys.users.password.requestReset],
     ...props,
   });

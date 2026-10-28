@@ -19,9 +19,7 @@ export const useUpdateUser = <TTransformedData = UpdateUserResponseDef>(
 ) => {
   const { onMutate: onUpdateUser, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to update user.',
-    mutationFn: (data) => {
-      return updateUserServerFn({ data });
-    },
+    mutationFn: updateUserServerFn,
     mutationKey: [reactMutationKeys.users.update],
     ...props,
   });

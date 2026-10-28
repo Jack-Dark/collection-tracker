@@ -28,9 +28,7 @@ export const useDeleteCollectionById = <
 
   const { onMutate: onDeleteCollectionById, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to delete collection.',
-    mutationFn: (data) => {
-      return deleteCollectionByIdServerFn({ data });
-    },
+    mutationFn: deleteCollectionByIdServerFn,
     mutationKey: [reactMutationKeys.collections('delete')],
     ...props,
     onSuccess: async (...args) => {

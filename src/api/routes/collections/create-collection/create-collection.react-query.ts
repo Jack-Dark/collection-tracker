@@ -28,13 +28,7 @@ export const useCreateCollection = <
 
   const { onMutate: onCreateCollection, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to add collection.',
-    mutationFn: async ({ records }) => {
-      const response = createCollectionServerFn({
-        data: { records },
-      });
-
-      return response;
-    },
+    mutationFn: createCollectionServerFn,
     mutationKey: [reactMutationKeys.collections('create')],
     ...props,
     onSuccess: async (...args) => {

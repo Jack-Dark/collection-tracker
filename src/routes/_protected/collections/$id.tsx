@@ -1,9 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
-import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
+import { getCollectionDetailsByIdQueryOptions } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { collectionDetailsSearchQueriesSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
-import { getCollectionDetailsByIdServerFn } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.serverFn';
 import { CollectionDetailsPage } from '#/pages/CollectionDetailsPage';
 import { createMetaTags } from '#/routes/__root';
 
@@ -14,18 +12,9 @@ export const Route = createFileRoute('/_protected/collections/$id')({
     return search;
   },
   loader: async ({ context, deps: searchQueries, params }) => {
-    const collectionId = Number(params.id);
-
-    const requestArgs = { collectionId, params: searchQueries };
-
-    const queryOptions = getGenericFetchQueryOptions({
-      queryFn: getCollectionDetailsByIdServerFn,
-      queryKey: [
-        reactQueryKeys.getCollectionDetailsById,
-        requestArgs.collectionId,
-        JSON.stringify(requestArgs),
-      ],
-      requestArgs,
+    const queryOptions = getCollectionDetailsByIdQueryOptions({
+      collectionId: Number(params.id),
+      params: searchQueries,
     });
 
     const data = await context.queryClient.query(queryOptions);

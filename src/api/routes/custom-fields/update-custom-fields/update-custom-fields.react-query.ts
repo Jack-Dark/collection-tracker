@@ -21,9 +21,7 @@ export const useUpdateCustomFields = <
 ) => {
   const { onMutate: onUpdateCustomFields, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to update custom field.',
-    mutationFn: (data) => {
-      return updateCustomFieldsServerFn({ data });
-    },
+    mutationFn: updateCustomFieldsServerFn,
     mutationKey: [reactMutationKeys.customFields('update')],
     ...props,
   });

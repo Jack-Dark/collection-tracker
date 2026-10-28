@@ -21,9 +21,7 @@ export const useCreateCustomFields = <
 ) => {
   const { onMutate: onCreateCustomFields, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to create custom field.',
-    mutationFn: (data) => {
-      return createCustomFieldsServerFn({ data });
-    },
+    mutationFn: createCustomFieldsServerFn,
     mutationKey: [reactMutationKeys.customFields('create')],
     ...props,
   });

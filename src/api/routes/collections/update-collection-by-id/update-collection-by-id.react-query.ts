@@ -4,8 +4,8 @@ import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
 import type {
+  OnUpdateCollectionsArgsDef,
   UpdateCollectionByIdResponseDef,
-  UpdateCollectionsFormRecordSchemaDef,
 } from './update-collection-by-id.types';
 
 import { useInvalidateGetNavMenuCollections } from '../get-nav-menu-collections/get-nav-menu-collections.react-query';
@@ -16,7 +16,7 @@ export const useUpdateCollectionById = <
   TTransformedData = UpdateCollectionByIdResponseDef,
 >(
   props?: GenericMutateQueryProps<
-    UpdateCollectionsFormRecordSchemaDef[],
+    OnUpdateCollectionsArgsDef,
     UpdateCollectionByIdResponseDef,
     TTransformedData
   >,
@@ -28,9 +28,7 @@ export const useUpdateCollectionById = <
 
   const { onMutate: onUpdateCollectionById, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to update collection.',
-    mutationFn: (records) => {
-      return updateCollectionByIdServerFn({ data: { records } });
-    },
+    mutationFn: updateCollectionByIdServerFn,
     mutationKey: [reactMutationKeys.collections('update')],
     ...props,
     onSuccess: async (...args) => {

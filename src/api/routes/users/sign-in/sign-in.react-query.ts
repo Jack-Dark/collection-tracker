@@ -19,9 +19,7 @@ export const useSignIn = <TTransformedData = SignInResponseDef>(
 
   const { onMutate: onSignIn, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to sign in. Please try again.',
-    mutationFn: (data) => {
-      return signInServerFn({ data });
-    },
+    mutationFn: signInServerFn,
     mutationKey: [reactMutationKeys.users.signIn.viaEmail],
     ...props,
     onSuccess: async (...args) => {

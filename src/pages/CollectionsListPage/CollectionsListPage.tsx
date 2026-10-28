@@ -74,9 +74,9 @@ export const CollectionsListPage: RouteComponent = () => {
         });
 
         if (isUpdatedRecords) {
-          await onUpdateCollectionById(
-            editedRecords as UpdateCollectionsFormRecordSchemaDef[],
-          );
+          await onUpdateCollectionById({
+            records: editedRecords as UpdateCollectionsFormRecordSchemaDef[],
+          });
 
           await Promise.all(
             editedRecords.map(({ id }) => {

@@ -24,9 +24,7 @@ export const useImpersonateUser = <
 
   const { onMutate: onImpersonateUser, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to impersonate user.',
-    mutationFn: (data) => {
-      return impersonateUserServerFn({ data });
-    },
+    mutationFn: impersonateUserServerFn,
     mutationKey: [reactMutationKeys.users.impersonate],
     ...props,
     onSuccess: async (...args) => {

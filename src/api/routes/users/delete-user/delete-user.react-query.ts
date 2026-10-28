@@ -22,9 +22,7 @@ export const useDeleteUser = <TTransformedData = DeleteUserResponseDef>(
 
   const { onMutate: onDeleteUser, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to delete user. Please try again.',
-    mutationFn: (data) => {
-      return deleteUserServerFn({ data });
-    },
+    mutationFn: deleteUserServerFn,
     mutationKey: [reactMutationKeys.users.delete],
     ...props,
     onSuccess: async (...args) => {
