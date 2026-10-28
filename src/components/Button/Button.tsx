@@ -80,12 +80,20 @@ export const Button = ({
       type={type}
     >
       {iconPosition === iconPositions.left &&
-        (processing ? <LoadingSpinner /> : Icon && <Icon className="icon" />)}
+        (processing ? (
+          <LoadingSpinner className="size-5" variant="mono" />
+        ) : (
+          Icon && <Icon className="icon" />
+        ))}
 
       {children || text}
 
       {iconPosition === iconPositions.right &&
-        (processing ? <LoadingSpinner /> : Icon && <Icon className="icon" />)}
+        (processing ? (
+          <LoadingSpinner className="size-5" variant="mono" />
+        ) : (
+          Icon && <Icon className="icon" />
+        ))}
     </MuiButton>
   );
 };
