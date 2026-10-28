@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import {
@@ -8,6 +8,7 @@ import {
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
+import { LoadingSpinner } from '#/components/FullPageLoadingSpinner/components/LoadingSpinner';
 import { Table } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -21,7 +22,7 @@ import { CollectionDetailsFiltersContent } from './components/CollectionItemsFil
 import {
   collectionItemsFiltersFormOptions,
   getIsFilterValueApplied,
-  useCollectionDetailsFiltersProps_NEW,
+  useCollectionDetailsFiltersProps,
 } from './hooks/use-collection-details-filters-props';
 import { useCollectionDetailsPaginationProps } from './hooks/use-collection-details-pagination-props';
 import { useCollectionDetailsSearchProps } from './hooks/use-collection-details-search-props';
@@ -111,7 +112,7 @@ export const CollectionDetailsTable = ({
     requestArgs: { id: collectionId },
   });
 
-  const filtersProps = useCollectionDetailsFiltersProps_NEW({
+  const filtersProps = useCollectionDetailsFiltersProps({
     form: filtersForm,
   });
   const searchProps = useCollectionDetailsSearchProps();

@@ -47,7 +47,7 @@ export const getIsFilterValueApplied = (
   return !!items?.length || !!range || (value !== null && value !== undefined);
 };
 
-export const useCollectionDetailsFiltersProps_NEW = (props: {
+export const useCollectionDetailsFiltersProps = (props: {
   form: CollectionItemsFiltersFormDef;
 }) => {
   const { form } = props;
