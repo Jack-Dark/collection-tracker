@@ -12,10 +12,7 @@ export const DesktopNavMenu = (props: { items: NavMenuItem[] }) => {
   const { items } = props;
 
   return (
-    <NavigationMenu.Root
-      className="p-1"
-      // closeDelay={99999999} // ? uncomment to troubleshoot menu
-    >
+    <NavigationMenu.Root className="p-1" closeDelay={300}>
       <NavigationMenu.List className="relative flex items-center gap-2">
         {items.map(
           ({ hidden, href, Icon, items, label, onClick, RenderItem }) => {
