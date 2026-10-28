@@ -106,7 +106,7 @@ export const CollectionDetailsTable = ({
     },
   });
 
-  // TODO - BUG: THIS HOOK NOT NECESSARY, BUT ENTIRE PAGE LOCKS UP IF REMOVED
+  // TODO - BUG: THIS QUERY IS NOT NECESSARY, BUT ENTIRE PAGE LOCKS UP IF REMOVED
   useGetFiltersForCollection({
     requestArgs: { id: collectionId },
   });
