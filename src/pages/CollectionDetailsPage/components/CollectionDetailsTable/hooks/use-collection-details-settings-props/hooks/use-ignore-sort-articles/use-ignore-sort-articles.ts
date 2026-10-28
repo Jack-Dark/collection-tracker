@@ -1,6 +1,6 @@
 import { useOnUpdateCollectionItemsQueries } from '../../../../../../hooks/use-on-update-collection-items-queries';
 
-export const articlesToIgnore = ['the', 'a', 'an'];
+export const articlesToIgnore = ['the', 'a', 'an'] as const;
 
 export const useIgnoreSortArticles = () => {
   const { onUpdateCollectionItemsQueries, searchQueries } =

@@ -26,6 +26,7 @@ import {
 } from '#/api/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
+import { articlesToIgnore } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-ignore-sort-articles';
 
 import type { CustomFieldValuesByFieldId } from '../../custom-field-values/custom-field-values.types';
 import type { CollectionItemsTableColumn } from '../collection-item.types';
@@ -168,7 +169,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
       return directionFn(
         column.dataType === 'string'
           ? ignoreSortArticles
-            ? sql`REGEXP_REPLACE(lower(${column}), '^(the|a|an)\\s+', '', 'i')`
+            ? sql`REGEXP_REPLACE(lower(${column}), '^(${sql.raw(articlesToIgnore.join('|'))})\\s+', '', 'i')`
             : sql`lower(${column})`
           : sql`${column}`,
       );
