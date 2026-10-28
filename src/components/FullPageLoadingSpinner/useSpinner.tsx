@@ -49,11 +49,13 @@ export const useSpinner = () => {
    * };
    * ```
    */
-  const onInterceptRequest = async (requestCallback: () => Promise<any>) => {
+  const onInterceptRequest = async <TResponse extends any>(
+    requestCallback: () => Promise<TResponse>,
+  ) => {
     try {
       showSpinner();
 
-      return requestCallback();
+      await requestCallback();
     } finally {
       hideSpinner();
     }
@@ -79,13 +81,13 @@ export const useSpinner = () => {
    * return <Button processing={processing} text="Confirm" />
    * ```
    */
-  const onInterceptProcessingRequest = async (
-    requestCallback: () => Promise<any>,
+  const onInterceptProcessingRequest = async <TResponse extends any>(
+    requestCallback: () => Promise<TResponse>,
   ) => {
     try {
       setProcessing(true);
 
-      return requestCallback();
+      await requestCallback();
     } finally {
       setProcessing(false);
     }
