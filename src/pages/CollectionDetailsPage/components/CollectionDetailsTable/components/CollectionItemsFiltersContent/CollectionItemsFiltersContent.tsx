@@ -12,6 +12,7 @@ import { Button } from '#/components/Button';
 import { CheckboxGroupField } from '#/components/Fields/CheckboxGroup';
 import { FieldWrapper } from '#/components/Fields/FieldWrapper';
 import { SelectField } from '#/components/Fields/SelectField';
+import { LoadingSpinner } from '#/components/FullPageLoadingSpinner/components/LoadingSpinner';
 import { Popover } from '#/components/Popover';
 import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
@@ -75,7 +76,11 @@ export const CollectionDetailsFiltersContent = (
 
   const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
 
-  const { data: filterOptions, isSuccess } = useGetFiltersForCollection({
+  const {
+    data: filterOptions,
+    isFetching,
+    isSuccess,
+  } = useGetFiltersForCollection({
     placeholderData: [],
     requestArgs: { id: collectionId },
   });
@@ -135,15 +140,21 @@ export const CollectionDetailsFiltersContent = (
 
   return (
     <div className="grid gap-5">
-      {filterOptions.map((customField) => {
-        return (
-          <CustomFieldTypeFilter
-            customField={customField}
-            form={form}
-            key={customField.id}
-          />
-        );
-      })}
+      {isFetching ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          {filterOptions?.map((customField) => {
+            return (
+              <CustomFieldTypeFilter
+                customField={customField}
+                form={form}
+                key={customField.id}
+              />
+            );
+          })}
+        </>
+      )}
     </div>
   );
 };

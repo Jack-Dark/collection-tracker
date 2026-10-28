@@ -1,9 +1,8 @@
 import { useForm } from '@tanstack/react-form';
-import { Suspense, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
-import { LoadingSpinner } from '#/components/FullPageLoadingSpinner/components/LoadingSpinner';
 import { Table } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -136,18 +135,10 @@ export const CollectionDetailsTable = () => {
               ...filtersProps,
               FiltersContent: () => {
                 return (
-                  <Suspense
-                    fallback={
-                      <div className="flex justify-center">
-                        <LoadingSpinner className="size-15" variant="color" />
-                      </div>
-                    }
-                  >
-                    <CollectionDetailsFiltersContent
-                      collectionId={collectionId}
-                      form={filtersForm}
-                    />
-                  </Suspense>
+                  <CollectionDetailsFiltersContent
+                    collectionId={collectionId}
+                    form={filtersForm}
+                  />
                 );
               },
             }}
