@@ -153,10 +153,18 @@ export const CollectionDetailsTable = ({
               ...filtersProps,
               FiltersContent: () => {
                 return (
-                  <CollectionDetailsFiltersContent
-                    collectionId={collectionId}
-                    form={filtersForm}
-                  />
+                  <Suspense
+                    fallback={
+                      <div className="flex justify-center">
+                        <LoadingSpinner className="size-15" variant="color" />
+                      </div>
+                    }
+                  >
+                    <CollectionDetailsFiltersContent
+                      collectionId={collectionId}
+                      form={filtersForm}
+                    />
+                  </Suspense>
                 );
               },
             }}
