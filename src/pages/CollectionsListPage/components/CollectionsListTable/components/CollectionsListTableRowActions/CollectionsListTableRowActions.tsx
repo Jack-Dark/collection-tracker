@@ -12,7 +12,6 @@ import { Button } from '#/components/Button';
 import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { Popover } from '#/components/Popover';
-import { pluralize } from '#/helpers/pluralize';
 import { useUserContext } from '#/hooks/use-user-context';
 import { verifyEmailMessage } from '#/layout';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
@@ -68,7 +67,7 @@ export const CollectionsListTableRowActions = (props: {
         <p className="text-center">
           Are you sure you want to delete{' '}
           {selectedRowIds.length > 1
-            ? `${numSelectedRows} ${pluralize('collection', numSelectedRows)}`
+            ? `${numSelectedRows} collections`
             : 'this collection'}
           ?
         </p>
