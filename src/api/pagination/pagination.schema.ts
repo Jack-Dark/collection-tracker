@@ -5,6 +5,8 @@ import {
   sortDirectionOptions,
 } from './pagination.constants';
 
+export const maxLimit = 100;
+
 export const getRequiredPaginationQueriesSchema = <TSortField extends string>(
   defaultSortField: TSortField,
 ) => {
@@ -12,6 +14,7 @@ export const getRequiredPaginationQueriesSchema = <TSortField extends string>(
     limit: z
       .number()
       .min(1)
+      .max(maxLimit)
       .optional()
       .default(paginationPropsDefaultValues.limit),
     page: z
@@ -50,7 +53,7 @@ export const getPaginationQueryDefaults = <TSortField extends string>(
   defaultSortField: TSortField,
 ): z.output<ReturnType<typeof getRequiredPaginationQueriesSchema>> => {
   return {
-    limit: 100,
+    limit: maxLimit,
     page: 1,
     search: '',
     sort: {
