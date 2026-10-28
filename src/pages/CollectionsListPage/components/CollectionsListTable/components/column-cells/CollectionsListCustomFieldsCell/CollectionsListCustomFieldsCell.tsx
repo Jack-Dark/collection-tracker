@@ -35,7 +35,7 @@ import { replaceValueInArrayField } from '#/helpers/replace-value-in-array-field
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 export const customFieldTypeLabelsMap = {
-  boolean: 'True/False',
+  boolean: 'Checkbox',
   number: 'Number',
   string: 'Text',
 } as const;
@@ -598,7 +598,7 @@ export const AddOrEditCustomFieldDialog = (props: {
                     <SelectField
                       error={fieldTypeError || typeField.errors}
                       items={customFieldDataTypeItems}
-                      Label="Data Type"
+                      Label="Input Type"
                       name={typeField.name}
                       onValueChange={(value) => {
                         const type = value?.id;
