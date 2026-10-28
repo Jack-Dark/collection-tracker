@@ -108,7 +108,6 @@ export const CollectionDetailsTable = ({
 
   // TODO - BUG: THIS HOOK NOT NECESSARY, BUT ENTIRE PAGE LOCKS UP IF REMOVED
   useGetFiltersForCollection({
-    placeholderData: [],
     requestArgs: { id: collectionId },
   });
 
