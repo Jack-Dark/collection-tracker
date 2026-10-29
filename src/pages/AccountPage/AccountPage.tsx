@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useRequestVerificationEmail } from '#/api/routes/users/request-verification-email/request-verification-email.react-query';
 import { useUpdateEmail } from '#/api/routes/users/update-email/update-email.react-query';
 import { useUpdateUser } from '#/api/routes/users/update-user/update-user.react-query';
-import { updateUserSchema } from '#/api/routes/users/update-user/update-user.schema';
+import { updateUserFormSchema } from '#/api/routes/users/update-user/update-user.schema';
 import { Button } from '#/components/Button';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { InputField } from '#/components/Fields/InputField';
@@ -48,7 +48,7 @@ export const AccountPage = () => {
       email: user?.email || '',
       name: user?.name || '',
     },
-    schema: updateUserSchema,
+    schema: updateUserFormSchema,
   });
 
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
@@ -67,7 +67,7 @@ export const AccountPage = () => {
         });
         setIsEditingEmail(false);
       } else {
-        await onUpdateUser(value);
+        await onUpdateUser({ name: value.name });
         setIsEditingName(false);
       }
 

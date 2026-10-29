@@ -38,7 +38,11 @@ export const Route = createRootRouteWithContext<{
 
     return {
       user: {
-        ...response?.user,
+        email: response?.user.email || '',
+        emailVerified: response?.user.emailVerified || false,
+        id: response?.user.id || '',
+        name: response?.user.name || '',
+        role: response?.user.role,
         impersonatedBy: response?.session.impersonatedBy,
       },
     };
