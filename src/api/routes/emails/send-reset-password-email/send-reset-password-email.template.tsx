@@ -4,6 +4,8 @@ import { resetPasswordTokenExpiresInMinutes } from '#/auth/auth';
 
 import type { ResetPasswordEmailTemplatePropsDef } from './send-reset-password-email.types';
 
+import { EmailSignature } from '../components/EmailSignature';
+
 const ResetPasswordEmailTemplate = ({
   url,
   name,
@@ -30,9 +32,7 @@ const ResetPasswordEmailTemplate = ({
         If you didn't request a password reset, you can safely ignore this
         email. Your password will remain unchanged.
       </p>
-      <br />
-      <p>Best regards,</p>
-      <p>The Collection Tracker Team</p>
+      <EmailSignature />
     </div>
   );
 };

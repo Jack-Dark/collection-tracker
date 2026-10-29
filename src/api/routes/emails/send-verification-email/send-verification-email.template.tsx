@@ -2,6 +2,8 @@ import { renderToString } from 'react-dom/server';
 
 import type { SendVerificationEmailTemplateArgs } from './send-verification-email.types';
 
+import { EmailSignature } from '../components/EmailSignature';
+
 const ResetPasswordEmailTemplate = ({
   url,
   name,
@@ -16,9 +18,7 @@ const ResetPasswordEmailTemplate = ({
         </a>{' '}
         to verify your email address.
       </p>
-      <br />
-      <p>Best regards,</p>
-      <p>The Collection Tracker Team</p>
+      <EmailSignature />
     </div>
   );
 };

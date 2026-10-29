@@ -4,6 +4,7 @@ import { admin } from 'better-auth/plugins';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
 
 import { db } from '#/api/db';
+import { sendAccountDeletedEmailServerFn } from '#/api/routes/emails/send-account-deleted-email/send-account-deleted-email.serverFn';
 import { sendDeleteAccountVerificationEmailServerFn } from '#/api/routes/emails/send-delete-account-verification-email/send-delete-account-verification-email.serverFn';
 import { sendResetPasswordEmailServerFn } from '#/api/routes/emails/send-reset-password-email/send-reset-password-email.serverFn';
 import { sendVerificationEmailServerFn } from '#/api/routes/emails/send-verification-email/send-verification-email.serverFn';
@@ -93,17 +94,25 @@ export const auth = betterAuth({
     },
     deleteUser: {
       afterDelete: async (user) => {
-        await db.transaction(async (tx) => {
-          const publicIdsToDelete = await getUserImagesDbQuery({
-            context: {
-              user,
-            },
-            data: {},
-            tx,
-          });
+        await Promise.all([
+          await db.transaction(async (tx) => {
+            const publicIdsToDelete = await getUserImagesDbQuery({
+              context: {
+                user,
+              },
+              data: {},
+              tx,
+            });
 
-          await deleteCloudinaryAssetsByPublicIds(...publicIdsToDelete);
-        });
+            await deleteCloudinaryAssetsByPublicIds(...publicIdsToDelete);
+          }),
+          await sendAccountDeletedEmailServerFn({
+            data: {
+              email: user.email,
+              name: user.name,
+            },
+          }),
+        ]);
       },
       enabled: true,
       sendDeleteAccountVerification: async ({ url, user }) => {

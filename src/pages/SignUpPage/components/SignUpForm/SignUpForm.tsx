@@ -175,7 +175,7 @@ export const SignUpForm: RouteComponent = () => {
 
           <p className="">- or -</p>
 
-          <LoginWithGoogleButton />
+          <LoginWithGoogleButton text="Sign Up with Google" />
         </div>
 
         <div className="grid gap-2 text-theme-t2 text-sm">

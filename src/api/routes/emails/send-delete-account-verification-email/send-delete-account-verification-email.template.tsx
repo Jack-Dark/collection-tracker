@@ -4,6 +4,8 @@ import { configs } from '#/configs';
 
 import type { SendDeleteAccountVerificationEmailRequestArgs } from './send-delete-account-verification-email.types';
 
+import { EmailSignature } from '../components/EmailSignature';
+
 const ResetPasswordEmailTemplate = ({
   url,
   email,
@@ -29,9 +31,7 @@ const ResetPasswordEmailTemplate = ({
           click here to reset your password immediately!
         </a>
       </p>
-      <br />
-      <p>Best regards,</p>
-      <p>The Collection Tracker Team</p>
+      <EmailSignature />
     </div>
   );
 };
