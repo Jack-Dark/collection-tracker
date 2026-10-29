@@ -30,6 +30,7 @@ import { ComboboxField } from '#/components/Fields/ComboboxField';
 import { InputField } from '#/components/Fields/InputField';
 import { SelectField } from '#/components/Fields/SelectField';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
+import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { pluralize } from '#/helpers/pluralize';
 import { replaceValueInArrayField } from '#/helpers/replace-value-in-array-field';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
@@ -315,7 +316,7 @@ export const CollectionsListCustomFieldsCell = (props: {
             );
           })
         ) : (
-          '-'
+          <EmptyCellValue />
         );
       }}
     </form.ArrayField>

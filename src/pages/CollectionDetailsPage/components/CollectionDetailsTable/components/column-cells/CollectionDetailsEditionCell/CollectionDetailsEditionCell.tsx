@@ -2,6 +2,7 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/Collection
 
 import { SwitchField } from '#/components/Fields/SwitchField';
 import { TextAreaField } from '#/components/Fields/TextAreaField';
+import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsEditionCell = (props: {
@@ -58,8 +59,10 @@ export const CollectionDetailsEditionCell = (props: {
                               value={editionDetailsField.value}
                             />
                           )
+                        ) : editionDetailsField.value ? (
+                          <p>{editionDetailsField.value}</p>
                         ) : (
-                          <p>{editionDetailsField.value || '-'}</p>
+                          <EmptyCellValue />
                         );
                       }}
                     </form.Field>

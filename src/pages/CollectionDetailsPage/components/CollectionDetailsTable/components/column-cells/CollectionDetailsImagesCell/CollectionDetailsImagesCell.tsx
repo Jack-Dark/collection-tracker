@@ -2,6 +2,7 @@ import type { BaseImagePropsDef } from '#/components/Image/Images.types';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
+import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { ZoomableThumbnailGallery } from '#/components/ZoomableThumbnailGallery/ZoomableThumbnailGallery';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
@@ -73,7 +74,7 @@ export const CollectionDetailsImagesCell = (props: {
                       })}
                     </>
                   ) : (
-                    <p>-</p>
+                    <EmptyCellValue />
                   );
                 }}
               </form.Field>

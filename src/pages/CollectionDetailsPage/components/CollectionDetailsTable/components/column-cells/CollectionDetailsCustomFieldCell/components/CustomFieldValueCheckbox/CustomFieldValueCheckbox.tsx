@@ -25,7 +25,7 @@ export const getCustomFieldValueCheckboxAriaLabel = (props: {
 }) => {
   const { checked, customFieldName } = props;
 
-  return `${checked ? 'Uncheck' : 'Checked'} ${customFieldName} for row`;
+  return `${checked ? 'Uncheck' : 'Check'} ${customFieldName} for row` as const;
 };
 
 export const CustomFieldValueCheckbox = <TField extends AnyFieldApi>({

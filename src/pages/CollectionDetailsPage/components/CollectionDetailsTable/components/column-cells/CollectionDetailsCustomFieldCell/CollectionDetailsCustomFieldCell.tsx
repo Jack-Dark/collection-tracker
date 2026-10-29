@@ -1,16 +1,14 @@
+import CheckIcon from '@mui/icons-material/Check';
 import { Suspense } from 'react';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 
-import { CheckboxBaseIcon } from '#/components/Fields/CheckboxField';
+import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../../../../CollectionDetailsPage.types';
 
-import {
-  CustomFieldValueCheckbox,
-  getCustomFieldValueCheckboxAriaLabel,
-} from './components/CustomFieldValueCheckbox';
+import { CustomFieldValueCheckbox } from './components/CustomFieldValueCheckbox';
 import { CustomFieldValueCombobox } from './components/CustomFieldValueCombobox';
 import { CustomFieldValueNumberInput } from './components/CustomFieldValueNumberInput';
 
@@ -46,10 +44,8 @@ export const CollectionDetailsCustomFieldCell = (
       >
         {(field) => {
           const checked = !!field.value?.valueBoolean;
-          const checkboxAriaLabel = getCustomFieldValueCheckboxAriaLabel({
-            checked,
-            customFieldName: customField.name,
-          });
+
+          const cellValue = field.value?.valueText ?? field.value?.valueNumber;
 
           return isEditingRow ? (
             <>
@@ -77,16 +73,14 @@ export const CollectionDetailsCustomFieldCell = (
             </>
           ) : (
             <>
-              {customField.type === 'boolean' ? (
-                <CheckboxBaseIcon
-                  aria-label={checkboxAriaLabel}
-                  checked={checked}
+              {customField.type === 'boolean' && checked ? (
+                <CheckIcon
+                  aria-label={`${customField.name} checked`}
                   className="text-theme-t1"
+                  fontSize="inherit"
                 />
               ) : (
-                <p>
-                  {field.value?.valueText ?? field.value?.valueNumber ?? '-'}
-                </p>
+                (cellValue ?? <EmptyCellValue />)
               )}
             </>
           );
