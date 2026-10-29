@@ -4,6 +4,8 @@ import type { QueryClient } from '@tanstack/react-query';
 import type { ErrorComponentProps } from '@tanstack/react-router';
 import type { MetaHTMLAttributes, ReactNode } from 'react';
 
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
 import { HotkeysProvider } from '@tanstack/react-hotkeys';
@@ -151,22 +153,26 @@ export const RootDocument = ({
 }: Readonly<{ children: ReactNode }>) => {
   const { theme } = Route.useLoaderData();
 
+  const emotionCache = createCache({ key: 'css' });
+
   return (
     <html data-theme={theme} lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
 
-      <ThemeProvider theme={theme}>
-        <HotkeysProvider appHotkeys={appHotkeys}>
-          <DialogProvider>
-            <body className="bg-linear-to-br from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
-              {children}
-              <Scripts />
-            </body>
-          </DialogProvider>
-        </HotkeysProvider>
-      </ThemeProvider>
+      <CacheProvider value={emotionCache}>
+        <ThemeProvider theme={theme}>
+          <HotkeysProvider appHotkeys={appHotkeys}>
+            <DialogProvider>
+              <body className="bg-linear-to-br from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
+                {children}
+                <Scripts />
+              </body>
+            </DialogProvider>
+          </HotkeysProvider>
+        </ThemeProvider>
+      </CacheProvider>
     </html>
   );
 };
