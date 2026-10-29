@@ -23,7 +23,7 @@ export const useCreateCollectionItems = <
 ) => {
   const { onMutate: onCreateCollectionItem, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to add item(s) to collection.',
-    mutationFn: async (formRecords) => {
+    mutationFn: async ({ data: formRecords }) => {
       let uploadedPublicIds: string[][] = [];
 
       try {
