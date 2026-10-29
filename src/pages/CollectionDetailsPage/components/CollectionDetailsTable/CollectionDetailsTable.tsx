@@ -13,7 +13,7 @@ import {
 import { useEditingCollectionItemsRowIds } from '../../hooks/use-editing-collection-items-row-ids';
 import { useOnUpdateCollectionItemsQueries } from '../../hooks/use-on-update-collection-items-queries';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
-import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
+import { CollectionDetailsAboveTableActions } from './components/CollectionDetailsAboveTableActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
 import {
   collectionItemsFiltersFormOptions,
@@ -120,7 +120,7 @@ export const CollectionDetailsTable = () => {
                 });
 
               return (
-                <CollectionDetailsTableRowActions
+                <CollectionDetailsAboveTableActions
                   form={form}
                   onCancel={onCancel}
                   resetRowSelection={table.resetRowSelection}

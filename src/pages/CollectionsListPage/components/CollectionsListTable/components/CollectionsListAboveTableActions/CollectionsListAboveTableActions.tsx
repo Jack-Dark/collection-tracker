@@ -19,7 +19,7 @@ import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/u
 import { AddNewCollectionButton } from './components/AddNewCollectionButton';
 import { CollectionsListSubmitButton } from './components/CollectionsListSubmitButton';
 
-export const CollectionsListTableRowActions = (props: {
+export const CollectionsListAboveTableActions = (props: {
   form: CreateOrUpdateCollectionFormTypeDef;
   onCancel: () => void;
   resetRowSelection: () => void;

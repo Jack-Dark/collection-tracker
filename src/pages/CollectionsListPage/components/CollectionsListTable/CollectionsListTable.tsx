@@ -12,7 +12,7 @@ import type { CreateOrUpdateCollectionFormTypeDef } from '../../CollectionsListP
 
 import { useEditingCollectionsRowIds } from '../../hooks/use-editing-collections-row-ids';
 import { getCollectionsListTableColumns } from './CollectionsListTable.columns';
-import { CollectionsListTableRowActions } from './components/CollectionsListTableRowActions';
+import { CollectionsListAboveTableActions } from './components/CollectionsListAboveTableActions';
 import { useCollectionsListPaginationProps } from './hooks/use-collections-list-pagination-props';
 import { useCollectionsListSearchProps } from './hooks/use-collections-list-search-props';
 import { useCollectionsListSortProps } from './hooks/use-collections-list-sort-props';
@@ -79,7 +79,7 @@ export const CollectionsListTable = ({
                 });
 
               return (
-                <CollectionsListTableRowActions
+                <CollectionsListAboveTableActions
                   form={form}
                   onCancel={onCancel}
                   resetRowSelection={table.resetRowSelection}
