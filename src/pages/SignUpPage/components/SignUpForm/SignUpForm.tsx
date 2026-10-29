@@ -168,6 +168,21 @@ export const SignUpForm: RouteComponent = () => {
         <div className="flex">
           <FormSubmitButton form={form} text="Sign Up" />
         </div>
+
+        <div className="grid gap-2 text-theme-t2 text-sm">
+          <p>
+            Collection Tracker only collects cookies that are strictly required
+            for site functionality.
+          </p>
+
+          <p>
+            We will{' '}
+            <strong>
+              <em>NEVER</em>
+            </strong>{' '}
+            share or sell your information.
+          </p>
+        </div>
       </div>
     </form>
   );

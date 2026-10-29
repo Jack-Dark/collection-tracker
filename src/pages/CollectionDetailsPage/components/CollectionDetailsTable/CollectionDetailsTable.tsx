@@ -46,7 +46,7 @@ export const CollectionDetailsTable = () => {
     resetForm();
 
     await Promise.all([
-      // TODO - IMPROVEMENT: CREATE SEPARATE `shouldInvalidate` state which will trigger the invalidation conditionally
+      // TODO - REFACTOR: CREATE SEPARATE `shouldInvalidate` state which will trigger the invalidation conditionally
       // ? invalidate to solve edge case of deleting a currently applied custom field value and then cancelling your changes leaving the old custom field value in the table
       invalidateGetCollectionDetailsById(),
       onDeleteUnusedCustomFieldValues({ collectionId }),

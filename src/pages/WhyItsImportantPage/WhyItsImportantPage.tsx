@@ -5,7 +5,7 @@ export const WhyItsImportantPage = () => {
   return (
     <PageWrapper>
       <div className="grid gap-10 max-w-200">
-        <div className="grid gap-2">
+        <div className="grid gap-4">
           <h2>Why it's Important to track your collections</h2>
           <p>
             The absolute biggest reason is for those worst case scenarios where

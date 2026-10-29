@@ -4,7 +4,11 @@ import { PageWrapper } from '#/components/PageWrapper';
 export const HomePage = () => {
   return (
     <PageWrapper>
-      <div className="grid gap-10 max-w-200">Content coming soon!</div>
+      <div className="grid gap-10 max-w-200">
+        <div className="grid gap-4">
+          <h2>Content coming soon!</h2>
+        </div>
+      </div>
     </PageWrapper>
   );
 };
