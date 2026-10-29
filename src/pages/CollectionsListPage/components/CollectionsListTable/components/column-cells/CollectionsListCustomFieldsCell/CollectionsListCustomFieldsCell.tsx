@@ -332,19 +332,16 @@ export const DeleteCustomFieldDialog = (props: {
 
   const id = Number(lastEditedCustomField.data?.customField.id);
 
-  const { data: collectionsWithCustomField } =
-    useGetCollectionsWithCustomFields({
-      placeholderData: [],
-      requestArgs: {
-        customFieldIds: [id],
-      },
-    });
+  const { data: numAffectedCollections } = useGetCollectionsWithCustomFields({
+    placeholderData: 0,
+    requestArgs: {
+      customFieldIds: [id],
+    },
+  });
 
   const invalidateGetCustomFields = useInvalidateGetCustomFields();
 
   const { onDeleteCustomFields } = useDeleteCustomFields();
-
-  const numAffectedCollections = collectionsWithCustomField.length;
 
   return (
     <form.Field name="records">
