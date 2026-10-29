@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
 import type { QueryClient } from '@tanstack/react-query';
+import type { ErrorComponentProps } from '@tanstack/react-router';
 import type { MetaHTMLAttributes, ReactNode } from 'react';
 
 import { TanStackDevtools } from '@tanstack/react-devtools';
@@ -30,6 +31,33 @@ import { getThemeServerFn } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
 
+export const RouteNotFoundComponent = () => {
+  return (
+    <RootDocument>
+      <PageWrapper>
+        <div className="grid gap-10">
+          <h1>Page Not Found</h1>
+          <p>
+            Ack! You caught us with our pants down! If you think this is bug,
+            you can help us out by reporting it.
+          </p>
+          <a href={githubUrl.issues} target="_blank">
+            <Button text="Report Bug" />
+          </a>
+        </div>
+      </PageWrapper>
+    </RootDocument>
+  );
+};
+
+export const RouteErrorComponent = (props: ErrorComponentProps) => {
+  return (
+    <RootDocument>
+      <RouteCatchBoundary {...props} />
+    </RootDocument>
+  );
+};
+
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
@@ -48,13 +76,7 @@ export const Route = createRootRouteWithContext<{
     };
   },
   component: RootComponent,
-  errorComponent: (props) => {
-    return (
-      <RootDocument>
-        <RouteCatchBoundary {...props} />
-      </RootDocument>
-    );
-  },
+  errorComponent: RouteErrorComponent,
   loader: async () => {
     const theme = await getThemeServerFn();
 
@@ -88,24 +110,7 @@ export const Route = createRootRouteWithContext<{
       ),
     };
   },
-  notFoundComponent: () => {
-    return (
-      <RootDocument>
-        <PageWrapper>
-          <div className="grid gap-10">
-            <h1>Page Not Found</h1>
-            <p>
-              Ack! You caught us with our pants down! If you think this is bug,
-              you can help us out by reporting it.
-            </p>
-            <a href={githubUrl.issues} target="_blank">
-              <Button text="Report Bug" />
-            </a>
-          </div>
-        </PageWrapper>
-      </RootDocument>
-    );
-  },
+  notFoundComponent: RouteNotFoundComponent,
 });
 
 function RootComponent() {
