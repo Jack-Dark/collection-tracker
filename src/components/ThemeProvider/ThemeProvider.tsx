@@ -1,11 +1,11 @@
 import type { PropsWithChildren } from 'react';
 
-import { useRouter } from '@tanstack/react-router';
+import { ScriptOnce, useRouter } from '@tanstack/react-router';
 import { createContext, use } from 'react';
 
 import type { UserPreferencesThemeDef } from '#/lib/theme';
 
-import { setThemeServerFn } from '#/lib/theme';
+import { handleThemeCookie, userPreferenceThemes } from '#/lib/theme';
 
 type ThemeContextVal = {
   setTheme: (theme: UserPreferencesThemeDef) => void;
@@ -20,14 +20,32 @@ type ThemeProviderPropsDef = PropsWithChildren<{
 
 export const ThemeProvider = ({ children, theme }: ThemeProviderPropsDef) => {
   const router = useRouter();
+  const { setThemeCookie } = handleThemeCookie();
 
-  const setTheme = async (theme: UserPreferencesThemeDef) => {
-    await setThemeServerFn({ data: theme }).then(() => {
-      return router.invalidate();
-    });
+  const setTheme = (theme: UserPreferencesThemeDef) => {
+    setThemeCookie(theme);
+
+    return router.invalidate();
   };
 
-  return <ThemeContext value={{ setTheme, theme }}>{children}</ThemeContext>;
+  const themeScript = `(function() {
+  try {
+    const themeAttr = 'data-theme';
+    const isThemeDefined = !!document.documentElement.getAttribute(themeAttr);
+    
+    if (!isThemeDefined) {
+      const themePreference = (matchMedia('(prefers-color-scheme: dark)').matches ? '${userPreferenceThemes.dark}' : '${userPreferenceThemes.light}');
+      document.documentElement.setAttribute(themeAttr, themePreference);
+    }
+  } catch (e) {}
+})();`;
+
+  return (
+    <ThemeContext value={{ setTheme, theme }}>
+      <ScriptOnce children={themeScript} />
+      {children}
+    </ThemeContext>
+  );
 };
 
 export const useTheme = () => {

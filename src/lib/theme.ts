@@ -1,5 +1,6 @@
-import { createClientOnlyFn, createServerFn } from '@tanstack/react-start';
+import { createIsomorphicFn, createClientOnlyFn } from '@tanstack/react-start';
 import { getCookie, setCookie } from '@tanstack/react-start/server';
+import Cookies from 'js-cookie';
 import * as z from 'zod';
 
 export const userPreferenceThemes = {
@@ -7,30 +8,14 @@ export const userPreferenceThemes = {
   light: 'light',
 } as const;
 
-const userThemeSchema = z
-  .union([
-    z.literal(userPreferenceThemes.light),
-    z.literal(userPreferenceThemes.dark),
-  ])
-  .describe('User Theme');
+const userThemeSchema = z.union([
+  z.literal(userPreferenceThemes.light),
+  z.literal(userPreferenceThemes.dark),
+]);
 
 export type UserPreferencesThemeDef = z.output<typeof userThemeSchema>;
 
-const userThemeCookieKey = '_theme-preference';
-
-export const getThemeServerFn = createServerFn().handler(async () => {
-  const themeCookieValue = getCookie(userThemeCookieKey);
-
-  const { data } = userThemeSchema.safeParse(themeCookieValue);
-
-  return data;
-});
-
-export const setThemeServerFn = createServerFn({ method: 'POST' })
-  .validator(userThemeSchema)
-  .handler(async ({ data }) => {
-    return setCookie(userThemeCookieKey, data);
-  });
+export const userThemeCookieKey = '_theme-preference';
 
 export const getSystemTheme = createClientOnlyFn(() => {
   const systemPrefersDarkMode = window?.matchMedia(
@@ -43,3 +28,49 @@ export const getSystemTheme = createClientOnlyFn(() => {
 
   return systemTheme;
 });
+
+export const handleThemeCookie = createIsomorphicFn()
+  .server(() => {
+    const cookieValue = getCookie(userThemeCookieKey);
+    const { data, error, success } = userThemeSchema.safeParse(cookieValue);
+
+    const setThemeCookie = (value: UserPreferencesThemeDef) => {
+      setCookie(userThemeCookieKey, value);
+    };
+
+    if (success) {
+      return {
+        setThemeCookie,
+        themeCookie: data,
+      };
+    } else {
+      console.error('Theme error:', error);
+
+      return {
+        setThemeCookie,
+        themeCookie: undefined,
+      };
+    }
+  })
+  .client(() => {
+    const cookieValue = Cookies.get(userThemeCookieKey);
+    const { data, error, success } = userThemeSchema.safeParse(cookieValue);
+
+    const setThemeCookie = (value: UserPreferencesThemeDef) => {
+      Cookies.set(userThemeCookieKey, value);
+    };
+
+    if (success) {
+      return {
+        setThemeCookie,
+        themeCookie: data,
+      };
+    } else {
+      console.error('Theme error:', error);
+
+      return {
+        setThemeCookie,
+        themeCookie: getSystemTheme(),
+      };
+    }
+  });

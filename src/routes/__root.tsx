@@ -29,7 +29,7 @@ import { RouteCatchBoundary } from '#/components/RouteCatchBoundary';
 import { ThemeProvider } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
 import { githubUrl } from '#/constants/githubUrl';
-import { getThemeServerFn } from '#/lib/theme';
+import { handleThemeCookie } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
 
@@ -80,9 +80,9 @@ export const Route = createRootRouteWithContext<{
   component: RootComponent,
   errorComponent: RouteErrorComponent,
   loader: async () => {
-    const theme = await getThemeServerFn();
+    const { themeCookie } = handleThemeCookie();
 
-    return { theme };
+    return { theme: themeCookie };
   },
   head: () => {
     return {
