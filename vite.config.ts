@@ -18,13 +18,20 @@ const dirname =
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const config = defineConfig(({ mode }) => {
+  const isDevMode = mode !== 'production';
+
   return {
+    build: { sourcemap: isDevMode },
+    css: { devSourcemap: isDevMode },
     define: {
       'process.env.NODE_ENV': JSON.stringify(mode),
     },
+    optimizeDeps: {
+      include: ['@mui/icons-material'],
+    },
     plugins: [
       devtools(),
-      mode !== 'production' &&
+      isDevMode &&
         checker({
           eslint: {
             lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
