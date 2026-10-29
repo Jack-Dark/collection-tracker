@@ -12,39 +12,21 @@ export const reactQueryKeys = {
   getPaginatedUsers: 'get-paginated-users',
 } as const;
 
+const createMutationKeys = <TSuffix extends string>(suffix: TSuffix) => {
+  return {
+    create: `create-${suffix}`,
+    delete: `delete-${suffix}`,
+    update: `update-${suffix}`,
+  } as const;
+};
+
 export const reactMutationKeys = {
-  collectionItems: (type: MutationKeyType) => {
-    return `${type}-collection-items` as const;
-  },
-  collections: (type: MutationKeyType) => {
-    return `${type}-collections` as const;
-  },
-  /** @deprecated */
-  createCollectionItems: 'create-collection-items',
-  /** @deprecated */
-  createCollections: 'create-collections',
-  /** @deprecated */
-  createCustomFields: 'create-custom-fields',
-  customFields: (type: MutationKeyType) => {
-    return `${type}-custom-fields` as const;
-  },
-  customFieldValues: (type: MutationKeyType) => {
-    return `${type}-custom-field-values` as const;
-  },
-  /** @deprecated */
-  deleteCollectionItems: 'delete-collection-items',
-  /** @deprecated */
-  deleteCollections: 'delete-collections',
-  /** @deprecated */
-  deleteCustomFields: 'delete-custom-field',
-  /** @deprecated */
-  updateCollectionItems: 'update-collection-items',
-  /** @deprecated */
-  updateCollections: 'update-collections',
-  /** @deprecated */
-  updateCustomFields: 'update-custom-fields',
+  collectionItems: createMutationKeys('collection-items'),
+  collections: createMutationKeys('collections'),
+  customFields: createMutationKeys('custom-fields'),
+  customFieldValues: createMutationKeys('custom-field-values'),
   users: {
-    delete: 'delete-user',
+    ...createMutationKeys('user'),
     email: {
       update: 'update-email',
     },
@@ -63,10 +45,5 @@ export const reactMutationKeys = {
     signUp: {
       viaEmail: 'sign-up-via-email',
     },
-    update: 'update-user',
   },
 } as const;
-
-type BaseMutationKeyType = 'create' | 'delete' | 'update';
-
-type MutationKeyType = BaseMutationKeyType | `${BaseMutationKeyType}-${string}`;

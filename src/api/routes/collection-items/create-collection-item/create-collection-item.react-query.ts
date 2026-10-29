@@ -67,7 +67,7 @@ export const useCreateCollectionItems = <
         throw error;
       }
     },
-    mutationKey: [reactMutationKeys.collectionItems('create')],
+    mutationKey: [reactMutationKeys.collectionItems.create],
     ...props,
   });
 

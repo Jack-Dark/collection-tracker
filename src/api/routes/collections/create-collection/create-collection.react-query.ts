@@ -29,7 +29,7 @@ export const useCreateCollection = <
   const { onMutate: onCreateCollection, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to add collection.',
     mutationFn: createCollectionServerFn,
-    mutationKey: [reactMutationKeys.collections('create')],
+    mutationKey: [reactMutationKeys.collections.create],
     ...props,
     onSuccess: async (...args) => {
       await invalidateGetNavMenuCollections();

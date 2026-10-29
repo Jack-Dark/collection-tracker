@@ -22,7 +22,7 @@ export const useDeleteCustomFields = <
   const { onMutate: onDeleteCustomFields, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to delete custom field.',
     mutationFn: deleteCustomFieldsServerFn,
-    mutationKey: [reactMutationKeys.customFields('delete')],
+    mutationKey: [reactMutationKeys.customFields.delete],
     ...props,
   });
 

@@ -29,7 +29,7 @@ export const useUpdateCollectionById = <
   const { onMutate: onUpdateCollectionById, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to update collection.',
     mutationFn: updateCollectionByIdServerFn,
-    mutationKey: [reactMutationKeys.collections('update')],
+    mutationKey: [reactMutationKeys.collections.update],
     ...props,
     onSuccess: async (...args) => {
       await invalidateGetNavMenuCollections();

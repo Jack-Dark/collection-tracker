@@ -18,7 +18,7 @@ export const useDeleteCollectionItemsByIds = <TTransformedData = void>(
     useGenericMutateQuery({
       fallbackErrorMessage: 'Unable to delete item(s) from collection.',
       mutationFn: deleteCollectionItemsByIdsServerFn,
-      mutationKey: [reactMutationKeys.collectionItems('delete')],
+      mutationKey: [reactMutationKeys.collectionItems.delete],
       ...props,
     });
 

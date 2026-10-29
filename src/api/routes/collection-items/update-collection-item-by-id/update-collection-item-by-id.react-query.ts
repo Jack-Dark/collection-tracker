@@ -76,7 +76,7 @@ export const useUpdateCollectionItems = <
         throw error;
       }
     },
-    mutationKey: [reactMutationKeys.collectionItems('update')],
+    mutationKey: [reactMutationKeys.collectionItems.update],
     ...props,
   });
 
