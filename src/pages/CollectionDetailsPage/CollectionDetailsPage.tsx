@@ -78,8 +78,9 @@ export const useCollectionDetailsForm = () => {
 
   const form = useForm({
     ...createOrUpdateCollectionItemsFormOptions,
-    defaultValues: { collectionItems: [] },
+    // ! you should be able to use the async data to update the default values, but doing so causes the page to lock up for a long time after loading. Uncomment to reproduce
     // defaultValues: { collectionItems: data.items },
+    defaultValues: { collectionItems: [] },
     onSubmit: async ({ value: { collectionItems } }) => {
       onInterceptRequest(async () => {
         const editedRecords = collectionItems.filter(({ id }) => {
