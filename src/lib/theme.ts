@@ -8,10 +8,12 @@ export const userPreferenceThemes = {
   light: 'light',
 } as const;
 
-const userThemeSchema = z.union([
-  z.literal(userPreferenceThemes.light),
-  z.literal(userPreferenceThemes.dark),
-]);
+const userThemeSchema = z
+  .union([
+    z.literal(userPreferenceThemes.light),
+    z.literal(userPreferenceThemes.dark),
+  ])
+  .optional();
 
 export type UserPreferencesThemeDef = z.output<typeof userThemeSchema>;
 
@@ -37,7 +39,7 @@ export const handleThemeCookie = createIsomorphicFn()
     const { data, error, success } = userThemeSchema.safeParse(cookieValue);
 
     const setThemeCookie = (value: UserPreferencesThemeDef) => {
-      setCookie(userThemeCookieKey, value);
+      setCookie(userThemeCookieKey, value ?? '');
     };
 
     if (success) {
@@ -59,7 +61,7 @@ export const handleThemeCookie = createIsomorphicFn()
     const { data, error, success } = userThemeSchema.safeParse(cookieValue);
 
     const setThemeCookie = (value: UserPreferencesThemeDef) => {
-      Cookies.set(userThemeCookieKey, value);
+      Cookies.set(userThemeCookieKey, value ?? '');
     };
 
     if (success) {

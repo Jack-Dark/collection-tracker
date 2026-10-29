@@ -13,13 +13,13 @@ import {
 
 type ThemeContextVal = {
   setTheme: (theme: UserPreferencesThemeDef) => void;
-  theme: UserPreferencesThemeDef | undefined;
+  theme: UserPreferencesThemeDef;
 };
 
 const ThemeContext = createContext<ThemeContextVal | null>(null);
 
 type ThemeProviderPropsDef = PropsWithChildren<{
-  initialTheme: UserPreferencesThemeDef | undefined;
+  initialTheme: UserPreferencesThemeDef;
 }>;
 
 export const ThemeProvider = ({
@@ -27,7 +27,7 @@ export const ThemeProvider = ({
   initialTheme,
 }: ThemeProviderPropsDef) => {
   const [themeContextValue, setThemeContextValue] =
-    useState<UserPreferencesThemeDef>(initialTheme as UserPreferencesThemeDef);
+    useState<UserPreferencesThemeDef>(initialTheme);
 
   const { setThemeCookie } = handleThemeCookie();
 
