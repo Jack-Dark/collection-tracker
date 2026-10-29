@@ -24,7 +24,10 @@ export const reactMutationKeys = {
   collectionItems: createMutationKeys('collection-items'),
   collections: createMutationKeys('collections'),
   customFields: createMutationKeys('custom-fields'),
-  customFieldValues: createMutationKeys('custom-field-values'),
+  customFieldValues: {
+    ...createMutationKeys('custom-field-values'),
+    unused: createMutationKeys('unused-custom-field-values'),
+  },
   users: {
     ...createMutationKeys('user'),
     email: {

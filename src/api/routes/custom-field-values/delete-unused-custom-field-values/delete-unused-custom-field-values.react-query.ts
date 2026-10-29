@@ -23,7 +23,7 @@ export const useDeleteUnusedCustomFieldValues = <
     useGenericMutateQuery({
       fallbackErrorMessage: 'Unable to delete unused custom field value(s).',
       mutationFn: deleteUnusedCustomFieldValuesServerFn,
-      mutationKey: [reactMutationKeys.customFieldValues('delete-unused')],
+      mutationKey: [reactMutationKeys.customFieldValues.unused.delete],
       ...props,
     });
 
