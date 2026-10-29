@@ -7,45 +7,45 @@ import { notificationTypes } from './Notifications.constants';
 
 export const notificationsStore = createStore<NotificationDetails[]>([]);
 
+export const createNewNotification = (
+  newNotification: Omit<NotificationDetails, 'id'>,
+) => {
+  const {
+    closeOthersOfType,
+    keepOpen = false,
+    message = '',
+    time = 2500,
+    type = 'success',
+  } = newNotification;
+
+  if (message) {
+    notificationsStore.setState((prevNotifications) => {
+      const purifiedNotificationsList = prevNotifications.filter(
+        (prevNotification) => {
+          if (closeOthersOfType && type === prevNotification.type) {
+            return false;
+          }
+
+          return true;
+        },
+      );
+
+      const newNotification: NotificationDetails = {
+        id: uuidv4(),
+        keepOpen,
+        message,
+        time,
+        type,
+      };
+
+      return [...purifiedNotificationsList, newNotification];
+    });
+  }
+};
+
 export const useNotifications = () => {
-  const showNotification = (
-    newNotification: Omit<NotificationDetails, 'id'>,
-  ) => {
-    const {
-      closeOthersOfType,
-      keepOpen = false,
-      message = '',
-      time = 2500,
-      type = 'success',
-    } = newNotification;
-
-    if (message) {
-      notificationsStore.setState((prevNotifications) => {
-        const purifiedNotificationsList = prevNotifications.filter(
-          (prevNotification) => {
-            if (closeOthersOfType && type === prevNotification.type) {
-              return false;
-            }
-
-            return true;
-          },
-        );
-
-        const newNotification: NotificationDetails = {
-          id: uuidv4(),
-          keepOpen,
-          message,
-          time,
-          type,
-        };
-
-        return [...purifiedNotificationsList, newNotification];
-      });
-    }
-  };
-
   const notify: Notify = (message, options = {}) => {
-    showNotification({
+    createNewNotification({
       closeOthersOfType: true,
       message,
       type: notificationTypes.success,
@@ -54,7 +54,7 @@ export const useNotifications = () => {
   };
 
   const notifyWarning: Notify = (message, options = {}) => {
-    showNotification({
+    createNewNotification({
       message,
       type: notificationTypes.warning,
       ...options,
@@ -62,7 +62,7 @@ export const useNotifications = () => {
   };
 
   const notifyError: Notify = (message, options = {}) => {
-    showNotification({
+    createNewNotification({
       message,
       type: notificationTypes.error,
       ...options,

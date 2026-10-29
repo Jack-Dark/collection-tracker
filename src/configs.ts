@@ -3,7 +3,6 @@ import { config } from 'dotenv';
 config({ path: '.env' });
 
 export const configs = {
-  betterAuthUrl: process.env.BETTER_AUTH_URL!,
   cloudinaryApiKey: process.env.CLOUDINARY_API_KEY!,
   cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET!,
   cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -16,4 +15,5 @@ export const configs = {
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET!,
   googleWebClientId: process.env.GOOGLE_WEB_CLIENT_ID!,
   resendApiKey: process.env.RESEND_API_KEY!,
+  siteUrl: process.env.SITE_URL!,
 } as const;

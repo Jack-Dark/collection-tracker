@@ -1,15 +1,10 @@
-import { useForm } from '@tanstack/react-form';
-
 import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 
 import { useDeleteUser } from '#/api/routes/users/delete-user/delete-user.react-query';
-import { deleteUserSchema } from '#/api/routes/users/delete-user/delete-user.schema';
 import { Button } from '#/components/Button';
 import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
-import { InputField } from '#/components/Fields/InputField';
 import { useNotifications } from '#/components/Notifications/useNotifications';
-import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
 
 export const DeleteAccountButton = () => {
   const [showDeleteAccountDialog, hideDeleteAccountDialog] = useDialog(() => {
@@ -30,70 +25,34 @@ export const DeleteAccountButton = () => {
 const DeleteAccountDialog = (props: { hideDialog: HideDialog }) => {
   const { hideDialog } = props;
 
-  const { notify } = useNotifications();
-
-  const validationFormOptions = useValidationFormOptions({
-    defaultValues: {
-      password: '',
-    },
-    schema: deleteUserSchema,
-  });
-
   const { onDeleteUser } = useDeleteUser({
-    onSuccess: ({ message }) => {
-      notify(message);
+    onSuccess: () => {
+      notifyWarning('Sent account deletion verification email');
     },
   });
 
-  const form = useForm({
-    ...validationFormOptions,
-    formId: 'delete-user',
-    onSubmit: async ({ value }) => {
-      onDeleteUser(value);
-    },
-  });
+  const { notifyWarning } = useNotifications();
 
   return (
-    <ConfirmDeleteDialog form={form} hideDialog={hideDialog}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
-        <div className="grid gap-10">
-          <div className="grid gap-5">
-            <p className="">
-              This will{' '}
-              <strong className="text-lg text-theme-t-alert">
-                PERMANENTLY
-              </strong>{' '}
-              delete your account and all your collections!
-            </p>
-
-            <p>
-              If you're sure you want to proceed, you must enter your password.
-            </p>
-          </div>
-
-          <form.Field name="password">
-            {(field) => {
-              return (
-                <InputField
-                  error={field.errors}
-                  Label="Password"
-                  name={field.name}
-                  onValueChange={field.handleChange}
-                  required
-                  type="password"
-                  value={field.value}
-                />
-              );
-            }}
-          </form.Field>
-        </div>
-      </form>
+    <ConfirmDeleteDialog
+      Header="Delete Account"
+      hideDialog={hideDialog}
+      onConfirm={async () => {
+        await onDeleteUser({});
+      }}
+      submitText="Send Email"
+    >
+      <div className="grid gap-5">
+        <p className="">
+          This will{' '}
+          <strong className="text-lg text-theme-t-alert">PERMANENTLY</strong>{' '}
+          delete your account and all your collections!
+        </p>
+        <p>
+          If you're sure, we will send you a verification email that will allow
+          you to delete your account.
+        </p>
+      </div>
     </ConfirmDeleteDialog>
   );
 };

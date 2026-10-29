@@ -4,10 +4,13 @@ import { admin } from 'better-auth/plugins';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
 
 import { db } from '#/api/db';
+import { sendDeleteAccountVerificationEmailServerFn } from '#/api/routes/emails/send-delete-account-verification-email/send-delete-account-verification-email.serverFn';
 import { sendResetPasswordEmailServerFn } from '#/api/routes/emails/send-reset-password-email/send-reset-password-email.serverFn';
 import { sendVerificationEmailServerFn } from '#/api/routes/emails/send-verification-email/send-verification-email.serverFn';
+import { getUserImagesDbQuery } from '#/api/routes/users/delete-user/delete-user.db-query';
 import { createNewUserExampleRecordsDbQuery } from '#/api/routes/users/sign-up/sign-up.db-query';
 import { configs } from '#/configs';
+import { deleteCloudinaryAssetsByPublicIds } from '#/lib/cloudinary';
 
 import type { UserRoleDef } from './auth-middleware.types';
 
@@ -18,7 +21,7 @@ const resetPasswordTokenExpiresInSeconds =
   resetPasswordTokenExpiresInMinutes * 60;
 
 export const auth = betterAuth({
-  baseURL: configs.betterAuthUrl,
+  baseURL: configs.siteUrl,
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
@@ -89,7 +92,29 @@ export const auth = betterAuth({
       updateEmailWithoutVerification: true,
     },
     deleteUser: {
+      afterDelete: async (user) => {
+        await db.transaction(async (tx) => {
+          const publicIdsToDelete = await getUserImagesDbQuery({
+            context: {
+              user,
+            },
+            data: {},
+            tx,
+          });
+
+          await deleteCloudinaryAssetsByPublicIds(...publicIdsToDelete);
+        });
+      },
       enabled: true,
+      sendDeleteAccountVerification: async ({ url, user }) => {
+        await sendDeleteAccountVerificationEmailServerFn({
+          data: {
+            email: user.email,
+            name: user.name,
+            url,
+          },
+        });
+      },
     },
   },
 });

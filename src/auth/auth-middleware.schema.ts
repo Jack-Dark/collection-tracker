@@ -6,7 +6,7 @@ export const authSchema = z.object({
   id: z.string().min(1),
   image: z.string().nullable().optional(),
   name: z.string(),
-  role: userRolesSchema,
+  role: userRolesSchema.optional(),
 });
 
 export const authAdminSchema = authSchema.extend({
