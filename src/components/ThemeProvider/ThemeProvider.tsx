@@ -1,11 +1,15 @@
 import type { PropsWithChildren } from 'react';
 
-import { ScriptOnce, useRouter } from '@tanstack/react-router';
-import { createContext, use } from 'react';
+import { ScriptOnce } from '@tanstack/react-router';
+import { createContext, use, useLayoutEffect, useState } from 'react';
 
 import type { UserPreferencesThemeDef } from '#/lib/theme';
 
-import { handleThemeCookie, userPreferenceThemes } from '#/lib/theme';
+import {
+  handleThemeCookie,
+  themeAttr,
+  userPreferenceThemes,
+} from '#/lib/theme';
 
 type ThemeContextVal = {
   setTheme: (theme: UserPreferencesThemeDef) => void;
@@ -15,33 +19,49 @@ type ThemeContextVal = {
 const ThemeContext = createContext<ThemeContextVal | null>(null);
 
 type ThemeProviderPropsDef = PropsWithChildren<{
-  theme: UserPreferencesThemeDef | undefined;
+  initialTheme: UserPreferencesThemeDef | undefined;
 }>;
 
-export const ThemeProvider = ({ children, theme }: ThemeProviderPropsDef) => {
-  const router = useRouter();
+export const ThemeProvider = ({
+  children,
+  initialTheme,
+}: ThemeProviderPropsDef) => {
+  const [themeContextValue, setThemeContextValue] =
+    useState<UserPreferencesThemeDef>(initialTheme as UserPreferencesThemeDef);
+
   const { setThemeCookie } = handleThemeCookie();
 
-  const setTheme = (theme: UserPreferencesThemeDef) => {
-    setThemeCookie(theme);
-
-    return router.invalidate();
+  const handleSetTheme = (selectedTheme: UserPreferencesThemeDef) => {
+    setThemeCookie(selectedTheme);
+    setThemeContextValue(selectedTheme);
   };
 
   const themeScript = `(function() {
-  try {
-    const themeAttr = 'data-theme';
-    const isThemeDefined = !!document.documentElement.getAttribute(themeAttr);
-    
-    if (!isThemeDefined) {
-      const themePreference = (matchMedia('(prefers-color-scheme: dark)').matches ? '${userPreferenceThemes.dark}' : '${userPreferenceThemes.light}');
-      document.documentElement.setAttribute(themeAttr, themePreference);
+    try {
+      const isThemeDefined = !!document.documentElement.getAttribute('${themeAttr}');
+      
+      if (!isThemeDefined) {
+        const themePreference = (matchMedia('(prefers-color-scheme: dark)').matches ? '${userPreferenceThemes.dark}' : '${userPreferenceThemes.light}');
+        document.documentElement.setAttribute('${themeAttr}', themePreference);
+      }
+    } catch (e) {}
+  })();`;
+
+  useLayoutEffect(() => {
+    if (!initialTheme) {
+      // ? If no theme cookie, grab theme attr value set by themeScript and set cookie and context
+      const themePreference = document.documentElement.getAttribute(themeAttr);
+
+      if (themePreference) {
+        handleSetTheme(themePreference as UserPreferencesThemeDef);
+      }
     }
-  } catch (e) {}
-})();`;
+  }, []);
 
   return (
-    <ThemeContext value={{ setTheme, theme }}>
+    <ThemeContext
+      value={{ setTheme: handleSetTheme, theme: themeContextValue }}
+    >
       <ScriptOnce children={themeScript} />
       {children}
     </ThemeContext>

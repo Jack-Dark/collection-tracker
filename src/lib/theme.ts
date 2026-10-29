@@ -17,6 +17,8 @@ export type UserPreferencesThemeDef = z.output<typeof userThemeSchema>;
 
 export const userThemeCookieKey = '_theme-preference';
 
+export const themeAttr = 'data-theme';
+
 export const getSystemTheme = createClientOnlyFn(() => {
   const systemPrefersDarkMode = window?.matchMedia(
     '(prefers-color-scheme: dark)',

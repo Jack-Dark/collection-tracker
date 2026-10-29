@@ -26,10 +26,10 @@ import { Button } from '#/components/Button';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { PageWrapper } from '#/components/PageWrapper';
 import { RouteCatchBoundary } from '#/components/RouteCatchBoundary';
-import { ThemeProvider } from '#/components/ThemeProvider';
+import { ThemeProvider, useTheme } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
 import { githubUrl } from '#/constants/githubUrl';
-import { handleThemeCookie } from '#/lib/theme';
+import { handleThemeCookie, themeAttr } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
 
@@ -116,63 +116,69 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
-  const queryClient = useQueryClient();
-
   return (
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
+      <AllProviders>
         <RootDocument>
           <Outlet />
         </RootDocument>
-        {import.meta.env.DEV && (
-          <TanStackDevtools
-            plugins={[
-              formDevtoolsPlugin(),
-              {
-                name: 'TanStack Hotkeys',
-                render: <HotkeysDevtoolsPanel />,
-              },
-              {
-                name: 'TanStack Query',
-                render: <ReactQueryDevtoolsPanel />,
-              },
-              {
-                name: 'TanStack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-            ]}
-          />
-        )}
-      </QueryClientProvider>
+      </AllProviders>
+      {import.meta.env.DEV && (
+        <TanStackDevtools
+          plugins={[
+            formDevtoolsPlugin(),
+            {
+              name: 'TanStack Hotkeys',
+              render: <HotkeysDevtoolsPanel />,
+            },
+            {
+              name: 'TanStack Query',
+              render: <ReactQueryDevtoolsPanel />,
+            },
+            {
+              name: 'TanStack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+          ]}
+        />
+      )}
     </StrictMode>
   );
 }
 
+const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
+  const queryClient = useQueryClient();
+  const emotionCache = createCache({ key: 'css' });
+  const { theme } = Route.useLoaderData();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <CacheProvider value={emotionCache}>
+        <ThemeProvider initialTheme={theme}>
+          <HotkeysProvider appHotkeys={appHotkeys}>
+            <DialogProvider>{children}</DialogProvider>
+          </HotkeysProvider>
+        </ThemeProvider>
+      </CacheProvider>
+    </QueryClientProvider>
+  );
+};
+
 export const RootDocument = ({
   children,
 }: Readonly<{ children: ReactNode }>) => {
-  const { theme } = Route.useLoaderData();
-
-  const emotionCache = createCache({ key: 'css' });
+  const { theme } = useTheme();
 
   return (
-    <html data-theme={theme} lang="en" suppressHydrationWarning>
+    <html {...{ [themeAttr]: theme }} lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
 
-      <CacheProvider value={emotionCache}>
-        <ThemeProvider theme={theme}>
-          <HotkeysProvider appHotkeys={appHotkeys}>
-            <DialogProvider>
-              <body className="bg-linear-to-br from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
-                {children}
-                <Scripts />
-              </body>
-            </DialogProvider>
-          </HotkeysProvider>
-        </ThemeProvider>
-      </CacheProvider>
+      <body className="bg-linear-to-br from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
+        {children}
+        <Scripts />
+      </body>
     </html>
   );
 };

@@ -1,17 +1,13 @@
 import { Toggle, ToggleGroup } from '@base-ui/react';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import { useEffect } from 'react';
 import { twJoin } from 'tailwind-merge';
 
-import {
-  getSystemTheme,
-  userPreferenceThemes,
-} from '../../../../../../lib/theme';
+import { userPreferenceThemes } from '../../../../../../lib/theme';
 import { useTheme } from '../../../../../ThemeProvider';
 
 export const ThemeToggles = () => {
-  const { setTheme, theme: userTheme } = useTheme();
+  const { setTheme, theme: selectedTheme } = useTheme();
 
   const themeToggleItems = [
     {
@@ -26,14 +22,6 @@ export const ThemeToggles = () => {
     },
   ] as const;
 
-  useEffect(() => {
-    if (!userTheme) {
-      const theme = getSystemTheme();
-
-      setTheme(theme);
-    }
-  }, []);
-
   return (
     <ToggleGroup
       aria-label="User Theme"
@@ -41,7 +29,7 @@ export const ThemeToggles = () => {
       defaultValue={[userPreferenceThemes.dark]}
     >
       {themeToggleItems.map(({ label, theme, ThemeIcon }) => {
-        const isActive = userTheme === theme;
+        const isActive = selectedTheme === theme;
 
         return (
           <Toggle
