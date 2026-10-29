@@ -4,17 +4,17 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 import { auth } from '#/auth/auth';
 import { errorHandlingMiddleware } from '#/auth/auth-middleware';
 
-import { signInRequestSchema } from './sign-in.schema';
+import { signInWithEmailRequestSchema } from './sign-in-with-email.schema';
 
-export const signInServerFn = createServerFn({
+export const signInWithEmailServerFn = createServerFn({
   method: 'POST',
 })
   .middleware([errorHandlingMiddleware])
-  .validator(signInRequestSchema)
+  .validator(signInWithEmailRequestSchema)
   .handler(async ({ data }) => {
     const headers = getRequestHeaders();
 
-    await auth.api.signInEmail({
+    return auth.api.signInEmail({
       headers,
       body: data,
     });

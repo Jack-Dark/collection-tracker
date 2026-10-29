@@ -6,7 +6,10 @@ import { tanstackStartCookies } from 'better-auth/tanstack-start';
 import { db } from '#/api/db';
 import { sendResetPasswordEmailServerFn } from '#/api/routes/emails/send-reset-password-email/send-reset-password-email.serverFn';
 import { sendVerificationEmailServerFn } from '#/api/routes/emails/send-verification-email/send-verification-email.serverFn';
+import { createNewUserExampleRecordsDbQuery } from '#/api/routes/users/sign-up/sign-up.db-query';
 import { configs } from '#/configs';
+
+import type { UserRoleDef } from './auth-middleware.types';
 
 import * as schema from '../api/db-tables-schema';
 
@@ -15,9 +18,7 @@ const resetPasswordTokenExpiresInSeconds =
   resetPasswordTokenExpiresInMinutes * 60;
 
 export const auth = betterAuth({
-  // TODO - REFACTOR: AFTER COMMITTING AUTH LOGIC, REMOVE AND TEST ALL AUTH LOGIC AGAIN TO SEE IF NECESSARY
-  baseURL:
-    configs.environment === 'development' ? configs.siteUrl : configs.authUrl,
+  baseURL: configs.betterAuthUrl,
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
@@ -27,8 +28,24 @@ export const auth = betterAuth({
       verification: schema.verificationsTable,
     },
   }),
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          await createNewUserExampleRecordsDbQuery({
+            context: {
+              user: {
+                ...user,
+                role: user.role as UserRoleDef,
+              },
+            },
+            data: undefined,
+          });
+        },
+      },
+    },
+  },
   emailAndPassword: {
-    // autoSignIn: true,
     enabled: true,
     resetPasswordTokenExpiresIn: resetPasswordTokenExpiresInSeconds,
     sendResetPassword: async ({ url, user }) => {
@@ -60,6 +77,12 @@ export const auth = betterAuth({
     // ! make sure this is the last plugin in the array
     tanstackStartCookies(),
   ],
+  socialProviders: {
+    google: {
+      clientId: configs.googleWebClientId,
+      clientSecret: configs.googleClientSecret,
+    },
+  },
   user: {
     changeEmail: {
       enabled: true,
@@ -69,10 +92,4 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  // socialProviders: {
-  //   google: {
-  //     clientId: '',
-  //     clientSecret: '',
-  //   },
-  // },
 });

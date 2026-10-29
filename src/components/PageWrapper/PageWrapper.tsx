@@ -77,7 +77,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
                   <a
                     aria-label="Buy me a coffee"
                     className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
-                    href="https://buymeacoffee.com/jack.dark"
+                    href="https://buymeacoffee.com/collectiontracker"
                     target="_blank"
                   >
                     <CoffeeIcon />

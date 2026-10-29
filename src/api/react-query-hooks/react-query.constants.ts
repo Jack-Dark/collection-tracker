@@ -41,9 +41,8 @@ export const reactMutationKeys = {
       update: 'update-password',
     },
     requestVerificationEmail: 'request-verification-email',
-    signIn: {
-      viaEmail: 'sign-in-via-email',
-    },
+    signInWithEmail: 'sign-in-with-email',
+    signInWithProvider: 'sign-in-with-provider',
     signOut: 'sign-out',
     signUp: {
       viaEmail: 'sign-up-via-email',

@@ -4,7 +4,6 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 import { auth } from '#/auth/auth';
 import { errorHandlingMiddleware } from '#/auth/auth-middleware';
 
-import { createNewUserExampleRecordsDbQuery } from './sign-up.db-query';
 import { signUpRequestSchema } from './sign-up.schema';
 
 export const signUpServerFn = createServerFn({
@@ -15,13 +14,8 @@ export const signUpServerFn = createServerFn({
   .handler(async ({ data }) => {
     const headers = getRequestHeaders();
 
-    const { user } = await auth.api.signUpEmail({
+    await auth.api.signUpEmail({
       headers,
       body: data,
-    });
-
-    await createNewUserExampleRecordsDbQuery({
-      context: { user },
-      data: undefined,
     });
   });

@@ -7,7 +7,7 @@ import { useLayoutEffect } from 'react';
 import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { useResetPassword } from '#/api/routes/users/reset-password/reset-password.react-query';
 import { resetPasswordFormSchema } from '#/api/routes/users/reset-password/reset-password.schema';
-import { useSignIn } from '#/api/routes/users/sign-in/sign-in.react-query';
+import { useSignInWithEmail } from '#/api/routes/users/sign-in-with-email/sign-in-with-email.react-query';
 import { InputField } from '#/components/Fields/InputField';
 import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useNotifications } from '#/components/Notifications/useNotifications';
@@ -30,7 +30,7 @@ export const ResetPasswordPage: RouteComponent = () => {
     schema: resetPasswordFormSchema,
   });
 
-  const { onSignIn } = useSignIn();
+  const { onSignInWithEmail } = useSignInWithEmail();
   const { onResetPassword } = useResetPassword();
 
   const form = useForm({
@@ -42,7 +42,7 @@ export const ResetPasswordPage: RouteComponent = () => {
       await invalidateGetNavMenuCollections();
 
       if (email) {
-        await onSignIn({
+        await onSignInWithEmail({
           email,
           password: value.newPassword,
         });
