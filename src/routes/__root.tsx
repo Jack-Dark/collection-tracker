@@ -6,6 +6,7 @@ import type { MetaHTMLAttributes, ReactNode } from 'react';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
 import { HotkeysProvider } from '@tanstack/react-hotkeys';
+import { HotkeysDevtoolsPanel } from '@tanstack/react-hotkeys-devtools';
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import {
@@ -116,6 +117,10 @@ function RootComponent() {
           <TanStackDevtools
             plugins={[
               formDevtoolsPlugin(),
+              {
+                name: 'TanStack Hotkeys',
+                render: <HotkeysDevtoolsPanel />,
+              },
               {
                 name: 'TanStack Query',
                 render: <ReactQueryDevtoolsPanel />,
