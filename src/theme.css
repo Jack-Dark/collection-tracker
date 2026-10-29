@@ -120,29 +120,29 @@
   --theme-alert-hover: var(--color-red-800);
 }
 
-@layer utilities {
+@layer base {
 
-  [data-them="light"] {
-
-    /* // TODO - IMPROVEMENT: INPUT AUTOFILL COLORS ARE NOT MATCHING THEME */
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus,
-    textarea:-webkit-autofill,
-    textarea:-webkit-autofill:hover,
-    textarea:-webkit-autofill:focus,
-    select:-webkit-autofill,
-    select:-webkit-autofill:hover,
-    select:-webkit-autofill:focus {
-      border-color: var(--color-theme-divider-1);
-      -webkit-text-fill-color: var(--color-theme-t1);
-      -webkit-box-shadow: 0 0 0px 1000px var(--color-theme-surface-1) inset;
-      transition: background-color 5000s ease-in-out 0s;
-    }
+  input:-internal-autofill-selected,
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    color: var(--color-theme-t1);
+    border-color: var(--color-theme-divider-1);
+    -webkit-text-fill-color: var(--color-theme-t1);
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-theme-surface-1) inset;
+    transition: background-color 5000s ease-in-out 0s;
   }
 
-  [data-them="dark"] {
 
+  [data-theme="dark"] {
+
+    input:-internal-autofill-selected,
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
@@ -158,6 +158,7 @@
 
     [data-dialog] {
 
+      input:-internal-autofill-selected,
       input:-webkit-autofill,
       input:-webkit-autofill:hover,
       input:-webkit-autofill:focus,
