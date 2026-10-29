@@ -13,7 +13,7 @@ import type { CustomFieldFormSchemaDef } from '#/api/routes/custom-fields/custom
 import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
 
-import { useGetCollectionsWithCustomFields } from '#/api/routes/collections/get-collections-with-custom-field/get-collections-with-custom-field.react-query';
+import { useGetNumCollectionsWithCustomField } from '#/api/routes/collections/get-num-collections-with-custom-field/get-num-collections-with-custom-field.react-query';
 import { useCreateCustomFields } from '#/api/routes/custom-fields/create-custom-fields/create-custom-fields.react-query';
 import { customFieldFormSchema } from '#/api/routes/custom-fields/custom-fields.schema';
 import { useDeleteCustomFields } from '#/api/routes/custom-fields/delete-custom-fields/delete-custom-fields.react-query';
@@ -332,12 +332,16 @@ export const DeleteCustomFieldDialog = (props: {
 
   const id = Number(lastEditedCustomField.data?.customField.id);
 
-  const { data: numAffectedCollections } = useGetCollectionsWithCustomFields({
-    placeholderData: 0,
+  const { data } = useGetNumCollectionsWithCustomField({
+    placeholderData: {
+      numAffectedCollections: 0,
+    },
     requestArgs: {
-      customFieldIds: [id],
+      customFieldId: id,
     },
   });
+
+  const { numAffectedCollections } = data;
 
   const invalidateGetCustomFields = useInvalidateGetCustomFields();
 

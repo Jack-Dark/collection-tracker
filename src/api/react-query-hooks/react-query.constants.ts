@@ -2,12 +2,12 @@ export const reactQueryKeys = {
   getCollectionDetailsById: 'get-collection-details',
   getCollectionItemsWithCustomFieldValue:
     'get-collection-items-with-custom-field-value',
-  getCollectionsWithCustomFields: 'get-collections-with-custom-fields',
   getCustomFields: 'get-custom-fields',
   getCustomFieldValuesByCustomFieldId:
     'get-custom-field-values-by-custom-field-id',
   getFiltersForCollection: 'get-filters-for-collection',
   getNavMenuCollections: 'get-nav-menu-collections',
+  getNumCollectionsWithCustomField: 'get-num-collections-with-custom-field',
   getPaginatedCollections: 'get-paginated-collections',
   getPaginatedUsers: 'get-paginated-users',
 } as const;
