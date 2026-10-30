@@ -309,12 +309,12 @@ const CustomFieldNumberFilter = (props: {
                       <Slider.Indicator className="bg-primary-700" />
                       <Slider.Thumb
                         aria-label="Minimum value"
-                        className="size-3 bg-primary-700 rounded-xl cursor-grab"
+                        className="size-3 bg-primary-700 rounded-full cursor-grab"
                         index={0}
                       />
                       <Slider.Thumb
                         aria-label="Maximum value"
-                        className="size-3 bg-primary-700 rounded-xl cursor-grab"
+                        className="size-3 bg-primary-700 rounded-full cursor-grab"
                         index={1}
                       />
                     </Slider.Track>

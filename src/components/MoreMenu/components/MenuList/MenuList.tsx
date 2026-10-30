@@ -27,7 +27,7 @@ export const MenuList = (props: MenuPropsDef) => {
         side={side}
         sideOffset={sideOffset}
       >
-        <Menu.Popup className="relative bg-theme-surface-1 text-theme-t1 border border-theme-divider-1 dark:border-theme-divider-2 rounded-xs py-1 shadow-lg">
+        <Menu.Popup className="relative bg-theme-surface-1 text-theme-t1 border border-theme-divider-1 dark:border-theme-divider-2 rounded-sm py-1 shadow-lg">
           <Menu.Arrow className="data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=left]:rotate-90 data-[side=right]:left-[-13px] data-[side=right]:-rotate-90 data-[side=top]:bottom-[-8px] data-[side=top]:rotate-180">
             <MenuArrowSvg />
           </Menu.Arrow>

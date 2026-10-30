@@ -18,13 +18,13 @@ export const SortableThumbnail = (props: SortableThumbnailPropsDef) => {
 
   return (
     <div
-      className="border border-theme-divider-3 bg-theme-surface-2 text-theme-t2 grid grid-rows-[auto_1fr]"
+      className="border border-theme-divider-3 bg-theme-surface-2 text-theme-t2 grid grid-rows-[auto_1fr] rounded-2xl overflow-hidden"
       key={src}
       ref={ref}
     >
       <SimpleErrorBoundary>
         <div
-          className="h-6 flex items-center justify-between gap-1 px-0.5 bg-theme-surface-2 border-b border-theme-divider-3"
+          className="h-6 flex items-center justify-between gap-1 px-1 bg-theme-surface-2 border-b border-theme-divider-2"
           onClick={onDelete}
         >
           <DragIndicatorIcon
@@ -43,7 +43,12 @@ export const SortableThumbnail = (props: SortableThumbnailPropsDef) => {
         </div>
 
         <div className="size-18 p-0.5">
-          <Image alt={altText} src={src} />
+          <Image
+            alt={altText}
+            className="rounded-xl overflow-hidden"
+            objectFit="cover"
+            src={src}
+          />
         </div>
       </SimpleErrorBoundary>
     </div>

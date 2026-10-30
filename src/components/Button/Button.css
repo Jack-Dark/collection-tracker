@@ -48,7 +48,7 @@
 
 @layer components {
   .btn {
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-4xl);
     font-weight: var(--font-weight-semibold);
     box-shadow: var(--shadow-md);
     cursor: pointer;

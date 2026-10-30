@@ -76,7 +76,7 @@ export const CollectionDetailsImagesField = (
             </DragDropProvider>
 
             <SimpleErrorBoundary>
-              <FieldWrapper className="relative grid items-center justify-center size-18 border border-theme-divider-3 bg-theme-surface-2 text-theme-t2 hover:border-theme-link-hover hover:text-theme-link-hover cursor-pointer">
+              <FieldWrapper className="relative grid items-center justify-center size-18 border border-theme-divider-3 rounded-2xl bg-theme-surface-2 text-theme-t2 hover:border-theme-link-hover hover:text-theme-link-hover cursor-pointer">
                 <AddIcon fontSize="large" />
                 <Field.Control
                   accept="image/*"

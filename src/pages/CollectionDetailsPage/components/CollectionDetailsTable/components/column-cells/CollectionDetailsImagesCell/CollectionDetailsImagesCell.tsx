@@ -51,7 +51,6 @@ export const CollectionDetailsImagesCell = (props: {
 
                         const thumbnail: BaseImagePropsDef = isPublicId
                           ? {
-                              cropMode: 'pad',
                               height: thumbnailSize,
                               publicId: data,
                               width: thumbnailSize,
@@ -60,11 +59,12 @@ export const CollectionDetailsImagesCell = (props: {
 
                         return (
                           <div
-                            className="p-1 size-14 border border-theme-divider-3 bg-theme-surface-2 text-theme-t2 hover:border-theme-link-hover hover:text-theme-link-hover"
+                            className="p-1 size-14 border border-theme-divider-3 bg-theme-surface-2 text-theme-t2 hover:border-theme-link-hover hover:text-theme-link-hover rounded-2xl overflow-hidden"
                             key={key}
                           >
                             <ZoomableThumbnailGallery
                               alt={`${nameField.value} image`}
+                              className="rounded-xl overflow-hidden"
                               images={formattedImages}
                               index={index}
                               thumbnail={thumbnail}

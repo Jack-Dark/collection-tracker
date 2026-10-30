@@ -17,7 +17,7 @@ export const SiteNavMenu = () => {
   const { accountNavItems, primaryNavItems } = useSiteNavMenuItems();
 
   return (
-    <div className="hidden md:flex justify-between items-center bg-theme-surface-1 text-theme-t1 rounded-xs">
+    <div className="hidden md:flex justify-between items-center bg-theme-surface-1 text-theme-t1 rounded-full">
       <DesktopNavMenu items={primaryNavItems} />
 
       <div className="flex items-center">

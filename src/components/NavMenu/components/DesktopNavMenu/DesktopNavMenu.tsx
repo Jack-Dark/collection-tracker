@@ -24,7 +24,7 @@ export const DesktopNavMenu = (props: { items: NavMenuItem[] }) => {
               <NavigationMenu.Item
                 className={twJoin(
                   // ? standard styles
-                  'rounded-xs no-underline text-theme-t1',
+                  'rounded-full no-underline text-theme-t1',
                   // ? active status styles
                   'has-data-[status="active"]:bg-theme-surface-selected',
                   // ? hover styles
@@ -38,7 +38,7 @@ export const DesktopNavMenu = (props: { items: NavMenuItem[] }) => {
                   condition={hasSubMenu}
                   Wrapper={({ children }) => {
                     return (
-                      <NavigationMenu.Trigger className="flex items-center justify-center rounded-xs text-inherit font-medium text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline">
+                      <NavigationMenu.Trigger className="flex items-center justify-center rounded-full text-inherit font-medium text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline">
                         {children}
                         {items && (
                           <div className="py-2 pr-2 ">
@@ -80,7 +80,7 @@ export const DesktopNavMenu = (props: { items: NavMenuItem[] }) => {
                 {hasSubMenu && (
                   <NavigationMenu.Content
                     className={twJoin(
-                      'py-1 min-w-40 rounded-xs',
+                      'py-1 min-w-40 rounded-full',
                       'transition-[opacity,transform,translate] duration-[var(--duration)] ease-[var(--easing)]',
                       'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0',
                       'data-[starting-style]:data-[activation-direction=left]:translate-x-[-50%]',
@@ -146,7 +146,7 @@ export const DesktopNavMenu = (props: { items: NavMenuItem[] }) => {
             ['--easing' as string]: 'cubic-bezier(0.22, 1, 0.36, 1)',
           }}
         >
-          <NavigationMenu.Popup className="data-[ending-style]:easing-[ease] relative h-[var(--popup-height)] origin-[var(--transform-origin)] rounded-xs bg-theme-surface-1 text-theme-t1 shadow-lg shadow-gray-200 outline-1 outline-theme-divider-1 transition-[opacity,transform,width,height,scale,translate] duration-[var(--duration)] ease-[var(--easing)] data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:duration-150 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 w-[var(--popup-width)] dark:shadow-none dark:-outline-offset-1 dark:outline-theme-divider-2">
+          <NavigationMenu.Popup className="data-[ending-style]:easing-[ease] relative h-[var(--popup-height)] origin-[var(--transform-origin)] rounded-sm bg-theme-surface-1 text-theme-t1 shadow-lg shadow-gray-200 outline-1 outline-theme-divider-1 transition-[opacity,transform,width,height,scale,translate] duration-[var(--duration)] ease-[var(--easing)] data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:duration-150 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 w-[var(--popup-width)] dark:shadow-none dark:-outline-offset-1 dark:outline-theme-divider-2">
             <NavigationMenu.Arrow className="flex transition-[left] duration-[var(--duration)] ease-[var(--easing)] data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=left]:rotate-90 data-[side=right]:left-[-13px] data-[side=right]:-rotate-90 data-[side=top]:bottom-[-8px] data-[side=top]:rotate-180">
               <MenuArrowSvg />
             </NavigationMenu.Arrow>

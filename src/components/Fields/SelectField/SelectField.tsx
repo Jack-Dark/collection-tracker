@@ -94,7 +94,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
       >
         <Select.Trigger
           aria-label={ariaLabel}
-          className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer text-left"
+          className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-full border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer text-left"
         >
           <Select.Value
             className="grid justify-start"
@@ -120,7 +120,11 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
           </Select.Icon>
         </Select.Trigger>
         <Select.Portal>
-          <Select.Positioner align="start" alignItemWithTrigger={false}>
+          <Select.Positioner
+            align="start"
+            alignItemWithTrigger={false}
+            className="p-2"
+          >
             <Select.Popup>
               <Select.List className="min-w-30 bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 border border-theme-divider-1 dark:border-theme-divider-3 py-2 rounded-sm shadow-lg max-h-100 overflow-auto data-empty:hidden">
                 {items.map((item, index) => {

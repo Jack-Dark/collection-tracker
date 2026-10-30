@@ -25,7 +25,7 @@ export const ThemeToggles = () => {
   return (
     <ToggleGroup
       aria-label="User Theme"
-      className="grid gap-1 grid-cols-2 border border-theme-divider-2 rounded-4xl p-1 w-25"
+      className="grid gap-1 grid-cols-2 border border-theme-divider-2 rounded-full p-1 w-25"
       defaultValue={[userPreferenceThemes.dark]}
     >
       {themeToggleItems.map(({ label, theme, ThemeIcon }) => {
@@ -35,7 +35,7 @@ export const ThemeToggles = () => {
           <Toggle
             aria-label={label}
             className={twJoin(
-              `p-0.5 flex items-center justify-center rounded-4xl cursor-pointer border border-transparent`,
+              `p-0.5 flex items-center justify-center rounded-full cursor-pointer border border-transparent`,
               theme === userPreferenceThemes.light
                 ? // ? light mode toggle
                   isActive

@@ -14,7 +14,7 @@ import { Image } from '../Image';
 export const ZoomableThumbnailGallery = (
   props: ZoomableThumbnailGalleryPropsDef,
 ) => {
-  const { alt, images, index, thumbnail } = props;
+  const { alt, className, images, index, thumbnail } = props;
 
   const [activeIndex, setActiveIndex] = useState<number>(index);
 
@@ -75,5 +75,13 @@ export const ZoomableThumbnailGallery = (
     );
   }, [images, activeIndex]);
 
-  return <Image {...thumbnail} alt={altText} onClick={showDialog} />;
+  return (
+    <Image
+      className={className}
+      objectFit="cover"
+      {...thumbnail}
+      alt={altText}
+      onClick={showDialog}
+    />
+  );
 };
