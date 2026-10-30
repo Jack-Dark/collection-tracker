@@ -53,7 +53,7 @@ export const getCollectionItemsTableColumns = (
         );
       },
       header: 'Images',
-      size: 225,
+      size: 250,
     }),
     ...sortedCustomFields.map(({ customField }) => {
       return columnHelper.accessor('customFieldValues', {
