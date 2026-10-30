@@ -1,3 +1,4 @@
+import type { ButtonPropsDef } from '#/components/Button';
 import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 
 import { useDeleteUser } from '#/api/routes/users/delete-user/delete-user.react-query';
@@ -6,7 +7,9 @@ import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { useNotifications } from '#/components/Notifications/useNotifications';
 
-export const DeleteAccountButton = () => {
+export const DeleteAccountButton = (
+  props: Omit<Partial<ButtonPropsDef>, 'children'>,
+) => {
   const [showDeleteAccountDialog, hideDeleteAccountDialog] = useDialog(() => {
     return <DeleteAccountDialog hideDialog={hideDeleteAccountDialog} />;
   }, []);
@@ -14,10 +17,11 @@ export const DeleteAccountButton = () => {
   return (
     <Button
       className="justify-self-start"
-      onClick={showDeleteAccountDialog}
       size="sm"
       text="Delete account"
       variant="alert"
+      {...props}
+      onClick={showDeleteAccountDialog}
     />
   );
 };

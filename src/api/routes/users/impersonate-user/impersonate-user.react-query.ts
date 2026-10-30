@@ -3,6 +3,7 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 import { useInvalidateEverything } from '#/api/react-query-hooks/use-invalidate-everything';
+import { authClient } from '#/auth/auth-client';
 
 import type {
   ImpersonateUserRequestArgsDef,
@@ -29,6 +30,8 @@ export const useImpersonateUser = <
     ...props,
     onSuccess: async (...args) => {
       await invalidateEverything();
+
+      authClient.clearLastUsedLoginMethod();
 
       await props?.onSuccess?.(...args);
     },
