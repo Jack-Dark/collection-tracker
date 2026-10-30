@@ -26,7 +26,7 @@ export const CollectionDetailsSubmitButton = ({
       {({ isPristine, isSubmitting, isValid }) => {
         return (
           <Button
-            className="flex flex-nowrap gap-2"
+            className="flex flex-nowrap gap-2 btn-sm md:btn-md"
             disabled={isPristine || !isValid}
             Icon={SaveIcon}
             onClick={(e) => {

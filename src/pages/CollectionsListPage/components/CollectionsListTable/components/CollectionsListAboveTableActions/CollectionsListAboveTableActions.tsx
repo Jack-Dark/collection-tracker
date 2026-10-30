@@ -125,6 +125,7 @@ export const CollectionsListAboveTableActions = (props: {
               {isEditing ? (
                 <>
                   <Button
+                    className="btn-sm md:btn-md"
                     Icon={ClearIcon}
                     onClick={onCancel}
                     text="Cancel"
