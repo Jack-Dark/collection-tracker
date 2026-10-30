@@ -104,7 +104,7 @@ export const useSpinner = () => {
   };
 };
 
-export const useShowSpinner = (isLoading: boolean) => {
+export const useShowSpinnerWhen = (isLoading: boolean) => {
   const { hideSpinner, isSpinning, showSpinner } = useSpinner();
 
   useLayoutEffect(() => {
