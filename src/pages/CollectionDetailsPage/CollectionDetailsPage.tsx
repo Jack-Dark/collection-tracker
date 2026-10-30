@@ -61,12 +61,9 @@ export const useCollectionDetailsForm = () => {
         notifyWarning(response.warning);
       }
     },
-    showLoading: true,
   });
 
-  const { onUpdateCollectionItems } = useUpdateCollectionItems({
-    showLoading: true,
-  });
+  const { onUpdateCollectionItems } = useUpdateCollectionItems();
 
   const { onDeleteUnusedCustomFieldValues } =
     useDeleteUnusedCustomFieldValues();
