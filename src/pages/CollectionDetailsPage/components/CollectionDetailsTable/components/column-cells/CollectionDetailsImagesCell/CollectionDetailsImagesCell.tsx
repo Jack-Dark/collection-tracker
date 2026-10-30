@@ -3,7 +3,7 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/Collection
 
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
 import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
-import { ZoomableThumbnailGallery } from '#/components/ZoomableThumbnailGallery/ZoomableThumbnailGallery';
+import { ZoomableThumbnailGallery } from '#/components/ZoomableThumbnailGallery';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 import { CollectionDetailsImagesField } from './components/CollectionDetailsImagesField';
