@@ -116,6 +116,8 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
+  const isDevMode = import.meta.env.DEV;
+
   return (
     <StrictMode>
       <AllProviders>
@@ -123,7 +125,7 @@ function RootComponent() {
           <Outlet />
         </RootDocument>
       </AllProviders>
-      {import.meta.env.DEV && (
+      {isDevMode && (
         <TanStackDevtools
           plugins={[
             formDevtoolsPlugin(),
