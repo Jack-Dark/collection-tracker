@@ -244,9 +244,9 @@ export const AccountPage = () => {
         )}
 
         {isGoogleSession && (
-          <div className="flex items-center gap-2">
-            <p>{user.email}</p>
+          <div className="p-1 pr-2 justify-self-start flex items-center gap-2 justify-center border border-theme-divider-2 rounded-4xl">
             <GoogleIcon />
+            <p>{user.email}</p>
           </div>
         )}
 
