@@ -36,9 +36,16 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
 
   const user = useUserContext();
 
+  const isImpersonating = user.impersonatedBy;
+
   return (
     <div className="p-1 md:p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-2 md:gap-4">
       <header className="grid gap-2 md:gap-4">
+        {isImpersonating && (
+          <div className="px-2 py-1 bg-amber-400 text-black text-center">
+            Impersonating {user.email}
+          </div>
+        )}
         <div className="py-1 md:py-0 grid grid-cols-[1fr_auto] gap-2 w-full justify-between text-white">
           <div className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_auto_1fr] items-center gap-2">
             <MobileNavMenu
