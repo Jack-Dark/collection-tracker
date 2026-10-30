@@ -191,6 +191,8 @@ export const SignUpForm: RouteComponent = () => {
             </strong>{' '}
             share or sell your information.
           </p>
+
+          <p>Delete your account anytime, hassle-free.</p>
         </div>
       </div>
     </form>
