@@ -80,7 +80,6 @@ export const CollectionDetailsImagesField = (
                 <AddIcon fontSize="large" />
                 <Field.Control
                   accept="image/*"
-                  autoFocus
                   capture="environment"
                   className="absolute size-full cursor-pointer text-transparent"
                   multiple
