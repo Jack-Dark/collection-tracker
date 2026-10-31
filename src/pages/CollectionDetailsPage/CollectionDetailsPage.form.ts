@@ -1,6 +1,5 @@
 import { formOptions } from '@tanstack/react-form';
 import { createStore } from '@tanstack/react-store';
-import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CreateCollectionItemsFormDataSchemaDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
@@ -10,7 +9,6 @@ import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections
 
 import type { CreateOrUpdateCollectionItemFormDataDef } from './CollectionDetailsPage.types';
 
-import { useHandleGetCollectionDetailsById } from './CollectionDetailsPage';
 import { createOrUpdateCollectionItemsFormSchema } from './CollectionDetailsPage.schema';
 import { useEnableAutoPopulateCustomFieldValues } from './components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-enable-auto-populate-custom-field-values';
 
@@ -31,7 +29,7 @@ export const useCreateNewCollectionItem =
         editionDetails: '',
         id: uuidv4(),
         images: [],
-        isSpecialEdition: Boolean(),
+        isSpecialEdition: false,
         name: '',
         notes: '',
       };
@@ -55,16 +53,7 @@ export const useLastAddedCustomFieldValues = () => {
     }
   };
 
-  const { data, isSuccess } = useHandleGetCollectionDetailsById();
-
-  useEffect(() => {
-    if (isSuccess && enableAutoPopulateCustomFieldValues) {
-      updateLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
-    }
-  }, [data, isSuccess]);
-
   return {
-    enableAutoPopulateCustomFieldValues,
     updateLastAddedCustomFieldValues,
   };
 };
