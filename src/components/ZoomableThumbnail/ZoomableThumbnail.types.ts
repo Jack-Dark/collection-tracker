@@ -1,21 +1,7 @@
-export type ZoomableImagePropsDef =
-  | {
-      height?: never;
-      publicId?: never;
-      src: string;
-      transformations?: never;
-      width?: never;
-    }
-  | {
-      height?: number;
-      publicId: string;
-      src?: never;
-      transformations?: string[];
-      width?: number;
-    };
+import type { BaseImagePropsDef } from '../Image/Images.types';
 
 export type ZoomableThumbnailPropsDef = {
   alt: string;
-  image: ZoomableImagePropsDef;
-  thumbnail: ZoomableImagePropsDef;
+  image: BaseImagePropsDef;
+  thumbnail: BaseImagePropsDef;
 };

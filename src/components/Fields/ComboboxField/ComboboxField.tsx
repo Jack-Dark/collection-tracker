@@ -415,7 +415,6 @@ const SortableChip = <TValue extends TValueRecordDef>(props: {
 
   return (
     <Combobox.Chip
-      aria-description="Press Backspace or Delete to remove"
       aria-label={label}
       className="bg-theme-surface-1 dark:bg-theme-surface-3 flex items-center gap-1 border border-theme-divider-2 rounded-4xl px-2 py-.5"
       ref={ref}

@@ -1,5 +1,7 @@
 import ClearIcon from '@mui/icons-material/Clear';
+import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import formatDate, { masks } from 'dateformat';
+import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
 
@@ -16,15 +18,34 @@ export const CollectionsListCreatedAtCell = (props: {
 }) => {
   const { form, index, rowId, value } = props;
 
-  const { getHasNewRecord, getIsEditingRowId } = useEditingCollectionsRowIds();
+  const {
+    getHasNewRecord,
+    getIsEditingRowId,
+    getLastNewRecordIndex,
+    removeFromEditingRowIds,
+  } = useEditingCollectionsRowIds();
+
   const isEditingRow = getIsEditingRowId(rowId);
-
-  const { getLastNewRecordIndex, removeFromEditingRowIds } =
-    useEditingCollectionsRowIds();
-
+  const showNewRecordButtons = isEditingRow && getHasNewRecord();
   const isLastNewRecordIndex = getLastNewRecordIndex() === index;
 
-  return isEditingRow && getHasNewRecord() ? (
+  const removeBtnRef = useRef<HTMLButtonElement>(null);
+
+  const appHotkeys = useAppHotkeys();
+
+  useHotkeys([
+    {
+      callback: () => {
+        removeBtnRef.current?.click();
+      },
+      hotkey: appHotkeys['app.remove-last'],
+      options: {
+        enabled: showNewRecordButtons && isLastNewRecordIndex,
+      },
+    },
+  ]);
+
+  return showNewRecordButtons ? (
     <form.ArrayField name="records">
       {(recordsField) => {
         return (

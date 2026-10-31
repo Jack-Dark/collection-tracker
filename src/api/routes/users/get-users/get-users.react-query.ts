@@ -29,7 +29,7 @@ export const useGetUsers = <TTransformedData = GetUsersResponseDef>(
   });
 };
 
-export const useInvalidateGetCollectionDetailsById =
+export const useInvalidateGetUsers =
   getUseInvalidateQuery<GetUsersRequestArgsDef>(
     reactQueryKeys.getPaginatedUsers,
   );

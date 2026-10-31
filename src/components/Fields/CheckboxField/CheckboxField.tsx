@@ -43,7 +43,7 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
       {...fieldWrapperProps}
     >
       <div
-        className={`grid gap-1 items-center ${Label && 'grid-cols-[max-content_1fr]'} ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        className={`justify-self-start flex gap-1 items-center ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       >
         {labelPosition === 'left' && <LabelComponent />}
 

@@ -1,7 +1,7 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
-import { useHotkeys } from '@tanstack/react-hotkeys';
+import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useBlocker } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
@@ -110,14 +110,17 @@ export const CollectionsListPage: RouteComponent = () => {
     },
   });
 
+  const appHotkeys = useAppHotkeys();
+
   useHotkeys([
     {
       callback: async () => {
-        if (isEditing && form.state.isDirty) {
-          await form.handleSubmit();
-        }
+        await form.handleSubmit();
       },
-      hotkey: 'Mod+Enter',
+      hotkey: appHotkeys['app.save'],
+      options: {
+        enabled: isEditing && form.state.isDirty,
+      },
     },
   ]);
 

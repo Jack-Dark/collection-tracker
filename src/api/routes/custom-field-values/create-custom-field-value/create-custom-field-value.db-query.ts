@@ -70,7 +70,7 @@ export const createCustomFieldValuesDbQuery = async ({
           );
         }
 
-        const [matchingRecord] = await tx
+        const [existingCustomFieldValueRecord] = await tx
           .select({
             id: customFieldValuesTable.id,
             valueBoolean: customFieldValuesTable.valueBoolean,
@@ -86,8 +86,8 @@ export const createCustomFieldValuesDbQuery = async ({
             ),
           );
 
-        if (matchingRecord) {
-          return matchingRecord;
+        if (existingCustomFieldValueRecord) {
+          return existingCustomFieldValueRecord;
         } else {
           const [newRecord] = await tx
             .insert(customFieldValuesTable)

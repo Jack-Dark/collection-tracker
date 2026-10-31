@@ -1,9 +1,8 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
-import { useHotkeys } from '@tanstack/react-hotkeys';
+import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useBlocker } from '@tanstack/react-router';
-import { useEffect } from 'react';
 
 import type { CreateCollectionItemsRequestArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
@@ -119,14 +118,17 @@ export const CollectionDetailsPage: RouteComponent = () => {
     },
   });
 
+  const appHotkeys = useAppHotkeys();
+
   useHotkeys([
     {
       callback: async () => {
-        if (isEditing && form.state.isDirty) {
-          await form.handleSubmit();
-        }
+        await form.handleSubmit();
       },
-      hotkey: 'Mod+Enter',
+      hotkey: appHotkeys['app.save'],
+      options: {
+        enabled: isEditing && form.state.isDirty,
+      },
     },
   ]);
 
@@ -144,12 +146,6 @@ export const CollectionDetailsPage: RouteComponent = () => {
       }
     },
   });
-
-  useEffect(() => {
-    return () => {
-      resetEditingRowIds();
-    };
-  }, []);
 
   return (
     <PageWrapper

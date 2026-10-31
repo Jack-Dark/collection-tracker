@@ -28,6 +28,7 @@ export const useCollectionDetailsPaginationProps = (props: {
       },
       value: searchQueries.page || 1,
     },
+    totalRecords: pagination?.totalRecords || 0,
   };
 
   return paginationProps;

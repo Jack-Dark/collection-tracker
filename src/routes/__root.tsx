@@ -5,6 +5,7 @@ import type { MetaHTMLAttributes, ReactNode } from 'react';
 
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
+import { HotkeysProvider } from '@tanstack/react-hotkeys';
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import {
@@ -22,6 +23,7 @@ import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { PageWrapper } from '#/components/PageWrapper';
 import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
 import { ThemeProvider } from '#/components/ThemeProvider';
+import { appHotkeys } from '#/constants/app-hotkeys';
 import { githubUrl } from '#/constants/githubUrl';
 import { getThemeServerFn } from '#/lib/theme';
 
@@ -136,12 +138,14 @@ export const RootDocument = ({
       </head>
 
       <ThemeProvider theme={theme}>
-        <DialogProvider>
-          <body className="bg-linear-to-br from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
-            {children}
-            <Scripts />
-          </body>
-        </DialogProvider>
+        <HotkeysProvider appHotkeys={appHotkeys}>
+          <DialogProvider>
+            <body className="bg-linear-to-br from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
+              {children}
+              <Scripts />
+            </body>
+          </DialogProvider>
+        </HotkeysProvider>
       </ThemeProvider>
     </html>
   );

@@ -1,6 +1,7 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import NotesIcon from '@mui/icons-material/Notes';
 import SearchIcon from '@mui/icons-material/Search';
+import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { twJoin } from 'tailwind-merge';
 
@@ -31,6 +32,17 @@ export const Search = (props: SearchPropsDef) => {
   useLayoutEffect(() => {
     setQuery(value);
   }, [value]);
+
+  const appHotkeys = useAppHotkeys();
+
+  useHotkeys([
+    {
+      callback: async () => {
+        await inputRef.current?.focus();
+      },
+      hotkey: appHotkeys['app.search'],
+    },
+  ]);
 
   return (
     <div className="relative">

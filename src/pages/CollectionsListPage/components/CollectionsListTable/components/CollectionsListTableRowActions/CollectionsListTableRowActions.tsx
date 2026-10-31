@@ -1,6 +1,8 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
+import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
 
@@ -74,6 +76,19 @@ export const CollectionsListTableRowActions = (props: {
     );
   }, [selectedRowIds]);
 
+  const addNewBtnRef = useRef<HTMLButtonElement>(null);
+
+  const appHotkeys = useAppHotkeys();
+
+  useHotkeys([
+    {
+      callback: () => {
+        addNewBtnRef.current?.click();
+      },
+      hotkey: appHotkeys['app.new'],
+    },
+  ]);
+
   return (
     <form.ArrayField name="records">
       {() => {
@@ -124,6 +139,7 @@ export const CollectionsListTableRowActions = (props: {
               ) : (
                 <Popover
                   Description={verifyEmailMessage}
+                  disabled={user?.emailVerified}
                   isTriggerButton
                   Trigger={() => {
                     return (
@@ -132,6 +148,7 @@ export const CollectionsListTableRowActions = (props: {
                         disabled={!user?.emailVerified}
                         form={form}
                         insertAtIndex={0}
+                        ref={addNewBtnRef}
                       >
                         <span>
                           Add{' '}

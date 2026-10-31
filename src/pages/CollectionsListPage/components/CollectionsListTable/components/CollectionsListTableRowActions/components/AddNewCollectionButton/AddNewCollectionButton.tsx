@@ -1,4 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
+import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
+import { useRef } from 'react';
 
 import type { ButtonPropsDef } from '#/components/Button';
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
@@ -17,6 +19,19 @@ export const AddNewCollectionButton = (
 
   const { addToEditingRowIds } = useEditingCollectionsRowIds();
 
+  const addAnotherBtnRef = useRef<HTMLButtonElement>(null);
+
+  const appHotkeys = useAppHotkeys();
+
+  useHotkeys([
+    {
+      callback: () => {
+        addAnotherBtnRef.current?.click();
+      },
+      hotkey: appHotkeys['app.new'],
+    },
+  ]);
+
   return (
     <form.ArrayField name="records">
       {(recordsField) => {
@@ -31,6 +46,7 @@ export const AddNewCollectionButton = (
 
               addToEditingRowIds(newCollectionItem.id);
             }}
+            ref={addAnotherBtnRef}
 
             variant="secondary"
           />

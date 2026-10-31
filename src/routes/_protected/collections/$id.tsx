@@ -5,7 +5,6 @@ import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic
 import { collectionDetailsSearchQueriesSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
 import { getCollectionDetailsByIdServerFn } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.serverFn';
 import { CollectionDetailsPage } from '#/pages/CollectionDetailsPage';
-import { getAutoPopulateCustomFieldValuesServerFn } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props';
 import { createMetaTags } from '#/routes/__root';
 
 export const Route = createFileRoute('/_protected/collections/$id')({
@@ -15,9 +14,6 @@ export const Route = createFileRoute('/_protected/collections/$id')({
     return search;
   },
   loader: async ({ context, deps: searchQueries, params }) => {
-    const autoPopulateCustomFieldValues =
-      await getAutoPopulateCustomFieldValuesServerFn();
-
     const collectionId = Number(params.id);
 
     const requestArgs = { collectionId, params: searchQueries };
@@ -34,10 +30,10 @@ export const Route = createFileRoute('/_protected/collections/$id')({
 
     const collectionDetails = await context.queryClient.query(queryOptions);
 
-    return { autoPopulateCustomFieldValues, ...collectionDetails };
+    return collectionDetails;
   },
   head: ({ loaderData }) => {
-    const title = `${loaderData?.collection?.name || 'Collection Items'}: Collection Tracker`;
+    const title = `${loaderData?.collection?.name || 'Collection Details'}: Collection Tracker`;
 
     const maxItems = 3;
     const numRecords = loaderData?.items?.length || 0;

@@ -26,20 +26,25 @@ export const createCollectionItemsDbQuery = async ({
   }
 
   const userId = context.user.id;
+  const isAdmin = context.user.role === 'admin';
 
   return await db.transaction(async (tx) => {
     // ! temporarily cap the maximum allowed collections to avoid service fees
-    const totalCollections = await tx.$count(
-      collectionItemsTable,
-      eq(collectionItemsTable.userId, userId),
-    );
+    const totalCollections = isAdmin
+      ? 0
+      : await tx.$count(
+          collectionItemsTable,
+          eq(collectionItemsTable.userId, userId),
+        );
 
     const maxAllowed = 250;
     const numAdditionalCollectionsAllowed = Math.max(
       0,
       maxAllowed - totalCollections,
     );
-    const limitReached = numAdditionalCollectionsAllowed < records.length;
+    const limitReached = isAdmin
+      ? false
+      : numAdditionalCollectionsAllowed < records.length;
 
     if (!numAdditionalCollectionsAllowed) {
       return {
@@ -47,7 +52,10 @@ export const createCollectionItemsDbQuery = async ({
       };
     }
 
-    const recordsToCreate = records.slice(0, numAdditionalCollectionsAllowed);
+    const recordsToCreate = records.slice(
+      0,
+      isAdmin ? undefined : numAdditionalCollectionsAllowed,
+    );
 
     const customFieldValuesIndexedToRecord: CustomFieldValuesByFieldId[] = [];
 

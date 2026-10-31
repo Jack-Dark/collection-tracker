@@ -185,12 +185,12 @@ export const getCollectionDetailsByIdDbQuery = async ({
     const orderBySql = getOrderBy(
       collectionItemsTable[sortingField] || collectionItemsTable.name,
     );
+    const offset = (page - 1) * limit;
 
     const unformattedCollectionItemIds = await tx
       .selectDistinct({
-        createdAt: collectionItemsTable.createdAt,
         id: collectionItemsTable.id,
-        name: collectionItemsTable.name,
+        // ! orderBySql is required to be included for selectDistinct to function
         orderBySql,
       })
       .from(collectionItemsTable)
@@ -202,9 +202,9 @@ export const getCollectionDetailsByIdDbQuery = async ({
           ...formattedFiltersSql,
         ),
       )
+      .orderBy(orderBySql)
       .limit(limit)
-      .offset((page - 1) * limit)
-      .orderBy(orderBySql);
+      .offset(offset);
 
     const formattedCollectionItemIds = unformattedCollectionItemIds.map(
       ({ id }) => {
@@ -212,12 +212,10 @@ export const getCollectionDetailsByIdDbQuery = async ({
       },
     );
 
-    const items = await tx.query.collectionItems.findMany({
+    const unformattedItems = await tx.query.collectionItems.findMany({
       columns: {
         userId: false,
       },
-      limit,
-      offset: (page - 1) * limit,
       orderBy: (table) => {
         return getOrderBy(table[sortingField || 'name']);
       },
@@ -263,29 +261,31 @@ export const getCollectionDetailsByIdDbQuery = async ({
       },
     });
 
-    const formattedItems = items.map(({ customFieldValues, ...item }) => {
-      const customFieldValuesByCustomFieldId =
-        customFieldValues.reduce<CustomFieldValuesByFieldId>(
-          (acc, { customFieldValue }) => {
-            if (customFieldValue) {
-              const { customFieldId, ...rest } = customFieldValue;
+    const formattedItems = unformattedItems.map(
+      ({ customFieldValues, ...item }) => {
+        const customFieldValuesByCustomFieldId =
+          customFieldValues.reduce<CustomFieldValuesByFieldId>(
+            (acc, { customFieldValue }) => {
+              if (customFieldValue) {
+                const { customFieldId, ...rest } = customFieldValue;
 
-              return {
-                ...acc,
-                [customFieldId]: rest,
-              };
-            }
+                return {
+                  ...acc,
+                  [customFieldId]: rest,
+                };
+              }
 
-            return acc;
-          },
-          {},
-        );
+              return acc;
+            },
+            {},
+          );
 
-      return {
-        ...item,
-        customFieldValues: customFieldValuesByCustomFieldId,
-      };
-    });
+        return {
+          ...item,
+          customFieldValues: customFieldValuesByCustomFieldId,
+        };
+      },
+    );
 
     const customFieldIds =
       collection?.customFields.reduce<number[]>((acc, { customField }) => {

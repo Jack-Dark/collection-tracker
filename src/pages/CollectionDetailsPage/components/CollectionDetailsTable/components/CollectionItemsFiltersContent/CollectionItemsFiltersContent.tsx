@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 
 import { Slider } from '@base-ui/react';
 import InfoIcon from '@mui/icons-material/Info';
-import { useLayoutEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import type { GetFiltersForCollectionResponseDef } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.types';
 import type { DefaultSelectItemDef } from '#/components/Fields/SelectField/SelectField.types';
@@ -13,8 +13,12 @@ import { CheckboxGroupField } from '#/components/Fields/CheckboxGroup';
 import { FieldWrapper } from '#/components/Fields/FieldWrapper';
 import { SelectField } from '#/components/Fields/SelectField';
 import { Popover } from '#/components/Popover';
+import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
-import type { CollectionItemsFiltersFormDef } from '../../hooks/use-collection-details-filters-props';
+import type {
+  CollectionItemsFiltersFormDef,
+  CollectionItemsFiltersFormSchemaDef,
+} from '../../hooks/use-collection-details-filters-props';
 
 type FiltersBlockPropsDef = PropsWithChildren<{
   label: string | null;
@@ -69,15 +73,63 @@ export const CollectionDetailsFiltersContent = (
 ) => {
   const { collectionId, form } = props;
 
+  const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
+
   // TODO - IMPROVEMENT: WRAP IN SUSPENSE SO REQUEST IS MADE ON DEMAND
   const { data: filterOptions } = useGetFiltersForCollection({
+    onSuccess: (filterOptions) => {
+      const filtersFormDefaultValues: CollectionItemsFiltersFormSchemaDef['filters'] =
+        filterOptions.reduce<
+          Record<number, CollectionItemsFiltersFormSchemaDef['filters'][number]>
+        >((acc, { id, range, type }) => {
+          if (acc[id]) {
+            return acc;
+          } else {
+            if (type === 'string') {
+              const emptyItems: string[] = [];
+
+              return {
+                ...acc,
+                [id]: {
+                  items: emptyItems,
+                  range: undefined,
+                  type,
+                  value: undefined,
+                } satisfies CollectionItemsFiltersFormSchemaDef['filters'][number],
+              };
+            }
+            if (type === 'number') {
+              return {
+                ...acc,
+                [id]: {
+                  items: undefined,
+                  range,
+                  type,
+                  value: undefined,
+                } satisfies CollectionItemsFiltersFormSchemaDef['filters'][number],
+              };
+            }
+            if (type === 'boolean') {
+              return {
+                ...acc,
+                [id]: {
+                  items: undefined,
+                  range: undefined,
+                  type,
+                  value: null,
+                } satisfies CollectionItemsFiltersFormSchemaDef['filters'][number],
+              };
+            }
+          }
+
+          return acc;
+        }, searchQueryFilters);
+
+      form.setFieldValue('filters', filtersFormDefaultValues);
+    },
     placeholderData: [],
     requestArgs: { id: collectionId },
   });
-
-  useLayoutEffect(() => {
-    form.reset();
-  }, []);
 
   return (
     <div className="grid gap-5">

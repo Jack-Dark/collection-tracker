@@ -1,6 +1,8 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useHotkeys, useAppHotkeys } from '@tanstack/react-hotkeys';
+import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
@@ -19,7 +21,7 @@ import { useEditingCollectionItemsRowIds } from '../../../../hooks/use-editing-c
 import { AddNewCollectionItemButton } from './components/AddNewCollectionItemButton';
 import { CollectionDetailsSubmitButton } from './components/CollectionDetailsSubmitButton';
 
-// TODO - IMPROVEMENT: RENAME TO SOMETHING MORE APPROPRIATE
+// TODO - REFACTOR: RENAME TO SOMETHING MORE APPROPRIATE
 export const CollectionDetailsTableRowActions = ({
   form,
   onCancel,
@@ -78,6 +80,19 @@ export const CollectionDetailsTableRowActions = ({
     );
   }, [selectedRowIds]);
 
+  const addNewBtnRef = useRef<HTMLButtonElement>(null);
+
+  const appHotkeys = useAppHotkeys();
+
+  useHotkeys([
+    {
+      callback: () => {
+        addNewBtnRef.current?.click();
+      },
+      hotkey: appHotkeys['app.new'],
+    },
+  ]);
+
   return (
     <div className="flex justify-between">
       <div className="flex gap-2">
@@ -126,6 +141,7 @@ export const CollectionDetailsTableRowActions = ({
         ) : (
           <Popover
             Description={verifyEmailMessage}
+            disabled={user?.emailVerified}
             isTriggerButton
             Trigger={() => {
               return (
@@ -134,6 +150,7 @@ export const CollectionDetailsTableRowActions = ({
                   disabled={!user?.emailVerified}
                   form={form}
                   insertAtIndex={0}
+                  ref={addNewBtnRef}
                 >
                   <span>
                     Add <span className="sr-only md:not-sr-only">New</span>

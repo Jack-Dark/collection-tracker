@@ -44,9 +44,8 @@ export const FullPageLoadingSpinner = () => {
       )}
 
       <LoadingSpinner
-        border="border-2"
+        className="size-20 border-2"
         enableShadow
-        size="size-20"
         variant="color"
       />
     </div>
