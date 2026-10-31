@@ -6,7 +6,7 @@ export const createCustomFieldValuesSchema = z.object({
   records: z.array(
     z
       .object({
-        customFieldId: z.number().min(1).describe('Custom Field ID'),
+        customFieldId: z.number().min(1),
         value: customFieldValueSchema,
       })
       .strict(),
