@@ -10,7 +10,7 @@ type SearchNotesSettingsDef =
       searchNotes?: never;
     }
   | {
-      enableSearchNotes: boolean;
+      enableSearchNotes?: boolean;
       onClickSearchNotes: (checked: boolean) => void;
       searchNotes: boolean;
     };

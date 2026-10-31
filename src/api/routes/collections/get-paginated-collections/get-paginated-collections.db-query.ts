@@ -45,6 +45,9 @@ export const getPaginatedCollectionsDbQuery = async ({
         : 'name';
 
     const collections = await tx.query.collections.findMany({
+      columns: {
+        userId: false,
+      },
       limit,
       offset: (page - 1) * limit,
       orderBy: {

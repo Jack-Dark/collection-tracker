@@ -1,5 +1,5 @@
-import type { JSXElementConstructor, JSX } from 'react';
+import type { JSXElementConstructor, ReactNode } from 'react';
 
 export type MenuItemLabelPropsDef = {
-  Label: string | JSXElementConstructor<{}> | JSX.Element;
+  Label: ReactNode | JSXElementConstructor<{}>;
 };
