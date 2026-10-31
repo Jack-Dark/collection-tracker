@@ -36,7 +36,13 @@ export const CollectionDetailsImagesCell = (props: {
                     const isPublicId = typeof data === 'string';
 
                     const image: BaseImagePropsDef = isPublicId
-                      ? { publicId: data }
+                      ? {
+                          cropMode: 'limit',
+                          height: 1000,
+                          publicId: data,
+                          transformations: ['f_auto,q_auto'],
+                          width: 1000,
+                        }
                       : { src: data.previewUrl };
 
                     return image;
@@ -51,8 +57,10 @@ export const CollectionDetailsImagesCell = (props: {
 
                         const thumbnail: BaseImagePropsDef = isPublicId
                           ? {
+                              cropMode: 'auto',
                               height: thumbnailSize,
                               publicId: data,
+                              transformations: ['f_auto,q_auto'],
                               width: thumbnailSize,
                             }
                           : { src: data.previewUrl };
