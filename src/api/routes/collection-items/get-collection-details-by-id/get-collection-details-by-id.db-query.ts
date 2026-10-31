@@ -32,6 +32,8 @@ import type { CustomFieldValuesByFieldId } from '../../custom-field-values/custo
 import type { CollectionItemsTableColumn } from '../collection-item.types';
 import type { GetCollectionDetailsByIdRequestArgsDef } from './get-collection-details-by-id.types';
 
+import { formatCollection } from '../../collections/get-paginated-collections/get-paginated-collections.db-query';
+
 export const getCollectionDetailsByIdDbQuery = async ({
   context,
   data,
@@ -98,6 +100,8 @@ export const getCollectionDetailsByIdDbQuery = async ({
         },
       },
     });
+
+    const formattedCollection = collection && formatCollection(collection);
 
     const formattedFiltersSql = Object.entries(filters).reduce<
       (SQL | undefined)[]
@@ -345,7 +349,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
       );
 
     return {
-      collection,
+      collection: formattedCollection,
       items: formattedItems,
       lastAddedCustomFieldValues: lastAddedCustomFieldValuesByCustomFieldId,
       pagination,

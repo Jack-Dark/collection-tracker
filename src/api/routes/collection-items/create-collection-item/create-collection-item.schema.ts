@@ -6,6 +6,7 @@ import {
 } from '../base-collection-item.schema';
 
 export const createCollectionItemsFormSchema = baseCollectionItemSchema.extend({
+  createdAt: z.undefined().optional(),
   id: z.string(),
   images: imagesSchema.filesList,
 });

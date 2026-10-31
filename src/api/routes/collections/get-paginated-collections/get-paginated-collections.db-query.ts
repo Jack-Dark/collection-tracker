@@ -81,33 +81,51 @@ export const getPaginatedCollectionsDbQuery = async ({
       },
     });
 
-    const formattedCollections = collections.map((collection) => {
-      const { customFields } = collection;
-
-      const formattedCustomFields = customFields.reduce<
-        {
-          customField: {
-            id: number;
-            name: string;
-            type: CustomFieldTypeDef;
-          };
-          order: number;
-        }[]
-      >((acc, data) => {
-        const { customField } = data;
-        if (customField) {
-          return [...acc, { order: data.order, customField }];
-        } else {
-          return acc;
-        }
-      }, []);
-
-      return { ...collection, customFields: formattedCustomFields };
-    });
+    const formattedCollections = collections.map(formatCollection);
 
     return {
       collections: formattedCollections,
       pagination,
     };
   });
+};
+
+export const formatCollection = <
+  TCollection extends Record<any, any> & {
+    customFields: {
+      customField: {
+        id: number;
+        name: string;
+        type: CustomFieldTypeDef;
+      } | null;
+      order: number;
+    }[];
+  },
+>(
+  collection: TCollection,
+) => {
+  const { customFields } = collection;
+
+  const formattedCustomFields = customFields.reduce<
+    {
+      customField: {
+        id: number;
+        name: string;
+        type: CustomFieldTypeDef;
+      };
+      order: number;
+    }[]
+  >((acc, data) => {
+    const { customField } = data;
+    if (customField) {
+      return [...acc, { order: data.order, customField }];
+    } else {
+      return acc;
+    }
+  }, []);
+
+  return {
+    ...collection,
+    customFields: formattedCustomFields,
+  } satisfies TCollection;
 };
