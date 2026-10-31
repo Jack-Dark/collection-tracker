@@ -1,5 +1,6 @@
 import { and, eq, ilike } from 'drizzle-orm';
 
+import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
 import { db } from '#/api/db';
@@ -80,8 +81,32 @@ export const getPaginatedCollectionsDbQuery = async ({
       },
     });
 
+    const formattedCollections = collections.map((collection) => {
+      const { customFields } = collection;
+
+      const formattedCustomFields = customFields.reduce<
+        {
+          customField: {
+            id: number;
+            name: string;
+            type: CustomFieldTypeDef;
+          };
+          order: number;
+        }[]
+      >((acc, data) => {
+        const { customField } = data;
+        if (customField) {
+          return [...acc, { order: data.order, customField }];
+        } else {
+          return acc;
+        }
+      }, []);
+
+      return { ...collection, customFields: formattedCustomFields };
+    });
+
     return {
-      collections,
+      collections: formattedCollections,
       pagination,
     };
   });

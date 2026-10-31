@@ -31,7 +31,7 @@ export const CollectionsListPage: RouteComponent = () => {
   const { data, isSuccess } = useGetPaginatedCollections({
     placeholderData: {
       collections: [],
-      pagination: getPaginationMetadataDefaults(1000),
+      pagination: getPaginationMetadataDefaults(),
     },
     requestArgs: { params: searchQueries },
   });

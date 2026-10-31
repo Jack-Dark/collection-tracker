@@ -1,12 +1,14 @@
 import InfoIcon from '@mui/icons-material/Info';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import type { GetPaginatedCollectionsResponseDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
 import type { TableFeaturesDef } from '#/components/Table';
 
 import { Popover } from '#/components/Popover';
 
-import type { CreateOrUpdateCollectionFormTypeDef } from '../../CollectionsListPage.types';
+import type {
+  CreateOrUpdateCollectionFormRecordDef,
+  CreateOrUpdateCollectionFormTypeDef,
+} from '../../CollectionsListPage.types';
 
 import { CollectionsListActionsCell } from './components/column-cells/CollectionsListActionsCell';
 import { CollectionsListCustomFieldsCell } from './components/column-cells/CollectionsListCustomFieldsCell';
@@ -15,7 +17,7 @@ import { CollectionsListNotesCell } from './components/column-cells/CollectionsL
 
 const columnHelper = createColumnHelper<
   TableFeaturesDef,
-  GetPaginatedCollectionsResponseDef['collections'][number]
+  CreateOrUpdateCollectionFormRecordDef
 >();
 
 export type GetCollectionsListTableColumnsPropsDef = {

@@ -1,4 +1,4 @@
-import type { CollectionTableColumnsDef } from '#/api/routes/collections/collection.types';
+import type { CreateOrUpdateCollectionFormRecordDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { useFormatSortProps } from '#/hooks/use-format-sort-props';
@@ -8,7 +8,9 @@ export const useCollectionsListSortProps = () => {
   const { onUpdateCollectionsListQueries, searchQueries } =
     useOnUpdateCollectionsListQueries();
 
-  const sortProps = useFormatSortProps<CollectionTableColumnsDef>({
+  const sortProps = useFormatSortProps<
+    keyof CreateOrUpdateCollectionFormRecordDef
+  >({
     items: [
       {
         bidirectional: true,
