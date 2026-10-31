@@ -1,1 +1,1 @@
-export * from './ZoomableThumbnailGalleryGallery';
+export * from './ZoomableThumbnailGallery';

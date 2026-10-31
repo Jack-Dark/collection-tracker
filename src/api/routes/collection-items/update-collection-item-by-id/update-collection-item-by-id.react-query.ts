@@ -23,7 +23,7 @@ export const useUpdateCollectionItems = <
 ) => {
   const { onMutate: onUpdateCollectionItems, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to update collection item.',
-    mutationFn: async (formRecords) => {
+    mutationFn: async ({ data: formRecords }) => {
       const uploadedPublicIds: string[][] = [];
 
       try {
@@ -76,7 +76,7 @@ export const useUpdateCollectionItems = <
         throw error;
       }
     },
-    mutationKey: [reactMutationKeys.collectionItems('update')],
+    mutationKey: [reactMutationKeys.collectionItems.update],
     ...props,
   });
 

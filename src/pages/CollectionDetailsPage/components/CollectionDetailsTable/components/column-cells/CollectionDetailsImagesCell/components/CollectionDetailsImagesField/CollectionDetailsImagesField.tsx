@@ -22,7 +22,7 @@ export const CollectionDetailsImagesField = (
   return (
     <form.ArrayField name={`collectionItems[${rowIndex}].images`}>
       {(field) => {
-        return (
+        return field.value ? (
           <>
             <DragDropProvider
               onDragEnd={(event) => {
@@ -76,11 +76,10 @@ export const CollectionDetailsImagesField = (
             </DragDropProvider>
 
             <SimpleErrorBoundary>
-              <FieldWrapper className="relative grid items-center justify-center size-18 border border-theme-divider-3 bg-theme-surface-2 text-theme-t2 hover:border-theme-link-hover hover:text-theme-link-hover cursor-pointer">
+              <FieldWrapper className="relative grid items-center justify-center size-18 border border-theme-divider-3 rounded-2xl bg-theme-surface-2 text-theme-t2 hover:border-theme-link-hover hover:text-theme-link-hover cursor-pointer">
                 <AddIcon fontSize="large" />
                 <Field.Control
                   accept="image/*"
-                  autoFocus
                   capture="environment"
                   className="absolute size-full cursor-pointer text-transparent"
                   multiple
@@ -103,7 +102,7 @@ export const CollectionDetailsImagesField = (
               </FieldWrapper>
             </SimpleErrorBoundary>
           </>
-        );
+        ) : null;
       }}
     </form.ArrayField>
   );

@@ -9,14 +9,18 @@ import { createMetaTags } from '../__root';
 export const Route = createFileRoute('/_unprotected/sign-in')({
   validateSearch: z.object({
     resetPassword: z.boolean().optional(),
+    accountDeleted: z.boolean().optional(),
     redirect: z.string().optional(),
   }),
   component: SignInPage,
+  loaderDeps: ({ search }) => {
+    return search;
+  },
   beforeLoad: () => {
     return getSession();
   },
-  loader: ({ context }) => {
-    if (context.user?.id)
+  loader: ({ context, deps: searchQueries }) => {
+    if (context.user?.id && !searchQueries?.resetPassword)
       throw redirect({
         to: '/collections',
       });

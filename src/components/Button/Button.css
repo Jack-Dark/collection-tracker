@@ -48,7 +48,7 @@
 
 @layer components {
   .btn {
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-4xl);
     font-weight: var(--font-weight-semibold);
     box-shadow: var(--shadow-md);
     cursor: pointer;
@@ -108,7 +108,7 @@
 
 
   .btn-secondary {
-    background-color: var(--color-primary-100);
+    background-color: transparent;
     border-color: var(--color-primary-900);
     color: var(--color-primary-900);
 

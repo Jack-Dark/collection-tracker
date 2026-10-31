@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { maxLimit } from '#/api/pagination/pagination.schema';
 import { SelectField } from '#/components/Fields/SelectField';
 
 import type { TablePaginationPropsDef } from './TablePagination.types';
@@ -10,8 +11,11 @@ export const TablePagination = (props: {
   const { pagination } = props;
 
   const limitItems = useMemo(() => {
-    return new Array(5).fill(null).map((_, index) => {
-      const value = (index + 1) * 50;
+    const numItems = 4;
+    const increment = Math.floor(maxLimit / numItems);
+
+    return new Array(numItems).fill(null).map((_, index) => {
+      const value = (index + 1) * increment;
 
       return {
         label: value,

@@ -23,6 +23,7 @@ export const getFiltersForCollectionDbQuery = async ({
 
   return db.transaction(async (tx) => {
     const collection = await tx.query.collections.findFirst({
+      columns: {},
       where: {
         id: collectionId,
         userId,

@@ -50,14 +50,14 @@ export const SwitchField = (props: SwitchFieldPropsDef) => {
         <SwitchMui.Root
           checked={checked}
           className={twJoin(
-            `flex h-5 w-9 shrink-0 rounded-2xl p-0.5 transition-colors duration-150 ease-[ease] border data-checked:bg-theme-link data-checked:border-theme-link`,
+            `flex h-5 w-9 shrink-0 rounded-full p-0.5 transition-colors duration-150 ease-[ease] border data-checked:bg-theme-link data-checked:border-theme-link`,
             disabled
               ? 'cursor-not-allowed border-gray-300 bg-gray-300'
               : 'cursor-pointer border-gray-500 bg-gray-500',
           )}
           onCheckedChange={onCheckedChange}
         >
-          <SwitchMui.Thumb className="size-3.5 rounded-2xl bg-white transition-[translate,background-color] duration-150 ease-[ease] data-checked:translate-x-4" />
+          <SwitchMui.Thumb className="size-3.5 rounded-full bg-white transition-[translate,background-color] duration-150 ease-[ease] data-checked:translate-x-4" />
         </SwitchMui.Root>
 
         {labelPosition === 'right' && <LabelComponent />}

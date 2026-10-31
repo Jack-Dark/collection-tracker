@@ -1,7 +1,6 @@
 import { createFileRoute, isRedirect } from '@tanstack/react-router';
 
 import { ensureSession } from '#/auth/auth-middleware';
-import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/admin')({
@@ -40,5 +39,4 @@ export const Route = createFileRoute('/admin')({
     }
   },
   component: Layout,
-  errorComponent: SimpleErrorBoundaryContent,
 });

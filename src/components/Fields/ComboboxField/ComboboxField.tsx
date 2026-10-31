@@ -332,7 +332,7 @@ export const ComboboxField = <
           <Combobox.Value>
             {() => {
               const classNames =
-                'min-w-30 max-w-full p-1.5 border rounded-xs border-theme-divider-2 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:dark:bg-theme-surface-1';
+                'min-w-30 max-w-full p-1.5 border rounded-full border-theme-divider-2 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:dark:bg-theme-surface-1';
 
               return multiple ? (
                 <Combobox.Input
@@ -360,7 +360,7 @@ export const ComboboxField = <
           >
             <Combobox.Popup>
               {!allowCreatable && (
-                <Combobox.Empty className="bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 border border-theme-divider-2 py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+                <Combobox.Empty className="bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 border border-theme-divider-2 py-2 rounded-full shadow-lg max-h-100 overflow-auto">
                   <div className="p-2 text-theme-t2">No matches</div>
                 </Combobox.Empty>
               )}
@@ -416,7 +416,7 @@ const SortableChip = <TValue extends TValueRecordDef>(props: {
   return (
     <Combobox.Chip
       aria-label={label}
-      className="bg-theme-surface-1 dark:bg-theme-surface-3 flex items-center gap-1 border border-theme-divider-2 rounded-4xl px-2 py-.5"
+      className="bg-theme-surface-1 dark:bg-theme-surface-3 flex items-center gap-1 border border-theme-divider-2 rounded-full px-2 py-.5"
       ref={ref}
     >
       {enableChipSort && (

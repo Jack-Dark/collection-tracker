@@ -22,9 +22,7 @@ export const useRequestVerificationEmail = <
   const { onMutate: onRequestVerificationEmail, ...rest } =
     useGenericMutateQuery({
       fallbackErrorMessage: 'Unable to send verification email.',
-      mutationFn: (data) => {
-        return requestVerificationEmailServerFn({ data });
-      },
+      mutationFn: requestVerificationEmailServerFn,
       mutationKey: [reactMutationKeys.users.requestVerificationEmail],
       ...props,
     });

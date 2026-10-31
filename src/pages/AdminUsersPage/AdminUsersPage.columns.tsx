@@ -6,6 +6,7 @@ import type { TableFeaturesDef } from '#/components/Table';
 
 import { useImpersonateUser } from '#/api/routes/users/impersonate-user/impersonate-user.react-query';
 import { MoreMenu } from '#/components/MoreMenu';
+import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 
 const columnHelper = createColumnHelper<
   TableFeaturesDef,
@@ -36,7 +37,11 @@ export const columns = columnHelper.columns([
     cell: ({ getValue }) => {
       const date = getValue();
 
-      return date ? formatDate(date, masks.paddedShortDate) : '-';
+      return date ? (
+        formatDate(date, masks.paddedShortDate)
+      ) : (
+        <EmptyCellValue />
+      );
     },
     header: 'Last Active',
   }),

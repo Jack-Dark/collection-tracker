@@ -13,14 +13,12 @@ export const getGenericFetchQueryOptions = <
     TTransformedData
   >,
 ) => {
-  const { onStart, placeholderData, queryFn, requestArgs, ...configs } = props;
+  const { placeholderData, queryFn, requestArgs, ...configs } = props;
 
   const configuredQueryOptions = queryOptions({
     ...configs,
     placeholderData: placeholderData as undefined,
     queryFn: async () => {
-      await onStart?.();
-
       return queryFn({ data: requestArgs });
     },
   });

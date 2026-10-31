@@ -9,8 +9,10 @@ export const ConfirmDeleteDialog = (props: ConfirmDeleteDialogPropsDef) => {
   const {
     children = 'Are you sure you want to delete this?',
     form,
+    Header = 'Confirm Delete',
     hideDialog,
     onConfirm,
+    submitText = 'Delete',
   } = props;
 
   const { onInterceptProcessingRequest, processing } = useSpinner();
@@ -40,14 +42,14 @@ export const ConfirmDeleteDialog = (props: ConfirmDeleteDialogPropsDef) => {
               <Button
                 onClick={handleConfirm}
                 processing={processing}
-                text="Delete"
+                text={submitText}
                 variant="alert"
               />
             )}
           </>
         );
       }}
-      Header="Confirm Delete"
+      Header={Header}
       onClose={hideDialog}
     >
       {children}

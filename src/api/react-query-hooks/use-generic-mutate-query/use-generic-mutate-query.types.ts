@@ -26,5 +26,5 @@ export interface UseGenericMutateQueryProps<
   'requestArgs'
 > {
   fallbackErrorMessage: string;
-  mutationFn: (args: TRequestArgs) => Promise<TResponseDef>;
+  mutationFn: (args: { data: TRequestArgs }) => Promise<TResponseDef>;
 }

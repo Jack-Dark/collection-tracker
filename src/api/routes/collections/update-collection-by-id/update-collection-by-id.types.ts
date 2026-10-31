@@ -1,5 +1,7 @@
 import type z from 'zod';
 
+import type { QueryResponseDef } from '#/api/db-tables-schema.types';
+
 import type { updateCollectionByIdDbQuery } from './update-collection-by-id.db-query';
 import type {
   onUpdateCollectionsArgsSchema,
@@ -14,6 +16,6 @@ export type OnUpdateCollectionsArgsDef = z.output<
   typeof onUpdateCollectionsArgsSchema
 >;
 
-export type UpdateCollectionByIdResponseDef = Awaited<
-  ReturnType<typeof updateCollectionByIdDbQuery>
+export type UpdateCollectionByIdResponseDef = QueryResponseDef<
+  typeof updateCollectionByIdDbQuery
 >;

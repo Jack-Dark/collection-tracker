@@ -8,6 +8,7 @@ import { signUpFormSchema } from '#/api/routes/users/sign-up/sign-up.schema';
 import { InputField } from '#/components/Fields/InputField';
 import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
+import { LoginWithGoogleButton } from '#/pages/SignInPage/components/SignInForm/components/LoginWithGoogleButton';
 
 export const SignUpForm: RouteComponent = () => {
   const navigate = useNavigate();
@@ -165,8 +166,33 @@ export const SignUpForm: RouteComponent = () => {
           }}
         </form.Subscribe>
 
-        <div className="flex">
-          <FormSubmitButton form={form} text="Sign Up" />
+        <div className="grid md:flex items-center md:flex-wrap gap-5 pt-4">
+          <FormSubmitButton
+            className="justify-self-start"
+            form={form}
+            text="Sign Up"
+          />
+
+          <p className="">- or -</p>
+
+          <LoginWithGoogleButton text="Sign Up with Google" />
+        </div>
+
+        <div className="grid gap-2 text-theme-t2 text-sm">
+          <p>
+            Collection Tracker only collects cookies that are strictly required
+            for site functionality.
+          </p>
+
+          <p>
+            We will{' '}
+            <strong>
+              <em>NEVER</em>
+            </strong>{' '}
+            share or sell your information.
+          </p>
+
+          <p>Delete your account anytime, hassle-free.</p>
         </div>
       </div>
     </form>

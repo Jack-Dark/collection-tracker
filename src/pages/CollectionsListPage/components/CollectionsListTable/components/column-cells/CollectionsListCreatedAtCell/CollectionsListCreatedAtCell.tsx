@@ -8,7 +8,7 @@ import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsLis
 import { Button } from '#/components/Button';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-import { AddNewCollectionButton } from '../../CollectionsListTableRowActions/components/AddNewCollectionButton';
+import { AddNewCollectionButton } from '../../CollectionsListAboveTableActions/components/AddNewCollectionButton';
 
 export const CollectionsListCreatedAtCell = (props: {
   form: CreateOrUpdateCollectionFormTypeDef;

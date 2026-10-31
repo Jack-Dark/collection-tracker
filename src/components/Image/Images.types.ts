@@ -2,6 +2,8 @@ import type { CropMode } from 'cloudinary';
 
 export type ImagePropsDef = {
   alt: string;
+  className?: string;
+  objectFit?: 'contain' | 'cover';
   onClick?: () => void;
 } & BaseImagePropsDef;
 

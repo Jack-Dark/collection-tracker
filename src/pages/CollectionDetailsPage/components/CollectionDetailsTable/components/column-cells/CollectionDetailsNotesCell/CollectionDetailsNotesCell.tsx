@@ -1,6 +1,7 @@
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { TextAreaField } from '#/components/Fields/TextAreaField';
+import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsNotesCell = (props: {
@@ -26,8 +27,10 @@ export const CollectionDetailsNotesCell = (props: {
             placeholder="Input notes..."
             value={field.value}
           />
+        ) : field.value ? (
+          <p>{field.value}</p>
         ) : (
-          <p>{field.value || '-'}</p>
+          <EmptyCellValue />
         );
       }}
     </form.Field>

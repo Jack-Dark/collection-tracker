@@ -19,9 +19,7 @@ export const useUpdatePassword = <TTransformedData = UpdatePasswordResponseDef>(
 ) => {
   const { onMutate: onUpdatePassword, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to update password.',
-    mutationFn: (data) => {
-      return updatePasswordServerFn({ data });
-    },
+    mutationFn: updatePasswordServerFn,
     mutationKey: [reactMutationKeys.users.password.update],
     ...props,
   });

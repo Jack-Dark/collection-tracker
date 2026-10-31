@@ -36,7 +36,8 @@ const tableCellClasses = twJoin(
   'last:sticky last:right-0 last:z-1 last:border-l last:border-l-transparent last:group-data-overflow-x-end:border-l-theme-surface-3',
 );
 
-const tableRowClasses = 'h-8 hover:bg-primary-950 not-last:*:border-b';
+const tableRowClasses =
+  'h-8 hover:bg-primary-100 dark:hover:bg-primary-950 not-last:*:border-b';
 
 export type AboveTableComponentDef<
   TTableFeatures extends TableFeatures,

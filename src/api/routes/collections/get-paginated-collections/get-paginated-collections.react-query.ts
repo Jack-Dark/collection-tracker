@@ -1,7 +1,8 @@
 import type { GenericFetchProps } from '#/api/react-query-hooks/use-generic-fetch-query/use-generic-fetch-query.types';
 
 import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
-import { useGenericFetchQuery } from '#/api/react-query-hooks/use-generic-fetch-query';
+import { useGenericSuspenseQuery } from '#/api/react-query-hooks/use-generic-fetch-query';
+import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
 import { getUseInvalidateQuery } from '#/api/react-query-hooks/use-generic-fetch-query/hooks/get-use-invalidate-query-cache';
 
 import type {
@@ -10,6 +11,27 @@ import type {
 } from './get-paginated-collections.types';
 
 import { getPaginatedCollectionsServerFn } from './get-paginated-collections.serverFn';
+
+const getPaginatedCollectionsQueryDetails = (
+  requestArgs: GetPaginatedCollectionsRequestArgsDef,
+) => {
+  return {
+    queryFn: getPaginatedCollectionsServerFn,
+    queryKey: [
+      reactQueryKeys.getPaginatedCollections,
+      JSON.stringify(requestArgs),
+    ],
+  } as const;
+};
+
+export const getPaginatedCollectionsQueryOptions = (
+  requestArgs: GetPaginatedCollectionsRequestArgsDef,
+) => {
+  return getGenericFetchQueryOptions({
+    ...getPaginatedCollectionsQueryDetails(requestArgs),
+    requestArgs,
+  });
+};
 
 export const useGetPaginatedCollections = <
   TTransformedData = GetPaginatedCollectionsResponseDef,
@@ -20,13 +42,9 @@ export const useGetPaginatedCollections = <
     TTransformedData
   >,
 ) => {
-  return useGenericFetchQuery({
+  return useGenericSuspenseQuery({
     fallbackErrorMessage: 'Unable to retrieve collections.',
-    queryFn: getPaginatedCollectionsServerFn,
-    queryKey: [
-      reactQueryKeys.getPaginatedCollections,
-      JSON.stringify(props.requestArgs),
-    ],
+    ...getPaginatedCollectionsQueryDetails(props.requestArgs),
     ...props,
   });
 };

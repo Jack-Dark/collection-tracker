@@ -19,9 +19,7 @@ export const useUpdateEmail = <TTransformedData = UpdateEmailResponseDef>(
 ) => {
   const { onMutate: onUpdateEmail, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to update email.',
-    mutationFn: (data) => {
-      return updateEmailServerFn({ data });
-    },
+    mutationFn: updateEmailServerFn,
     mutationKey: [reactMutationKeys.users.email.update],
     ...props,
   });

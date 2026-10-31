@@ -4,7 +4,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { createAtom, useAtom } from '@tanstack/react-store';
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
@@ -13,7 +13,7 @@ import type { CustomFieldFormSchemaDef } from '#/api/routes/custom-fields/custom
 import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
 
-import { useGetCollectionsWithCustomFields } from '#/api/routes/collections/get-collections-with-custom-field/get-collections-with-custom-field.react-query';
+import { useGetNumCollectionsWithCustomField } from '#/api/routes/collections/get-num-collections-with-custom-field/get-num-collections-with-custom-field.react-query';
 import { useCreateCustomFields } from '#/api/routes/custom-fields/create-custom-fields/create-custom-fields.react-query';
 import { customFieldFormSchema } from '#/api/routes/custom-fields/custom-fields.schema';
 import { useDeleteCustomFields } from '#/api/routes/custom-fields/delete-custom-fields/delete-custom-fields.react-query';
@@ -30,12 +30,13 @@ import { ComboboxField } from '#/components/Fields/ComboboxField';
 import { InputField } from '#/components/Fields/InputField';
 import { SelectField } from '#/components/Fields/SelectField';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
+import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { pluralize } from '#/helpers/pluralize';
 import { replaceValueInArrayField } from '#/helpers/replace-value-in-array-field';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 export const customFieldTypeLabelsMap = {
-  boolean: 'True/False',
+  boolean: 'Checkbox',
   number: 'Number',
   string: 'Text',
 } as const;
@@ -81,14 +82,17 @@ export const CollectionsListCustomFieldsCell = (props: {
 
   const [updateItemsTimestamp, setUpdateItemsTimestamp] = useState<number>(0);
 
-  // TODO - IMPROVEMENT: wrap inside conditional with Suspense so data is only fetched when editing a row
-  const { data: customFieldsInDb = [] } = useGetCustomFields({
-    onSuccess: () => {
-      setUpdateItemsTimestamp(Date.now());
-    },
+  const { data: customFieldsInDb, isSuccess } = useGetCustomFields({
+    enabled: isEditingRow,
     placeholderData: [],
     requestArgs: {},
   });
+
+  useLayoutEffect(() => {
+    if (isSuccess) {
+      setUpdateItemsTimestamp(Date.now());
+    }
+  }, [isSuccess, customFieldsInDb]);
 
   const [showAddOrEditCustomFieldsDialog, hideAddOrEditCustomFieldsDialog] =
     useDialog(() => {
@@ -312,7 +316,7 @@ export const CollectionsListCustomFieldsCell = (props: {
             );
           })
         ) : (
-          '-'
+          <EmptyCellValue />
         );
       }}
     </form.ArrayField>
@@ -329,19 +333,20 @@ export const DeleteCustomFieldDialog = (props: {
 
   const id = Number(lastEditedCustomField.data?.customField.id);
 
-  const { data: collectionsWithCustomField } =
-    useGetCollectionsWithCustomFields({
-      placeholderData: [],
-      requestArgs: {
-        customFieldIds: [id],
-      },
-    });
+  const { data } = useGetNumCollectionsWithCustomField({
+    placeholderData: {
+      numAffectedCollections: 0,
+    },
+    requestArgs: {
+      customFieldId: id,
+    },
+  });
+
+  const { numAffectedCollections } = data;
 
   const invalidateGetCustomFields = useInvalidateGetCustomFields();
 
   const { onDeleteCustomFields } = useDeleteCustomFields();
-
-  const numAffectedCollections = collectionsWithCustomField.length;
 
   return (
     <form.Field name="records">
@@ -429,7 +434,6 @@ export const AddOrEditCustomFieldDialog = (props: {
   const isNewRecord =
     typeof lastEditedCustomField.data?.customField.id === 'string';
 
-  // TODO - IMPROVEMENT: wrap inside conditional with Suspense so data is only fetched when editing a row
   const { data: customFieldsInDb = [] } = useGetCustomFields({
     placeholderData: [],
     requestArgs: {},
@@ -596,7 +600,7 @@ export const AddOrEditCustomFieldDialog = (props: {
                     <SelectField
                       error={fieldTypeError || typeField.errors}
                       items={customFieldDataTypeItems}
-                      Label="Data Type"
+                      Label="Input Type"
                       name={typeField.name}
                       onValueChange={(value) => {
                         const type = value?.id;

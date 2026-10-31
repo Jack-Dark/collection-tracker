@@ -43,11 +43,7 @@ export const FullPageLoadingSpinner = () => {
         </button>
       )}
 
-      <LoadingSpinner
-        className="size-20 border-2"
-        enableShadow
-        variant="color"
-      />
+      <LoadingSpinner className="size-20 border-2" enableShadow />
     </div>
   ) : null;
 };

@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 
 import { Slider } from '@base-ui/react';
 import InfoIcon from '@mui/icons-material/Info';
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 
 import type { GetFiltersForCollectionResponseDef } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.types';
 import type { DefaultSelectItemDef } from '#/components/Fields/SelectField/SelectField.types';
@@ -12,6 +12,7 @@ import { Button } from '#/components/Button';
 import { CheckboxGroupField } from '#/components/Fields/CheckboxGroup';
 import { FieldWrapper } from '#/components/Fields/FieldWrapper';
 import { SelectField } from '#/components/Fields/SelectField';
+import { LoadingSpinner } from '#/components/FullPageLoadingSpinner/components/LoadingSpinner';
 import { Popover } from '#/components/Popover';
 import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
@@ -75,9 +76,17 @@ export const CollectionDetailsFiltersContent = (
 
   const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
 
-  // TODO - IMPROVEMENT: WRAP IN SUSPENSE SO REQUEST IS MADE ON DEMAND
-  const { data: filterOptions } = useGetFiltersForCollection({
-    onSuccess: (filterOptions) => {
+  const {
+    data: filterOptions,
+    isFetching,
+    isSuccess,
+  } = useGetFiltersForCollection({
+    placeholderData: [],
+    requestArgs: { id: collectionId },
+  });
+
+  useLayoutEffect(() => {
+    if (isSuccess) {
       const filtersFormDefaultValues: CollectionItemsFiltersFormSchemaDef['filters'] =
         filterOptions.reduce<
           Record<number, CollectionItemsFiltersFormSchemaDef['filters'][number]>
@@ -126,22 +135,26 @@ export const CollectionDetailsFiltersContent = (
         }, searchQueryFilters);
 
       form.setFieldValue('filters', filtersFormDefaultValues);
-    },
-    placeholderData: [],
-    requestArgs: { id: collectionId },
-  });
+    }
+  }, [isSuccess, filterOptions]);
 
   return (
     <div className="grid gap-5">
-      {filterOptions.map((customField) => {
-        return (
-          <CustomFieldTypeFilter
-            customField={customField}
-            form={form}
-            key={customField.id}
-          />
-        );
-      })}
+      {isFetching ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          {filterOptions?.map((customField) => {
+            return (
+              <CustomFieldTypeFilter
+                customField={customField}
+                form={form}
+                key={customField.id}
+              />
+            );
+          })}
+        </>
+      )}
     </div>
   );
 };
@@ -296,12 +309,12 @@ const CustomFieldNumberFilter = (props: {
                       <Slider.Indicator className="bg-primary-700" />
                       <Slider.Thumb
                         aria-label="Minimum value"
-                        className="size-3 bg-primary-700 rounded-xl cursor-grab"
+                        className="size-3 bg-primary-700 rounded-full cursor-grab"
                         index={0}
                       />
                       <Slider.Thumb
                         aria-label="Maximum value"
-                        className="size-3 bg-primary-700 rounded-xl cursor-grab"
+                        className="size-3 bg-primary-700 rounded-full cursor-grab"
                         index={1}
                       />
                     </Slider.Track>

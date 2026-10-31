@@ -1,7 +1,7 @@
 import { createStore, useSelector } from '@tanstack/react-store';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
-export const spinnerStore = createStore({ isSpinning: false });
+const spinnerStore = createStore({ isSpinning: false });
 
 export const useSpinner = () => {
   const { isSpinning } = useSelector(spinnerStore);
@@ -49,11 +49,13 @@ export const useSpinner = () => {
    * };
    * ```
    */
-  const onInterceptRequest = async (requestCallback: () => Promise<any>) => {
+  const onInterceptRequest = async <TResponse extends any>(
+    requestCallback: () => Promise<TResponse>,
+  ) => {
     try {
       showSpinner();
 
-      return requestCallback();
+      await requestCallback();
     } finally {
       hideSpinner();
     }
@@ -79,13 +81,13 @@ export const useSpinner = () => {
    * return <Button processing={processing} text="Confirm" />
    * ```
    */
-  const onInterceptProcessingRequest = async (
-    requestCallback: () => Promise<any>,
+  const onInterceptProcessingRequest = async <TResponse extends any>(
+    requestCallback: () => Promise<TResponse>,
   ) => {
     try {
       setProcessing(true);
 
-      return requestCallback();
+      await requestCallback();
     } finally {
       setProcessing(false);
     }
@@ -100,4 +102,16 @@ export const useSpinner = () => {
     showSpinner,
     toggleSpinner,
   };
+};
+
+export const useShowSpinnerWhen = (isLoading: boolean) => {
+  const { hideSpinner, isSpinning, showSpinner } = useSpinner();
+
+  useLayoutEffect(() => {
+    if (isLoading && !isSpinning) {
+      showSpinner();
+    } else if (!isLoading && isSpinning) {
+      hideSpinner();
+    }
+  }, [isLoading]);
 };

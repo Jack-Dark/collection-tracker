@@ -17,8 +17,6 @@ export type GetGenericFetchOptionsProps<
     'queryFn' | 'queryKey' | 'placeholderData'
   >
 > & {
-  /** NOT called when returning a cached response. */
-  onStart?: () => void | Promise<void>;
   placeholderData?:
     | DeepPartial<TResponseDef>
     | PlaceholderDataFunction<DeepPartial<TResponseDef>>;

@@ -19,9 +19,7 @@ export const useSignUp = <TTransformedData = SignUpResponseDef>(
 
   const { onMutate: onSignUp, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to sign up. Please try again.',
-    mutationFn: (data) => {
-      return signUpServerFn({ data });
-    },
+    mutationFn: signUpServerFn,
     mutationKey: [reactMutationKeys.users.signUp.viaEmail],
     ...props,
     onSuccess: async (...args) => {

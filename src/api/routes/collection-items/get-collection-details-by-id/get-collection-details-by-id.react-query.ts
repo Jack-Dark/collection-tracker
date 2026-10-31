@@ -1,7 +1,8 @@
 import type { GenericFetchProps } from '#/api/react-query-hooks/use-generic-fetch-query/use-generic-fetch-query.types';
 
 import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
-import { useGenericFetchQuery } from '#/api/react-query-hooks/use-generic-fetch-query';
+import { useGenericSuspenseQuery } from '#/api/react-query-hooks/use-generic-fetch-query';
+import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
 import { getUseInvalidateQuery } from '#/api/react-query-hooks/use-generic-fetch-query/hooks/get-use-invalidate-query-cache';
 
 import type {
@@ -10,6 +11,28 @@ import type {
 } from './get-collection-details-by-id.types';
 
 import { getCollectionDetailsByIdServerFn } from './get-collection-details-by-id.serverFn';
+
+const getCollectionDetailsByIdQueryDetails = (
+  requestArgs: GetCollectionDetailsByIdRequestArgsDef,
+) => {
+  return {
+    queryFn: getCollectionDetailsByIdServerFn,
+    queryKey: [
+      reactQueryKeys.getCollectionDetailsById,
+      requestArgs.collectionId,
+      JSON.stringify(requestArgs),
+    ],
+  } as const;
+};
+
+export const getCollectionDetailsByIdQueryOptions = (
+  requestArgs: GetCollectionDetailsByIdRequestArgsDef,
+) => {
+  return getGenericFetchQueryOptions({
+    ...getCollectionDetailsByIdQueryDetails(requestArgs),
+    requestArgs,
+  });
+};
 
 export const useGetCollectionDetailsById = <
   TTransformedData = GetCollectionDetailsByIdResponseDef,
@@ -20,14 +43,9 @@ export const useGetCollectionDetailsById = <
     TTransformedData
   >,
 ) => {
-  return useGenericFetchQuery({
+  return useGenericSuspenseQuery({
     fallbackErrorMessage: 'Unable to retrieve collection details.',
-    queryFn: getCollectionDetailsByIdServerFn,
-    queryKey: [
-      reactQueryKeys.getCollectionDetailsById,
-      props.requestArgs.collectionId,
-      JSON.stringify(props.requestArgs),
-    ],
+    ...getCollectionDetailsByIdQueryDetails(props.requestArgs),
     ...props,
   });
 };

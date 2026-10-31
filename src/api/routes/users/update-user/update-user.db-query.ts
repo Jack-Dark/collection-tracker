@@ -13,5 +13,8 @@ export const updateUserDbQuery = async ({
 }: DbQueryArgsDef<UpdateUserRequestArgsDef>) => {
   const userId = context.user.id;
 
-  await db.update(usersTable).set(data).where(eq(usersTable.id, userId));
+  await db
+    .update(usersTable)
+    .set({ name: data.name })
+    .where(eq(usersTable.id, userId));
 };

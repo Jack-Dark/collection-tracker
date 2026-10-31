@@ -36,11 +36,18 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
 
   const user = useUserContext();
 
+  const isImpersonating = user.impersonatedBy;
+
   return (
     <div className="p-1 md:p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-2 md:gap-4">
       <header className="grid gap-2 md:gap-4">
-        <div className="py-1 md:py-0 flex items-center gap-2 justify-between text-white">
-          <div className="flex items-center gap-2">
+        {isImpersonating && (
+          <div className="px-2 py-1 bg-amber-400 text-black text-center">
+            Impersonating {user.email}
+          </div>
+        )}
+        <div className="py-1 md:py-0 grid grid-cols-[1fr_auto] gap-2 w-full justify-between text-white">
+          <div className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_auto_1fr] items-center gap-2">
             <MobileNavMenu
               BottomContent={({ closeMenu }) => {
                 return (
@@ -54,20 +61,17 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
               TopContent={ThemeToggles}
             />
 
-            <Link className="flex items-center gap-2 text-inherit" to="/">
-              <div className="hidden md:block">
-                <ListAltIcon
-                  className="text-4xl text-inherit"
-                  fontSize="large"
-                />
-              </div>
+            <Link className="hidden md:block text-inherit" to="/">
+              <ListAltIcon className="text-4xl text-inherit" fontSize="large" />
             </Link>
 
             <Link
-              className="flex items-center gap-2 text-inherit"
+              className="block text-inherit overflow-hidden"
               to={user?.id ? '/collections' : '/'}
             >
-              <h1 className="text-inherit text-2xl md:text-3xl">{title}</h1>
+              <h1 className="text-inherit text-2xl md:text-3xl block text-ellipsis whitespace-nowrap overflow-hidden w-full">
+                {title}
+              </h1>
             </Link>
           </div>
 
@@ -80,7 +84,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
                   <a
                     aria-label="Buy me a coffee"
                     className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
-                    href="https://buymeacoffee.com/jack.dark"
+                    href="https://buymeacoffee.com/collectiontracker"
                     target="_blank"
                   >
                     <CoffeeIcon />
@@ -126,7 +130,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
           'relative size-full',
           wideOnMobile ? 'p-2' : 'p-4',
           'md:p-4 md:pt-6',
-          'bg-theme-surface-1 rounded-xs',
+          'bg-theme-surface-1 rounded-3xl md:rounded-4xl',
         )}
       >
         <QueryErrorResetBoundary>

@@ -1,12 +1,12 @@
 import { useForm } from '@tanstack/react-form';
-import { useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
 
 import type { RouterPath } from '#/types';
 
 import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
-import { useSignIn } from '#/api/routes/users/sign-in/sign-in.react-query';
-import { signInRequestSchema } from '#/api/routes/users/sign-in/sign-in.schema';
+import { useSignInWithEmail } from '#/api/routes/users/sign-in-with-email/sign-in-with-email.react-query';
+import { signInWithEmailRequestSchema } from '#/api/routes/users/sign-in-with-email/sign-in-with-email.schema';
 import { Button } from '#/components/Button';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { InputField } from '#/components/Fields/InputField';
@@ -14,10 +14,11 @@ import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
 import { Route as SignInRoute } from '#/routes/_unprotected/sign-in';
 
+import { LoginWithGoogleButton } from './components/LoginWithGoogleButton';
 import { ResetPasswordDialog } from './components/PasswordResetDialog';
 
 export const SignInForm = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const searchQueries = SignInRoute.useSearch();
 
   const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
@@ -27,13 +28,14 @@ export const SignInForm = () => {
       email: '',
       password: '',
     },
-    schema: signInRequestSchema,
+    schema: signInWithEmailRequestSchema,
   });
 
-  const { onSignIn } = useSignIn({
+  const { onSignInWithEmail: onSignIn } = useSignInWithEmail({
     onSuccess: () => {
       invalidateGetNavMenuCollections();
-      router.navigate({
+
+      navigate({
         to: searchQueries.redirect || ('/collections' satisfies RouterPath),
       });
     },
@@ -112,19 +114,29 @@ export const SignInForm = () => {
           }}
         </form.Field>
 
-        <div className="flex flex-wrap gap-5 md:gap-10 justify-between items-center pt-4">
-          <FormSubmitButton
-            className="justify-self-start"
-            form={form}
-            text="Sign In"
-          />
+        <div className="grid gap-5 pt-4">
+          <div className="flex flex-wrap gap-5 items-center">
+            <FormSubmitButton
+              className="justify-self-start"
+              form={form}
+              text="Login"
+            />
 
-          <div className="flex flex-wrap items-center gap-1 text-sm">
-            <p>Having trouble?</p>
-            <Button onClick={showResetPasswordDialog} size="xs" variant="ghost">
-              <span className="font-normal">Reset Password</span>
-            </Button>
+            <div className="flex flex-wrap items-center gap-1 text-sm">
+              <p>Having trouble?</p>
+              <Button
+                onClick={showResetPasswordDialog}
+                size="xs"
+                variant="ghost"
+              >
+                <span className="font-normal">Reset Password</span>
+              </Button>
+            </div>
           </div>
+
+          <p className="">- or -</p>
+
+          <LoginWithGoogleButton />
         </div>
       </div>
     </form>

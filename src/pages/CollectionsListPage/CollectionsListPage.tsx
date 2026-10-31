@@ -3,7 +3,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useBlocker } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
 
@@ -28,10 +28,7 @@ import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row
 export const CollectionsListPage: RouteComponent = () => {
   const searchQueries = CollectionsRoute.useSearch();
 
-  const { data } = useGetPaginatedCollections({
-    onSuccess: () => {
-      form.reset();
-    },
+  const { data, isSuccess } = useGetPaginatedCollections({
     placeholderData: {
       collections: [],
       pagination: getPaginationMetadataDefaults(1000),
@@ -77,9 +74,9 @@ export const CollectionsListPage: RouteComponent = () => {
         });
 
         if (isUpdatedRecords) {
-          await onUpdateCollectionById(
-            editedRecords as UpdateCollectionsFormRecordSchemaDef[],
-          );
+          await onUpdateCollectionById({
+            records: editedRecords as UpdateCollectionsFormRecordSchemaDef[],
+          });
 
           await Promise.all(
             editedRecords.map(({ id }) => {
@@ -144,6 +141,12 @@ export const CollectionsListPage: RouteComponent = () => {
       resetEditingRowIds();
     };
   }, []);
+
+  useLayoutEffect(() => {
+    if (isSuccess) {
+      form.reset();
+    }
+  }, [isSuccess, data]);
 
   return (
     <PageWrapper

@@ -19,7 +19,7 @@ export const SimpleErrorBoundary = ({
 export const SimpleErrorBoundaryContent = () => {
   return (
     <div className="h-full w-full flex justify-center items-center">
-      <div className="p-4 bg-white text-black rounded-xs">
+      <div className="p-4 bg-white text-black rounded-full">
         <p>Something went wrong.</p>
         <p>
           <a href={githubUrl.issues} target="_blank">

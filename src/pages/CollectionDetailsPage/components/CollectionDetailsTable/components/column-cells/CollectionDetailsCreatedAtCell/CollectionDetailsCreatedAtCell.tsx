@@ -8,7 +8,7 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/Collection
 import { Button } from '#/components/Button';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
-import { AddNewCollectionItemButton } from '../../CollectionDetailsTableRowActions/components/AddNewCollectionItemButton';
+import { AddNewCollectionItemButton } from '../../CollectionDetailsAboveTableActions/components/AddNewCollectionItemButton';
 
 export const CollectionDetailsCreatedAtCell = ({
   form,
@@ -53,6 +53,10 @@ export const CollectionDetailsCreatedAtCell = ({
           <div className="grid gap-2 justify-start">
             <form.Field name={`collectionItems[${rowIndex}]`}>
               {({ value }) => {
+                if (!value) {
+                  return null;
+                }
+
                 return showNewRecordButtons ? (
                   <>
                     <Button
