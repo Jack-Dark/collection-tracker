@@ -3,7 +3,6 @@ import type { RouteComponent } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useBlocker } from '@tanstack/react-router';
-import { useLayoutEffect } from 'react';
 
 import type { CreateCollectionItemsRequestArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
@@ -76,8 +75,8 @@ export const useCollectionDetailsForm = () => {
   const form = useForm({
     ...createOrUpdateCollectionItemsFormOptions,
     // ! you should be able to use the async data to update the default values, but doing so causes the page to lock up for a long time after loading. Uncomment to reproduce
-    // defaultValues: { collectionItems: data.items },
-    defaultValues: { collectionItems: [] },
+    defaultValues: { collectionItems: data.items },
+    // defaultValues: { collectionItems: [] },
     onSubmit: async ({ value: { collectionItems } }) => {
       onInterceptRequest(async () => {
         const editedRecords = collectionItems.filter(({ id }) => {
@@ -119,11 +118,11 @@ export const useCollectionDetailsForm = () => {
     form.setFieldValue('collectionItems', data.items);
   };
 
-  useLayoutEffect(() => {
-    if (isSuccess) {
-      resetForm();
-    }
-  }, [data, isSuccess]);
+  // useLayoutEffect(() => {
+  //   if (isSuccess) {
+  //     resetForm();
+  //   }
+  // }, [data, isSuccess]);
 
   const appHotkeys = useAppHotkeys();
 
