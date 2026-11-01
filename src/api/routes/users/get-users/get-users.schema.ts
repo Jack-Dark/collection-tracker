@@ -1,3 +1,4 @@
-import z from 'zod';
+import { getOptionalPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
 
-export const getUsersRequestSchema = z.object({});
+export const getUsersRequestSchema =
+  getOptionalPaginationQueriesSchema('email');

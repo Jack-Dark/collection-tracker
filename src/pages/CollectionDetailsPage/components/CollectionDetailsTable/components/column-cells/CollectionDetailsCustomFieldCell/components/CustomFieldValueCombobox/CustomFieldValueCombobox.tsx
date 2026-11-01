@@ -98,6 +98,22 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
       labelProperty="valueText"
       name={field.name}
       onValueChange={async (selectedItem) => {
+        const handleValueChange = (
+          customFieldValue:
+            | {
+                id: number;
+                valueBoolean: boolean | null;
+                valueNumber: number | null;
+                valueText: string | null;
+              }
+            | undefined,
+        ) => {
+          updateLastAddedCustomFieldValues({
+            [customField.id]: customFieldValue,
+          });
+          field.handleChange(customFieldValue);
+        };
+
         if (selectedItem) {
           const customFieldValueExistsInDB =
             typeof selectedItem.id === 'number';
@@ -105,10 +121,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
           const isAlreadySelected = field.value?.id === selectedItem.id;
           if (isAlreadySelected) {
             // ? deselect item
-            updateLastAddedCustomFieldValues({
-              [customField.id]: undefined,
-            });
-            field.handleChange(undefined);
+            handleValueChange(undefined);
           } else if (customFieldValueExistsInDB) {
             // ? use selected item
             const customFieldValue = {
@@ -117,10 +130,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
               valueNumber: null,
               valueText: selectedItem.valueText,
             };
-            updateLastAddedCustomFieldValues({
-              [customField.id]: customFieldValue,
-            });
-            field.handleChange(customFieldValue);
+            handleValueChange(customFieldValue);
           } else {
             // ? create selected item in DB
             const [newCustomFieldValue] = await onCreateCustomFieldValues({
@@ -132,11 +142,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
               ],
             });
 
-            updateLastAddedCustomFieldValues({
-              [customField.id]: newCustomFieldValue,
-            });
-
-            field.handleChange(newCustomFieldValue);
+            handleValueChange(newCustomFieldValue);
           }
         }
       }}

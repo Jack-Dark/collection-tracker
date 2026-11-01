@@ -10,21 +10,10 @@ const meta = {
   argTypes: {
     variant: {
       control: 'radio',
-      options: ['color', 'light', 'dark'],
+      options: ['color', 'mono'],
     },
   },
-  component: (props) => {
-    const { variant } = props;
-
-    return (
-      <div
-        className={`size-100 flex items-center justify-center ${variant === 'dark' ? '' : 'bg-gray-600'}`}
-        data-loading-overlay=""
-      >
-        <LoadingSpinner {...props} />
-      </div>
-    );
-  },
+  component: LoadingSpinner,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: 'centered',
@@ -41,9 +30,8 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const LoadingSpinnerStory: Story = {
   args: {
-    border: 'border-2',
+    className: '',
     enableShadow: false,
-    size: 'size-5',
-    variant: 'light',
+    variant: 'color',
   },
 };

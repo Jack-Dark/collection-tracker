@@ -129,7 +129,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
         className={twJoin(
           'relative size-full',
           wideOnMobile ? 'p-2' : 'p-4',
-          'md:p-4 md:pt-6',
+          'md:p-4',
           'bg-theme-surface-1 rounded-3xl md:rounded-4xl',
         )}
       >

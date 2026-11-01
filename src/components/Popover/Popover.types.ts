@@ -2,7 +2,7 @@ import type {
   PopoverTriggerProps,
   PopoverPositionerProps,
 } from '@base-ui/react';
-import type { JSXElementConstructor } from 'react';
+import type { JSXElementConstructor, ReactNode } from 'react';
 
 export type PopoverPropsDef = {
   Description: string | JSXElementConstructor<{}>;
@@ -10,5 +10,5 @@ export type PopoverPropsDef = {
   disabled?: boolean;
   isTriggerButton?: boolean;
   side?: PopoverPositionerProps['side'];
-  Trigger?: JSXElementConstructor<{}>;
+  Trigger?: ReactNode | JSXElementConstructor<{}>;
 } & Pick<PopoverTriggerProps, 'delay' | 'aria-label'>;

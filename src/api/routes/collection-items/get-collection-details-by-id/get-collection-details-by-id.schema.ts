@@ -6,50 +6,42 @@ import { getRequiredPaginationQueriesSchema } from '../../../pagination/paginati
 
 export const collectionDetailsFilterValueSchema = z.union([
   z.object({
-    items: z
-      .array(z.string().describe('Custom Field Value'))
-      .describe('Custom Field Value Items'),
+    items: z.array(z.string()),
     range: z
       .object({
-        max: z.undefined().describe('Max'),
-        min: z.undefined().describe('Min'),
+        max: z.undefined(),
+        min: z.undefined(),
       })
-      .optional()
-      .describe('Custom Field Value Range'),
-    type: z.literal('string').describe('Custom Field Type'),
-    value: z.undefined().optional().describe('Custom Field Value'),
+      .optional(),
+    type: z.literal('string'),
+    value: z.undefined().optional(),
   }),
   z.object({
-    items: z.undefined().optional().describe('Custom Field Value Items'),
-    range: z
-      .object({
-        max: z.number().describe('Max'),
-        min: z.number().describe('Min'),
-      })
-      .describe('Custom Field Value Range'),
-    type: z.literal('number').describe('Custom Field Type'),
-    value: z.undefined().optional().describe('Custom Field Value'),
+    items: z.undefined().optional(),
+    range: z.object({
+      max: z.number(),
+      min: z.number(),
+    }),
+    type: z.literal('number'),
+    value: z.undefined().optional(),
   }),
   z.object({
-    items: z.undefined().optional().describe('Custom Field Value Items'),
+    items: z.undefined().optional(),
     range: z
       .object({
-        max: z.undefined().optional().describe('Max'),
-        min: z.undefined().optional().describe('Min'),
+        max: z.undefined().optional(),
+        min: z.undefined().optional(),
       })
-      .optional()
-      .describe('Custom Field Value Range'),
-    type: z.literal('boolean').describe('Custom Field Type'),
-    value: z.boolean().nullable().describe('Custom Field Value'),
+      .optional(),
+    type: z.literal('boolean'),
+    value: z.boolean().nullable(),
   }),
 ]);
 
-export const collectionDetailsFiltersSchema = z
-  .record(
-    z.number().describe('Custom Field ID'),
-    collectionDetailsFilterValueSchema,
-  )
-  .describe('Filters');
+export const collectionDetailsFiltersSchema = z.record(
+  z.number(),
+  collectionDetailsFilterValueSchema,
+);
 
 export const collectionDetailsSearchQueriesSchema =
   getRequiredPaginationQueriesSchema<CollectionItemsTableColumn>('name').and(
@@ -57,11 +49,9 @@ export const collectionDetailsSearchQueriesSchema =
       filters: collectionDetailsFiltersSchema.optional().default({}),
       ignoreSortArticles: z
         .boolean()
-        .describe('Include "Notes" in search')
         .default(true),
       searchNotes: z
         .boolean()
-        .describe('Include "Notes" in search')
         .default(false),
     }),
   );

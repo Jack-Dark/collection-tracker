@@ -23,7 +23,10 @@ import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
 import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
-import { createOrUpdateCollectionItemsFormOptions } from './CollectionDetailsPage.form';
+import {
+  createOrUpdateCollectionItemsFormOptions,
+  useLastAddedCustomFieldValues,
+} from './CollectionDetailsPage.form';
 import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import { useEditingCollectionItemsRowIds } from './hooks/use-editing-collection-items-row-ids';
 
@@ -119,9 +122,13 @@ export const useCollectionDetailsForm = () => {
     form.setFieldValue('collectionItems', data.items);
   };
 
+  const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
+
   useLayoutEffect(() => {
     if (isSuccess) {
-      resetForm();
+      // resetForm();
+
+      updateLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
     }
   }, [data, isSuccess]);
 

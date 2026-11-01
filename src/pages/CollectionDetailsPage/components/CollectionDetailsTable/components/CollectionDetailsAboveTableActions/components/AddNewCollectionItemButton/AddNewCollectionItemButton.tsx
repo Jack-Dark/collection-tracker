@@ -6,6 +6,7 @@ import type { ButtonPropsDef } from '#/components/Button';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { Button } from '#/components/Button';
+import { HotkeyPopover } from '#/components/HotkeyPopover';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 import { useCreateNewCollectionItem } from '../../../../../../CollectionDetailsPage.form';
@@ -39,22 +40,24 @@ export const AddNewCollectionItemButton = ({
     <form.ArrayField name="collectionItems">
       {(collectionItemsField) => {
         return (
-          <Button
-            Icon={AddIcon}
-            onClick={async () => {
-              const newCollectionItem = await createNewCollectionItem();
+          <HotkeyPopover hotkey="new">
+            <Button
+              Icon={AddIcon}
+              onClick={async () => {
+                const newCollectionItem = await createNewCollectionItem();
 
-              collectionItemsField.insertValue(
-                insertAtIndex,
-                newCollectionItem,
-              );
+                collectionItemsField.insertValue(
+                  insertAtIndex,
+                  newCollectionItem,
+                );
 
-              addToEditingRowIds(newCollectionItem.id);
-            }}
-            ref={addAnotherBtnRef}
-            variant="secondary"
-            {...buttonProps}
-          />
+                addToEditingRowIds(newCollectionItem.id);
+              }}
+              ref={addAnotherBtnRef}
+              variant="secondary"
+              {...buttonProps}
+            />
+          </HotkeyPopover>
         );
       }}
     </form.ArrayField>

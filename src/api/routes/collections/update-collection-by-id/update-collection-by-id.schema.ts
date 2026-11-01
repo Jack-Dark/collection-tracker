@@ -4,10 +4,10 @@ import { updateCustomFieldFormSchema } from '../../custom-fields/custom-fields.s
 import { baseCollectionSchema } from '../base-collection.schema';
 
 export const updateCollectionsFormRecordSchema = baseCollectionSchema.extend({
-  createdAt: z.date().describe('Created At').min(1),
-  customFields: z.array(updateCustomFieldFormSchema).describe('Custom Fields'),
-  id: z.number().describe('ID').min(1),
-  updatedAt: z.date().describe('Updated At').min(1),
+  createdAt: z.date().min(1),
+  customFields: z.array(updateCustomFieldFormSchema),
+  id: z.number().min(1),
+  updatedAt: z.date().min(1),
 });
 
 export const onUpdateCollectionsArgsSchema = z.object({

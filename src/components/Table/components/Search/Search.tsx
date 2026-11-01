@@ -1,13 +1,18 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import NotesIcon from '@mui/icons-material/Notes';
 import SearchIcon from '@mui/icons-material/Search';
-import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
+import {
+  formatForDisplay,
+  useAppHotkeys,
+  useHotkeys,
+} from '@tanstack/react-hotkeys';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { twJoin } from 'tailwind-merge';
 
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/Fields/InputField';
 import { Popover } from '#/components/Popover';
+import { hotkeys } from '#/constants/app-hotkeys';
 
 import type { SearchPropsDef } from './Search.types';
 
@@ -43,6 +48,8 @@ export const Search = (props: SearchPropsDef) => {
       hotkey: appHotkeys['app.search'],
     },
   ]);
+
+  const formattedSearchHotkey = formatForDisplay(hotkeys.search);
 
   return (
     <div className="relative">
@@ -94,7 +101,7 @@ export const Search = (props: SearchPropsDef) => {
         className="size-full"
         inputClassName="size-full pl-10 pr-12"
         onValueChange={handleChange}
-        placeholder="Search..."
+        placeholder={`Search... (${formattedSearchHotkey})`}
         ref={inputRef}
         type="text"
         value={query}

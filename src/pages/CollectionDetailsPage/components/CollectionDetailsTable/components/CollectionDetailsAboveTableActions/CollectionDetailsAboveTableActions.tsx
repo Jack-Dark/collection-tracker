@@ -1,7 +1,11 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useHotkeys, useAppHotkeys } from '@tanstack/react-hotkeys';
+import {
+  useHotkeys,
+  useAppHotkeys,
+  formatForDisplay,
+} from '@tanstack/react-hotkeys';
 import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
@@ -12,6 +16,7 @@ import { Button } from '#/components/Button';
 import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { Popover } from '#/components/Popover';
+import { hotkeys } from '#/constants/app-hotkeys';
 import { pluralize } from '#/helpers/pluralize';
 import { useUserContext } from '#/hooks/use-user-context';
 import { verifyEmailMessage } from '#/layout';
@@ -93,6 +98,8 @@ export const CollectionDetailsAboveTableActions = ({
     },
   ]);
 
+  const formattedNewHotkey = formatForDisplay(hotkeys.new);
+
   return (
     <div className="flex justify-between">
       <div className="flex gap-2">
@@ -144,8 +151,11 @@ export const CollectionDetailsAboveTableActions = ({
           </>
         ) : (
           <Popover
-            Description={verifyEmailMessage}
-            disabled={user?.emailVerified}
+            Description={
+              user?.emailVerified
+                ? `Hotkey: ${formattedNewHotkey}`
+                : verifyEmailMessage
+            }
             isTriggerButton
             Trigger={() => {
               return (
