@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { Popover as MuiPopover } from '@base-ui/react';
 import InfoIcon from '@mui/icons-material/Info';
 
@@ -11,19 +13,20 @@ export const Popover = (props: PopoverPropsDef) => {
     disabled,
     isTriggerButton,
     side = 'top',
-    Trigger = () => {
-      return (
-        <InfoIcon
-          {...props}
-          className="cursor-pointer text-gray-400"
-          fontSize="inherit"
-        />
-      );
-    },
+    Trigger = (
+      <InfoIcon
+        {...props}
+        className="cursor-pointer text-gray-400"
+        fontSize="inherit"
+      />
+    ),
   } = props;
 
+  const TriggerContent: ReactNode =
+    typeof Trigger === 'function' ? <Trigger /> : Trigger;
+
   return disabled ? (
-    <Trigger />
+    TriggerContent
   ) : (
     <MuiPopover.Root>
       <MuiPopover.Trigger
@@ -40,7 +43,7 @@ export const Popover = (props: PopoverPropsDef) => {
             : undefined
         }
       >
-        <Trigger />
+        {TriggerContent}
       </MuiPopover.Trigger>
       <MuiPopover.Portal>
         <MuiPopover.Positioner side={side} sideOffset={8}>

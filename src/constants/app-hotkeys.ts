@@ -4,12 +4,14 @@ import { defineAppHotkeys } from '@tanstack/react-hotkeys';
 
 export const hotkeys = {
   new: 'Control+Alt+N',
-  submit: 'Mod+Enter',
+  removeLast: 'Control+Alt+Backspace',
+  save: 'Mod+Enter',
+  search: 'Mod+K',
 } as const satisfies Record<string, Hotkey>;
 
 export const appHotkeys = defineAppHotkeys({
   'app.new': {
-    hotkey: 'Control+Alt+N',
+    hotkey: hotkeys.new,
     meta: { group: 'App', name: 'New record' },
     options: {
       conflictBehavior: 'replace',
@@ -19,7 +21,7 @@ export const appHotkeys = defineAppHotkeys({
     },
   },
   'app.remove-last': {
-    hotkey: 'Control+Alt+Backspace',
+    hotkey: hotkeys.removeLast,
     meta: { group: 'App', name: 'Remove last new record' },
     options: {
       conflictBehavior: 'replace',
@@ -29,7 +31,7 @@ export const appHotkeys = defineAppHotkeys({
     },
   },
   'app.save': {
-    hotkey: 'Mod+Enter',
+    hotkey: hotkeys.save,
 
     meta: { group: 'App', name: 'Save' },
     options: {
@@ -39,7 +41,7 @@ export const appHotkeys = defineAppHotkeys({
     },
   },
   'app.search': {
-    hotkey: 'Mod+K',
+    hotkey: hotkeys.search,
     meta: { group: 'App', name: 'Search' },
   },
 });

@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { Button } from '#/components/Button';
+import { HotkeyPopover } from '#/components/HotkeyPopover';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 import { AddNewCollectionItemButton } from '../../CollectionDetailsAboveTableActions/components/AddNewCollectionItemButton';
@@ -59,16 +60,18 @@ export const CollectionDetailsCreatedAtCell = ({
 
                 return showNewRecordButtons ? (
                   <>
-                    <Button
-                      Icon={ClearIcon}
-                      onClick={() => {
-                        collectionItemsField.removeValue(rowIndex);
-                        removeFromEditingRowIds(String(value.id));
-                      }}
-                      ref={removeBtnRef}
-                      text="Remove"
-                      variant="mono"
-                    />
+                    <HotkeyPopover hotkey="removeLast">
+                      <Button
+                        Icon={ClearIcon}
+                        onClick={() => {
+                          collectionItemsField.removeValue(rowIndex);
+                          removeFromEditingRowIds(String(value.id));
+                        }}
+                        ref={removeBtnRef}
+                        text="Remove"
+                        variant="mono"
+                      />
+                    </HotkeyPopover>
 
                     {isLastNewRecordIndex && (
                       <AddNewCollectionItemButton
