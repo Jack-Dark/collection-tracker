@@ -178,22 +178,21 @@ export const SignUpForm: RouteComponent = () => {
           <LoginWithGoogleButton text="Sign Up with Google" />
         </div>
 
-        <div className="grid gap-2 text-theme-t2 text-sm">
-          <p>
+        <ul className="pl-4 list-disc text-theme-t2 text-sm">
+          <li>
             Collection Tracker only collects cookies that are strictly required
             for site functionality.
-          </p>
-
-          <p>
+          </li>
+          <li>
             We will{' '}
             <strong>
               <em>NEVER</em>
             </strong>{' '}
             share or sell your information.
-          </p>
-
-          <p>Delete your account anytime, hassle-free.</p>
-        </div>
+          </li>
+          <li>We won't add you to a mailing list.</li>
+          <li>Delete your account anytime, hassle-free.</li>
+        </ul>
       </div>
     </form>
   );
