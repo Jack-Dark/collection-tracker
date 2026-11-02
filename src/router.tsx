@@ -2,6 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { createRouter } from '@tanstack/react-router';
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query';
 
+import { RouteErrorComponent, RouteNotFoundComponent } from './routes/__root';
 import { routeTree } from './routeTree.gen';
 
 export function getRouter() {
@@ -15,9 +16,8 @@ export function getRouter() {
 
   const router = createRouter({
     context: { queryClient },
-    // TODO - IMPROVEMENT - INVESTIGATE NESTED HTML TAGS
-    // defaultErrorComponent: RouteErrorComponent,
-    // defaultNotFoundComponent: RouteNotFoundComponent,
+    defaultErrorComponent: RouteErrorComponent,
+    defaultNotFoundComponent: RouteNotFoundComponent,
     defaultPreload: 'intent',
     routeTree,
   });
