@@ -13,8 +13,8 @@ const resetPasswordSearchSchema = z.object({
 });
 
 export const Route = createFileRoute('/_unprotected/reset-password')({
-  component: ResetPasswordPage,
   validateSearch: resetPasswordSearchSchema,
+  component: ResetPasswordPage,
   beforeLoad: () => {
     return getSession();
   },
