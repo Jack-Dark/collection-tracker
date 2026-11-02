@@ -8,6 +8,7 @@ import { useGetCollectionItemsWithCustomFieldValue } from '#/api/routes/collecti
 import { useDeleteCustomFieldValues } from '#/api/routes/custom-field-values/delete-custom-field-values/delete-custom-field-values.react-query';
 import { useInvalidateGetCustomFieldValuesByCustomFieldId } from '#/api/routes/custom-field-values/get-custom-field-values-by-collection-id/get-custom-field-values-by-collection-id.react-query';
 import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
+import { LoadingSpinner } from '#/components/FullPageLoadingSpinner/components/LoadingSpinner';
 import { pluralize } from '#/helpers/pluralize';
 
 type DeleteCustomFieldValueDialogPropsDef<
@@ -51,11 +52,9 @@ export const DeleteCustomFieldValueDialog = <
   };
 
   const { data, isSuccess } = useGetCollectionItemsWithCustomFieldValue({
-    placeholderData: (_data) => {
-      return {
-        affectedCollections: [],
-        numAffectedCollectionItems: 0,
-      } satisfies typeof _data;
+    placeholderData: {
+      affectedCollections: [],
+      numAffectedCollectionItems: 0,
     },
     requestArgs: {
       customFieldValueId: id,
@@ -87,22 +86,19 @@ export const DeleteCustomFieldValueDialog = <
     });
   };
 
-  const shouldAutoDelete = getShouldAutoDelete({
-    affectedCollections,
-    numAffectedCollectionItems,
-  });
+  const shouldAutoDelete = getShouldAutoDelete(data);
 
   useLayoutEffect(() => {
     if (isSuccess) {
-      const shouldAutoDelete = getShouldAutoDelete(data);
-
       if (shouldAutoDelete) {
         onDelete();
       }
     }
   }, [isSuccess, data]);
 
-  return shouldAutoDelete ? null : (
+  return shouldAutoDelete ? (
+    <LoadingSpinner />
+  ) : (
     <ConfirmDeleteDialog hideDialog={onClose} onConfirm={onDelete}>
       <div className="grid gap-4 content-center h-full">
         <p className="text-center" />
@@ -110,7 +106,7 @@ export const DeleteCustomFieldValueDialog = <
         {!!numAffectedCollectionItems && (
           <>
             <div className="grid gap-1">
-              <p className="text-center text-sm text-theme-t1">
+              <p className="text-center text-theme-t1">
                 This will remove "{customFieldValueToDelete.valueText}" from{' '}
                 <strong className="text-theme-t-alert">
                   {numAffectedCollectionItems}
@@ -121,28 +117,22 @@ export const DeleteCustomFieldValueDialog = <
               </p>
 
               <div className="flex justify-center">
-                <ul className="list-inside list-disc">
+                <ul className="pl-4 list-disc">
                   {affectedCollections.map(({ id, name }) => {
-                    return (
-                      <li key={id}>
-                        <span className="text-sm">{name}</span>
-                      </li>
-                    );
+                    return <li key={id}>{name}</li>;
                   })}
                 </ul>
               </div>
 
-              <p className="text-center text-sm text-theme-t1">
+              <p className="mt-4 text-center text-theme-t1">
                 Are you sure you want to delete this custom field value?
               </p>
             </div>
 
-            <div className="grid gap-1">
-              <p className="max-w-100 text-theme-t2 text-sm text-center">
-                Note: This will delete the custom field value, even if changes
-                to your collection are dismissed.
-              </p>
-            </div>
+            <p className="max-w-100 text-theme-t2 text-sm text-center">
+              Note: This will delete the custom field value, even if changes to
+              your collection are dismissed.
+            </p>
           </>
         )}
       </div>

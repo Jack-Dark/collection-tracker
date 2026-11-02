@@ -5,6 +5,7 @@ import type { GetUsersResponseDef } from '#/api/routes/users/get-users/get-users
 import type { TableFeaturesDef } from '#/components/Table';
 
 import { useImpersonateUser } from '#/api/routes/users/impersonate-user/impersonate-user.react-query';
+import { getIsAdmin } from '#/auth/auth-middleware.helpers';
 import { MoreMenu } from '#/components/MoreMenu';
 import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 
@@ -58,7 +59,7 @@ export const columns = columnHelper.columns([
           <MoreMenu
             items={[
               {
-                disabled: row.original.role === 'admin',
+                disabled: getIsAdmin(row.original.role),
                 Label: 'Impersonate',
                 onClick: async () => {
                   await onImpersonateUser({ userId });

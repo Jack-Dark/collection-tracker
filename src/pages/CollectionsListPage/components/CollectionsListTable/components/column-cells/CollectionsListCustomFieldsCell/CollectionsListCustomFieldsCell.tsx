@@ -76,8 +76,6 @@ export const CollectionsListCustomFieldsCell = (props: {
 
   const isEditingRow = getIsEditingRowId(rowId);
 
-  // const editCustomFieldAtom = useEditCustomFieldAtom();
-
   const lastEditedCustomField = useLastEditedCustomField();
 
   const [updateItemsTimestamp, setUpdateItemsTimestamp] = useState<number>(0);
@@ -587,17 +585,18 @@ export const AddOrEditCustomFieldDialog = (props: {
               >
                 {(typeField) => {
                   const formattedValue:
-                    (typeof customFieldDataTypeItems)[number] | undefined =
+                    (typeof customFieldDataTypeItems)[number] | null =
                     typeField.value
                       ? {
                           disabled: false,
                           id: typeField.value,
                           label: customFieldTypeLabelsMap[typeField.value],
                         }
-                      : undefined;
+                      : null;
 
                   return (
                     <SelectField
+                      autoFocus={!typeField.value}
                       error={fieldTypeError || typeField.errors}
                       items={customFieldDataTypeItems}
                       Label="Input Type"

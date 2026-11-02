@@ -7,7 +7,7 @@ export type RouterPath = LinkProps['to'];
  * ```ts
  * const myObjectMap = {...} as const;
  *
- * type MyObjectDef = ObjectValues<typeof myObjectMap>
+ * type MyObjectValuesDef = ObjectValues<typeof myObjectMap>
  * ```
  * */
 export type ObjectValues<T extends Record<any, any>> = T[keyof T];

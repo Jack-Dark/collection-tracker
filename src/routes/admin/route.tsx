@@ -1,6 +1,7 @@
 import { createFileRoute, isRedirect } from '@tanstack/react-router';
 
 import { ensureSession } from '#/auth/auth-middleware';
+import { getIsAdmin } from '#/auth/auth-middleware.helpers';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/admin')({
@@ -19,7 +20,7 @@ export const Route = createFileRoute('/admin')({
         throw redirectToSignIn();
       }
 
-      if (session.user?.role !== 'admin') {
+      if (!getIsAdmin(session.user?.role)) {
         throw Route.redirect({
           to: '/collections',
         });

@@ -15,6 +15,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
 ) => {
   const {
     'aria-label': ariaLabel,
+    autoFocus,
     className,
     description,
     disabled,
@@ -90,6 +91,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         onValueChange={(item) => {
           onValueChange(item);
         }}
+        open={autoFocus}
         value={value}
       >
         <Select.Trigger

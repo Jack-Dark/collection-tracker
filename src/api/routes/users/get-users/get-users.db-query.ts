@@ -31,7 +31,11 @@ export const getUsersDbQuery = async ({
   });
 
   const formattedUsers = users.map(({ sessions, ...user }) => {
-    return { ...user, lastSession: sessions[0]?.updatedAt };
+    return {
+      ...user,
+      lastSession: sessions[0]?.updatedAt,
+      role: user.role,
+    };
   });
 
   return { users: formattedUsers };

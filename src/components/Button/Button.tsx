@@ -4,6 +4,8 @@ import type { JSXElementConstructor, PropsWithChildren } from 'react';
 import { Button as MuiButton } from '@base-ui/react';
 import { twMerge } from 'tailwind-merge';
 
+import type { ObjectValues } from '#/types';
+
 import { LoadingSpinner } from '../FullPageLoadingSpinner/components/LoadingSpinner';
 
 export const buttonVariants = [
@@ -21,7 +23,7 @@ type ButtonSizeDef = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'custom';
 export type ButtonPropsDef = Omit<MuiButtonProps, 'form'> & {
   className?: string;
   disabled?: boolean;
-  iconPosition?: (typeof iconPositions)[keyof typeof iconPositions];
+  iconPosition?: ObjectValues<typeof iconPositions>;
   processing?: boolean;
   /** Applies standardized padding, font-size, and line-height styling. `'custom'` does not apply any. */
   size?: ButtonSizeDef;

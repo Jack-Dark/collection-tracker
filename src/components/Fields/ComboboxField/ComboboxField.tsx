@@ -1,12 +1,8 @@
-import type { HTMLAttributes, JSXElementConstructor } from 'react';
-
 import { Combobox } from '@base-ui/react';
 import { DragDropProvider } from '@dnd-kit/react';
-import { useSortable, isSortable } from '@dnd-kit/react/sortable';
+import { isSortable } from '@dnd-kit/react/sortable';
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
-import ClearIcon from '@mui/icons-material/Clear';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import _ from 'lodash';
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +14,7 @@ import type {
 } from './ComboboxField.types';
 
 import { FieldWrapper } from '../FieldWrapper';
+import { SortableChip } from './components/SortableChip';
 
 export const getNormalizedValue = (
   value: string,
@@ -208,10 +205,11 @@ export const ComboboxField = <
         return [];
       }
     };
+
     // ? Merge items in list with selected items. This ensures new items are always available even if they don't exist outside of the component yet
     const includedItemsById = new Map<string, true>();
     const uniqueDisplayItems: TValue[] = [
-      ...items,
+      ...(Array.isArray(items) ? items : items ? [items] : []),
       ...getSelectedItemsArray(),
     ].filter((item) => {
       const idAsString = itemToStringValue(item);
@@ -394,47 +392,5 @@ export const ComboboxField = <
         </Combobox.Portal>
       </Combobox.Root>
     </FieldWrapper>
-  );
-};
-
-const SortableChip = <TValue extends TValueRecordDef>(props: {
-  enableChipSort: boolean | undefined;
-  id: string;
-  index: number;
-  item: TValue;
-  label: string;
-  onRemoveChip: ((item: TValue, index: number) => void) | undefined;
-  RenderChip: JSXElementConstructor<
-    HTMLAttributes<HTMLElement> & { item: TValue }
-  >;
-}) => {
-  const { enableChipSort, id, index, item, label, onRemoveChip, RenderChip } =
-    props;
-
-  const { ref } = useSortable({ disabled: !enableChipSort, id, index });
-
-  return (
-    <Combobox.Chip
-      aria-label={label}
-      className="bg-theme-surface-1 dark:bg-theme-surface-3 flex items-center gap-1 border border-theme-divider-2 rounded-full px-2 py-.5"
-      ref={ref}
-    >
-      {enableChipSort && (
-        <DragIndicatorIcon
-          className="text-theme-t3 cursor-grab active:cursor-grabbing"
-          fontSize="inherit"
-        />
-      )}
-      <RenderChip item={item} />
-      <Combobox.ChipRemove
-        aria-label={`Remove ${label}`}
-        className="text-theme-t2 hover:text-theme-t-alert-hover cursor-pointer ml-auto p-0.5 leading-0"
-        onClick={() => {
-          onRemoveChip?.(item, index);
-        }}
-      >
-        <ClearIcon fontSize="inherit" />
-      </Combobox.ChipRemove>
-    </Combobox.Chip>
   );
 };

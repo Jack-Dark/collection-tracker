@@ -3,7 +3,7 @@ import type {
   UseQueryOptions,
 } from '@tanstack/react-query';
 
-import type { DeepPartial } from '#/types';
+import type { DeepPartial, ObjectValues } from '#/types';
 
 import type { reactQueryKeys } from '../react-query.constants';
 
@@ -39,5 +39,4 @@ export type QueryKeyDef = Readonly<
   [ReactQueryKeysDef] | [ReactQueryKeysDef, ...(string | number)[]]
 >;
 
-export type ReactQueryKeysDef =
-  (typeof reactQueryKeys)[keyof typeof reactQueryKeys];
+export type ReactQueryKeysDef = ObjectValues<typeof reactQueryKeys>;
