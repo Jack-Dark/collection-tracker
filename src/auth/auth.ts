@@ -13,8 +13,6 @@ import { createNewUserExampleRecordsDbQuery } from '#/api/routes/users/sign-up/s
 import { configs } from '#/configs';
 import { deleteCloudinaryAssetsByPublicIds } from '#/lib/cloudinary';
 
-import type { UserRoleDef } from './auth-middleware.types';
-
 import * as schema from '../api/db-tables-schema';
 
 export const resetPasswordTokenExpiresInMinutes = 20;
@@ -38,10 +36,7 @@ export const auth = betterAuth({
         after: async (user) => {
           await createNewUserExampleRecordsDbQuery({
             context: {
-              user: {
-                ...user,
-                role: user.role as UserRoleDef,
-              },
+              user,
             },
             data: undefined,
           });

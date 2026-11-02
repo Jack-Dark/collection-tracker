@@ -29,6 +29,8 @@ export const usersTable = snakeCase.table('users', {
   emailVerified: boolean('email_verified').default(false).notNull(),
   id: text('id').primaryKey(),
   image: text('image'),
+  maxCollectionItems: integer('max_collection_items').notNull().default(250),
+  maxCollections: integer('max_collections').notNull().default(20),
   name: text('name').notNull(),
   role: text('role').notNull().default('user'),
   ...timestamps,
