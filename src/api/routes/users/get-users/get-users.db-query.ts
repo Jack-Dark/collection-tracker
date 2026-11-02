@@ -1,4 +1,4 @@
-import type { DbQueryArgsDef, UserRoleDef } from '#/auth/auth-middleware.types';
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
 import { db } from '#/api/db';
 
@@ -34,7 +34,7 @@ export const getUsersDbQuery = async ({
     return {
       ...user,
       lastSession: sessions[0]?.updatedAt,
-      role: user.role as UserRoleDef,
+      role: user.role,
     };
   });
 
