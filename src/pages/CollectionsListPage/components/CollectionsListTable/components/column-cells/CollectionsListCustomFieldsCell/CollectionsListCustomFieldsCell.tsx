@@ -596,6 +596,7 @@ export const AddOrEditCustomFieldDialog = (props: {
 
                   return (
                     <SelectField
+                      autoFocus={!typeField.value}
                       error={fieldTypeError || typeField.errors}
                       items={customFieldDataTypeItems}
                       Label="Input Type"
