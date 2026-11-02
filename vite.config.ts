@@ -39,8 +39,17 @@ const config = defineConfig(({ mode }) => {
           typescript: true,
         }),
       tailwindcss(),
-      tanstackStart(),
-      // react's vite plugin must come after start's vite plugin
+      tanstackStart({
+        prerender: {
+          crawlLinks: true,
+          enabled: true,
+        },
+        sitemap: {
+          enabled: true,
+          host: 'https://collectiontracker.app',
+        },
+      }),
+      // ! react's vite plugin must come after start's vite plugin
       viteReact(),
       netlify(),
     ].filter(Boolean),
