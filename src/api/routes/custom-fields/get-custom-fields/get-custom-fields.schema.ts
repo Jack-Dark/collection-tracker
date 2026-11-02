@@ -12,8 +12,7 @@ const defaultSortField: CustomFieldColumnDef = 'name';
 export const getCustomFieldsSchema = z
   .object({
     ids: z
-      .array(z.number().min(1).describe('ID'))
-      .describe('IDs')
+      .array(z.number().min(1))
       .optional()
       .default([]),
     params:

@@ -3,6 +3,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useBlocker } from '@tanstack/react-router';
+import { useLayoutEffect } from 'react';
 
 import type { CreateCollectionItemsRequestArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
@@ -22,7 +23,10 @@ import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
 import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
-import { createOrUpdateCollectionItemsFormOptions } from './CollectionDetailsPage.form';
+import {
+  createOrUpdateCollectionItemsFormOptions,
+  useLastAddedCustomFieldValues,
+} from './CollectionDetailsPage.form';
 import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import { useEditingCollectionItemsRowIds } from './hooks/use-editing-collection-items-row-ids';
 
@@ -118,11 +122,15 @@ export const useCollectionDetailsForm = () => {
     form.setFieldValue('collectionItems', data.items);
   };
 
-  // useLayoutEffect(() => {
-  //   if (isSuccess) {
-  //     resetForm();
-  //   }
-  // }, [data, isSuccess]);
+  const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
+
+  useLayoutEffect(() => {
+    if (isSuccess) {
+      // resetForm();
+
+      updateLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
+    }
+  }, [data, isSuccess]);
 
   const appHotkeys = useAppHotkeys();
 

@@ -38,54 +38,54 @@ export const CollectionDetailsCustomFieldCell = (
     : collectionItemIdNumber;
 
   return (
-    <Suspense>
-      <form.Field
-        name={`collectionItems[${rowIndex}].customFieldValues.${customField.id}`}
-      >
-        {(field) => {
-          const checked = !!field.value?.valueBoolean;
+    <form.Field
+      name={`collectionItems[${rowIndex}].customFieldValues.${customField.id}`}
+    >
+      {(field) => {
+        const checked = !!field.value?.valueBoolean;
 
-          const cellValue = field.value?.valueText ?? field.value?.valueNumber;
+        const cellValue = field.value?.valueText ?? field.value?.valueNumber;
 
-          return isEditingRow ? (
-            <>
-              {customField.type === 'boolean' && (
-                <CustomFieldValueCheckbox
-                  customField={customField}
-                  field={field}
-                />
-              )}
+        return isEditingRow ? (
+          <>
+            {customField.type === 'boolean' && (
+              <CustomFieldValueCheckbox
+                customField={customField}
+                field={field}
+              />
+            )}
 
-              {customField.type === 'number' && (
-                <CustomFieldValueNumberInput
-                  customField={customField}
-                  field={field}
-                />
-              )}
+            {customField.type === 'number' && (
+              <CustomFieldValueNumberInput
+                customField={customField}
+                field={field}
+              />
+            )}
 
-              {customField.type === 'string' && (
+            {customField.type === 'string' && (
+              <Suspense>
                 <CustomFieldValueCombobox
                   collectionItemId={collectionItemId}
                   customField={customField}
                   field={field}
                 />
-              )}
-            </>
-          ) : (
-            <>
-              {customField.type === 'boolean' && checked ? (
-                <CheckIcon
-                  aria-label={`${customField.name} checked`}
-                  className="text-theme-t1"
-                  fontSize="inherit"
-                />
-              ) : (
-                (cellValue ?? <EmptyCellValue />)
-              )}
-            </>
-          );
-        }}
-      </form.Field>
-    </Suspense>
+              </Suspense>
+            )}
+          </>
+        ) : (
+          <>
+            {customField.type === 'boolean' && checked ? (
+              <CheckIcon
+                aria-label={`${customField.name} checked`}
+                className="text-theme-t1"
+                fontSize="inherit"
+              />
+            ) : (
+              (cellValue ?? <EmptyCellValue />)
+            )}
+          </>
+        );
+      }}
+    </form.Field>
   );
 };

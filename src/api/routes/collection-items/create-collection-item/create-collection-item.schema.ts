@@ -6,7 +6,8 @@ import {
 } from '../base-collection-item.schema';
 
 export const createCollectionItemsFormSchema = baseCollectionItemSchema.extend({
-  id: z.string().describe('ID'),
+  createdAt: z.undefined().optional(),
+  id: z.string(),
   images: imagesSchema.filesList,
 });
 
@@ -16,20 +17,16 @@ export const createCollectionItemsWithFileImagesSchema =
     .extend({
       images: imagesSchema.filesList,
     })
-    .describe('Collection Item')
     .strict();
 
 // ? Handle the rest server-side with uploaded files public IDs
 export const createCollectionItemsServerFnSchema = z.object({
   publicIds: z.array(z.array(z.string())),
-  records: z
-    .array(
-      baseCollectionItemSchema
-        .extend({
-          images: imagesSchema.publicIdsList,
-        })
-        .describe('Collection Item')
-        .strict(),
-    )
-    .describe('Collection Items'),
+  records: z.array(
+    baseCollectionItemSchema
+      .extend({
+        images: imagesSchema.publicIdsList,
+      })
+      .strict(),
+  ),
 });

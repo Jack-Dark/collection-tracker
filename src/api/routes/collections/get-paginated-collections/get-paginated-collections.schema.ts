@@ -13,7 +13,6 @@ export const collectionsListSearchQueriesSchema =
     z.object({
       searchNotes: z
         .boolean()
-        .describe('Include "Notes" in search')
         .default(false),
     }),
   );

@@ -1,4 +1,4 @@
-import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
+import type { CreateOrUpdateCollectionItemFormRowDataDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { useFormatSortProps } from '#/hooks/use-format-sort-props';
@@ -9,7 +9,9 @@ export const useCollectionDetailsSortProps = () => {
   const { onUpdateCollectionItemsQueries, searchQueries } =
     useOnUpdateCollectionItemsQueries();
 
-  const sortProps = useFormatSortProps<CollectionItemsTableColumn>({
+  const sortProps = useFormatSortProps<
+    keyof CreateOrUpdateCollectionItemFormRowDataDef
+  >({
     items: [
       {
         bidirectional: true,

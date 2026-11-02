@@ -1,7 +1,11 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
+import {
+  formatForDisplay,
+  useAppHotkeys,
+  useHotkeys,
+} from '@tanstack/react-hotkeys';
 import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
@@ -12,6 +16,7 @@ import { Button } from '#/components/Button';
 import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { Popover } from '#/components/Popover';
+import { hotkeys } from '#/constants/app-hotkeys';
 import { useUserContext } from '#/hooks/use-user-context';
 import { verifyEmailMessage } from '#/layout';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
@@ -88,6 +93,8 @@ export const CollectionsListAboveTableActions = (props: {
     },
   ]);
 
+  const formattedNewHotkey = formatForDisplay(hotkeys.new);
+
   return (
     <form.ArrayField name="records">
       {() => {
@@ -138,8 +145,11 @@ export const CollectionsListAboveTableActions = (props: {
                 </>
               ) : (
                 <Popover
-                  Description={verifyEmailMessage}
-                  disabled={user?.emailVerified}
+                  Description={
+                    user?.emailVerified
+                      ? `Hotkey: ${formattedNewHotkey}`
+                      : verifyEmailMessage
+                  }
                   isTriggerButton
                   Trigger={() => {
                     return (

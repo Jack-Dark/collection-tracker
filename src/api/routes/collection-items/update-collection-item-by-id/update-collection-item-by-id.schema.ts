@@ -6,9 +6,9 @@ import {
 } from '../base-collection-item.schema';
 
 const updateCollectionItemsBaseSchema = baseCollectionItemSchema.extend({
-  createdAt: z.date().describe('Created At').min(1),
-  id: z.number().describe('ID').min(1),
-  updatedAt: z.date().describe('Updated At').min(1),
+  createdAt: z.date().min(1),
+  id: z.number().min(1),
+  updatedAt: z.date().min(1),
 });
 
 export const updateCollectionItemsFormSchema =
