@@ -76,8 +76,6 @@ export const CollectionsListCustomFieldsCell = (props: {
 
   const isEditingRow = getIsEditingRowId(rowId);
 
-  // const editCustomFieldAtom = useEditCustomFieldAtom();
-
   const lastEditedCustomField = useLastEditedCustomField();
 
   const [updateItemsTimestamp, setUpdateItemsTimestamp] = useState<number>(0);
