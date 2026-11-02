@@ -585,14 +585,14 @@ export const AddOrEditCustomFieldDialog = (props: {
               >
                 {(typeField) => {
                   const formattedValue:
-                    (typeof customFieldDataTypeItems)[number] | undefined =
+                    (typeof customFieldDataTypeItems)[number] | null =
                     typeField.value
                       ? {
                           disabled: false,
                           id: typeField.value,
                           label: customFieldTypeLabelsMap[typeField.value],
                         }
-                      : undefined;
+                      : null;
 
                   return (
                     <SelectField
