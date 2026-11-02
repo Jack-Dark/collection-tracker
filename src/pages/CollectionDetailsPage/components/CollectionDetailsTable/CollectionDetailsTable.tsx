@@ -38,12 +38,12 @@ export const CollectionDetailsTable = () => {
   const { onDeleteUnusedCustomFieldValues } =
     useDeleteUnusedCustomFieldValues();
 
-  const { form, resetForm } = useCollectionDetailsForm();
+  const { form } = useCollectionDetailsForm();
 
   const onCancel = async () => {
     resetEditingRowIds();
     // ? Reset form to immediately clear changes
-    resetForm();
+    form.reset();
 
     await Promise.all([
       // TODO - REFACTOR: CREATE SEPARATE `shouldInvalidate` state which will trigger the invalidation conditionally

@@ -26,36 +26,41 @@ export const createCollectionItemsDbQuery = async ({
   }
 
   const userId = context.user.id;
-  const isAdmin = context.user.role === 'admin';
 
   return await db.transaction(async (tx) => {
-    // ! temporarily cap the maximum allowed collections to avoid service fees
-    const totalCollections = isAdmin
-      ? 0
-      : await tx.$count(
-          collectionItemsTable,
-          eq(collectionItemsTable.userId, userId),
-        );
+    // ! cap the maximum allowed collection items to avoid service fees
+    const userData = await tx.query.users.findFirst({
+      columns: { maxCollectionItems: true },
+      where: { id: userId },
+    });
 
-    const maxAllowed = 250;
+    if (!userData) {
+      throw new Error('Unable to locate user.');
+    }
+
+    const { maxCollectionItems } = userData;
+
+    const maxReachedWarningMessage = `You have reached the maximum number of collection items currently allowed for free (${maxCollectionItems}).`;
+    const totalCollections = await tx.$count(
+      collectionItemsTable,
+      eq(collectionItemsTable.userId, userId),
+    );
+
     const numAdditionalCollectionsAllowed = Math.max(
       0,
-      maxAllowed - totalCollections,
+      maxCollectionItems - totalCollections,
     );
-    const limitReached = isAdmin
-      ? false
-      : numAdditionalCollectionsAllowed < records.length;
 
     if (!numAdditionalCollectionsAllowed) {
       return {
-        warning: `You have reached the maximum number of collections currently allowed for free (${maxAllowed}).`,
+        warning: maxReachedWarningMessage,
       };
     }
 
-    const recordsToCreate = records.slice(
-      0,
-      isAdmin ? undefined : numAdditionalCollectionsAllowed,
-    );
+    const recordsToCreate =
+      numAdditionalCollectionsAllowed < records.length
+        ? records.slice(0, numAdditionalCollectionsAllowed)
+        : records;
 
     const customFieldValuesIndexedToRecord: CustomFieldValuesByFieldId[] = [];
 
@@ -129,9 +134,9 @@ export const createCollectionItemsDbQuery = async ({
 
     await addCloudinaryTagsToPublicIds(...cloudinaryTagItems);
 
-    if (limitReached) {
+    if (numAdditionalCollectionsAllowed < records.length) {
       return {
-        warning: `You have been restricted to the maximum number of collections currently allowed for free (${maxAllowed}).`,
+        warning: maxReachedWarningMessage,
       };
     }
   });
