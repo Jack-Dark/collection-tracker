@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import type { ObjectValues } from '#/types';
+
 import type { notificationTypes } from './Notifications.constants';
 
 type NotifyOptions = {
@@ -15,7 +17,6 @@ export type NotificationDetails = NotifyOptions & {
   message: ReactNode;
 } & Required<Pick<NotifyOptions, 'type'>>;
 
-export type NotificationType =
-  (typeof notificationTypes)[keyof typeof notificationTypes];
+export type NotificationType = ObjectValues<typeof notificationTypes>;
 
 export type Notify = (message: ReactNode, options?: NotifyOptions) => void;
