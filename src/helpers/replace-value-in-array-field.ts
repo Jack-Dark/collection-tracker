@@ -6,6 +6,5 @@ export const replaceValueInArrayField = <TArrayField extends AnyFieldApi>(
   index: number,
   data: TArrayField['value'][number],
 ) => {
-  field.removeValue(index);
-  field.insertValue(index, data);
+  field.handleChange(field.value.toSpliced(index, 1, data));
 };
