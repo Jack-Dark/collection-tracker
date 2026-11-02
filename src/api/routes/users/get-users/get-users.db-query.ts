@@ -1,4 +1,4 @@
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { DbQueryArgsDef, UserRoleDef } from '#/auth/auth-middleware.types';
 
 import { db } from '#/api/db';
 
@@ -31,7 +31,11 @@ export const getUsersDbQuery = async ({
   });
 
   const formattedUsers = users.map(({ sessions, ...user }) => {
-    return { ...user, lastSession: sessions[0]?.updatedAt };
+    return {
+      ...user,
+      lastSession: sessions[0]?.updatedAt,
+      role: user.role as UserRoleDef,
+    };
   });
 
   return { users: formattedUsers };

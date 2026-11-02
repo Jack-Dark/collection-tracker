@@ -2,6 +2,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 import { useImpersonateUserStop } from '#/api/routes/users/impersonate-user-stop/impersonate-user-stop.react-query';
+import { getIsAdmin } from '#/auth/auth-middleware.helpers';
 import { DesktopNavMenu } from '#/components/NavMenu/components/DesktopNavMenu';
 import { useUserContext } from '#/hooks/use-user-context';
 
@@ -98,7 +99,7 @@ export const useSiteNavMenuItems = () => {
           Icon: AccountCircleIcon,
           items: [
             {
-              hidden: user?.role !== 'admin',
+              hidden: !getIsAdmin(user?.role),
               href: '/admin/users' satisfies RouterPath,
               Icon: AdminPanelSettingsIcon,
               label: 'Admin: Users',
