@@ -78,9 +78,7 @@ export const useCollectionDetailsForm = () => {
 
   const form = useForm({
     ...createOrUpdateCollectionItemsFormOptions,
-    // ! you should be able to use the async data to update the default values, but doing so causes the page to lock up for a long time after loading. Uncomment to reproduce
     defaultValues: { collectionItems: data.items },
-    // defaultValues: { collectionItems: [] },
     onSubmit: async ({ value: { collectionItems } }) => {
       onInterceptRequest(async () => {
         const editedRecords = collectionItems.filter(({ id }) => {
@@ -118,15 +116,11 @@ export const useCollectionDetailsForm = () => {
     },
   });
 
-  const resetForm = () => {
-    form.setFieldValue('collectionItems', data.items);
-  };
-
   const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
 
   useLayoutEffect(() => {
     if (isSuccess) {
-      // resetForm();
+      form.reset();
 
       updateLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
     }
@@ -161,7 +155,7 @@ export const useCollectionDetailsForm = () => {
     },
   });
 
-  return { form, resetForm };
+  return { form };
 };
 
 export const useHandleGetCollectionDetailsById = () => {
