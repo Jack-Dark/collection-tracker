@@ -78,7 +78,6 @@ export const Route = createRootRouteWithContext<{
     };
   },
   component: RootComponent,
-  errorComponent: RouteErrorComponent,
   loader: async () => {
     const { themeCookie } = handleThemeCookie();
 
@@ -112,7 +111,6 @@ export const Route = createRootRouteWithContext<{
       ),
     };
   },
-  notFoundComponent: RouteNotFoundComponent,
 });
 
 function RootComponent() {
