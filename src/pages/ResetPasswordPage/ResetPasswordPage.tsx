@@ -57,16 +57,25 @@ export const ResetPasswordPage: RouteComponent = () => {
   const { notifyError } = useNotifications();
 
   useLayoutEffect(() => {
-    if (error) {
-      navigate({
+    const redirectToSignIn = () => {
+      return navigate({
         search: { resetPassword: true },
         to: '/sign-in',
       });
+    };
+
+    if (!email) {
+      notifyError('There was a problem with your email. Please try again.');
+
+      redirectToSignIn();
+    } else if (error) {
       notifyError(
         'There was a problem with your password reset token. Please try again.',
       );
+
+      redirectToSignIn();
     }
-  }, [error]);
+  }, [email, error]);
 
   return (
     <PageWrapper>

@@ -7,7 +7,7 @@ import { ResetPasswordPage } from '#/pages/ResetPasswordPage';
 import { createMetaTags } from '../__root';
 
 const resetPasswordSearchSchema = z.object({
-  email: z.email(),
+  email: z.email().optional(),
   token: z.string().min(1).optional(),
   error: z.string().min(1).optional(),
 });
