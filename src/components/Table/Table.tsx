@@ -1,10 +1,11 @@
 import type {
+  Row,
   RowData,
   Table as TableDef,
   TableFeatures,
   TableOptions,
 } from '@tanstack/react-table';
-import type { JSXElementConstructor } from 'react';
+import type { HTMLAttributes, JSXElementConstructor } from 'react';
 
 import { ScrollArea } from '@base-ui/react';
 import { useKeyHold } from '@tanstack/react-hotkeys';
@@ -19,8 +20,9 @@ import {
   useTable,
 } from '@tanstack/react-table';
 import { useLayoutEffect, useMemo, useState } from 'react';
-import { twJoin } from 'tailwind-merge';
+import { twJoin, twMerge } from 'tailwind-merge';
 
+import type { NotificationType } from '../Notifications/Notifications.types';
 import type { TableActionsPropsDef } from './components/TableActions/TableActions.types';
 import type { TablePaginationPropsDef } from './components/TablePagination/TablePagination.types';
 import type { TableSettingsMenuPropsDef } from './components/TableSettingsMenu/TableSettingsMenu.types';
@@ -36,8 +38,15 @@ const tableCellClasses = twJoin(
   'last:sticky last:right-0 last:z-1 last:border-l last:border-l-transparent last:group-data-overflow-x-end:border-l-theme-surface-3',
 );
 
-const tableRowClasses =
-  'h-8 hover:bg-primary-100 dark:hover:bg-primary-950 not-last:*:border-b';
+const tableRowClasses = twMerge(
+  'h-8 hover:bg-primary-100 dark:hover:bg-primary-950 not-last:*:border-b',
+  'even:bg-theme-surface-1',
+  'odd:bg-theme-surface-2',
+  'data-[status="error"]:light:bg-red-100 data-[status="error"]:dark:bg-red-950 data-[status="error"]:light:hover:bg-red-200 data-[status="error"]:dark:hover:bg-red-900',
+  'data-[status="warning"]:light:bg-amber-100 data-[status="warning"]:dark:bg-amber-800 data-[status="warning"]:hover:bg-amber-200 data-[status="warning"]:dark:hover:bg-amber-900',
+  'data-[status="success"]:even:animate-(--animate-success-row-fade-out-even)',
+  'data-[status="success"]:odd:animate-(--animate-success-row-fade-out-odd)',
+);
 
 export type AboveTableComponentDef<
   TTableFeatures extends TableFeatures,
@@ -45,6 +54,17 @@ export type AboveTableComponentDef<
 > = JSXElementConstructor<{
   table: TableDef<TTableFeatures, TData>;
 }>;
+
+/** Include `data-status` in the returned props to change the row color. */
+export type GetRowProps<
+  TTableFeatures extends TableFeatures,
+  TData extends RowData,
+> = (
+  row: Row<TTableFeatures, TData>,
+  allRows: Row<TTableFeatures, TData>[],
+) => {
+  'data-status'?: NotificationType;
+} & HTMLAttributes<HTMLTableRowElement>;
 
 export type TablePropsDef<
   TTableFeatures extends TableFeatures,
@@ -54,6 +74,7 @@ export type TablePropsDef<
   TableActionsPropsDef<TData> & {
     AboveTableComponent?: AboveTableComponentDef<TTableFeatures, TData>;
     disableRowSelection?: boolean;
+    getRowProps?: GetRowProps<TTableFeatures, TData>;
     pagination?: TablePaginationPropsDef;
     settings?: TableSettingsMenuPropsDef;
     showRowSelection?: boolean;
@@ -97,6 +118,7 @@ export const Table = <TData extends RowData>({
     // @ts-expect-error
     return String(row?.id || index);
   },
+  getRowProps,
   pagination,
   search,
   settings,
@@ -146,6 +168,8 @@ export const Table = <TData extends RowData>({
   useLayoutEffect(() => {
     table.resetRowSelection();
   }, [data]);
+
+  const tableRows = table.getRowModel().rows;
 
   return (
     <div
@@ -222,7 +246,7 @@ export const Table = <TData extends RowData>({
                   })}
                 </thead>
                 <tbody className="overflow-auto min-h-100">
-                  {table.getRowModel().rows.map((row) => {
+                  {tableRows.map((row) => {
                     const onCheckedChange = (checked: boolean) => {
                       const { rows } = table.getRowModel();
                       const rowId = row.id;
@@ -269,6 +293,7 @@ export const Table = <TData extends RowData>({
                         className={tableRowClasses}
                         data-row-id={row.id}
                         key={row.id}
+                        {...getRowProps?.(row, tableRows)}
                       >
                         {row.getVisibleCells().map((cell, index) => {
                           const { column } = cell;

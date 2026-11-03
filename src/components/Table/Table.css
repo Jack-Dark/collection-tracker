@@ -19,14 +19,43 @@
     td {
       background-color: inherit;
     }
+  }
+}
 
-    tr,
-    tr:nth-child(odd) {
-      background-color: var(--color-theme-surface-2);
+
+@theme {
+  --animate-success-row-fade-out-even: success-row-fade-out-even 2s ease-out;
+
+  @keyframes success-row-fade-out-even {
+    0% {
+      background-color: var(--color-success-flash);
     }
 
-    tr:nth-child(even) {
+    100% {
       background-color: var(--color-theme-surface-1);
     }
   }
+
+  --animate-success-row-fade-out-odd: success-row-fade-out-odd 2s ease-out;
+
+  @keyframes success-row-fade-out-odd {
+    0% {
+      background-color: var(--color-success-flash);
+    }
+
+    100% {
+      background-color: var(--color-theme-surface-2);
+    }
+  }
+}
+
+
+
+[data-theme="light"] {
+  --color-success-flash: var(--color-blue-100);
+}
+
+
+[data-theme="dark"] {
+  --color-success-flash: var(--color-blue-950);
 }

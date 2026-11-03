@@ -292,30 +292,11 @@ export const getCollectionDetailsByIdDbQuery = async ({
       },
     );
 
-    const customFieldIds =
-      collection?.customFields.reduce<number[]>((acc, { customField }) => {
-        if (customField?.id) {
-          return [...acc, customField.id];
-        } else {
-          return acc;
-        }
-      }, []) || [];
-
-    const lastAddedCustomFieldValues = await Promise.all(
-      customFieldIds.map(async (customFieldId) => {
-        return tx.query.collectionItemsToCustomFieldValues.findFirst({
+    const lastUpdatedCollectionItem = await tx.query.collectionItems.findFirst({
+      columns: {},
+      with: {
+        customFieldValues: {
           columns: {},
-          orderBy: {
-            updatedAt: 'desc',
-          },
-          where: {
-            customFieldValue: {
-              customFieldId,
-            },
-            collectionItem: {
-              collectionId,
-            },
-          },
           with: {
             customFieldValue: {
               columns: {
@@ -327,12 +308,18 @@ export const getCollectionDetailsByIdDbQuery = async ({
               },
             },
           },
-        });
-      }),
-    );
+        },
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    });
+
+    const lastUpdatedCustomFieldValues =
+      lastUpdatedCollectionItem?.customFieldValues || [];
 
     const lastAddedCustomFieldValuesByCustomFieldId =
-      lastAddedCustomFieldValues.reduce<CustomFieldValuesByFieldId>(
+      lastUpdatedCustomFieldValues.reduce<CustomFieldValuesByFieldId>(
         (acc, customField) => {
           if (customField?.customFieldValue) {
             const { customFieldId, ...rest } = customField.customFieldValue;

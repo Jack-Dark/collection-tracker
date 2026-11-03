@@ -31,4 +31,4 @@ export type SelectFieldPropsDef<TItem extends DefaultSelectItemDef> = Omit<
   >;
 } & FieldWrapperProps &
   Pick<SelectValueProps, 'placeholder'> &
-  Pick<SelectTriggerProps, 'aria-label'>;
+  Pick<SelectTriggerProps, 'aria-label' | 'autoFocus'>;

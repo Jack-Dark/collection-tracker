@@ -58,13 +58,12 @@ export const useLastAddedCustomFieldValues = () => {
   };
 };
 
-export const createOrUpdateCollectionItemsFormDefaultValues: CreateOrUpdateCollectionItemFormDataDef =
-  {
-    collectionItems: [],
-  };
+const formDefaultValues: CreateOrUpdateCollectionItemFormDataDef = {
+  collectionItems: [],
+};
 
 export const createOrUpdateCollectionItemsFormOptions = formOptions({
-  defaultValues: createOrUpdateCollectionItemsFormDefaultValues,
+  defaultValues: formDefaultValues,
   formId: 'collection-items',
   validators: [
     {

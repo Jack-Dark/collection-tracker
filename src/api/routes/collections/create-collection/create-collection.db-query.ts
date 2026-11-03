@@ -22,23 +22,34 @@ export const createCollectionDbQuery = async ({
   }
 
   const userId = context.user.id;
-  const isAdmin = context.user.role === 'admin';
 
   return await db.transaction(async (tx) => {
-    // ! temporarily cap the maximum allowed collections to avoid service fees
-    const totalCollections = isAdmin
-      ? 0
-      : await tx.$count(collectionsTable, eq(collectionsTable.userId, userId));
+    // ! cap the maximum allowed collections to avoid service fees
+    const userData = await tx.query.users.findFirst({
+      columns: { maxCollections: true },
+      where: { id: userId },
+    });
 
-    const maxAllowed = 20;
-    const numAdditionalCollectionsAllowed = Math.max(
-      0,
-      maxAllowed - totalCollections,
+    if (!userData) {
+      throw new Error('Unable to locate user.');
+    }
+    const { maxCollections } = userData;
+
+    const totalCollections = await tx.$count(
+      collectionsTable,
+      eq(collectionsTable.userId, userId),
     );
 
-    if (!isAdmin && !numAdditionalCollectionsAllowed) {
+    const numAdditionalCollectionsAllowed = Math.max(
+      0,
+      maxCollections - totalCollections,
+    );
+
+    if (!numAdditionalCollectionsAllowed) {
+      const maxReachedWarningMessage = `You have reached the maximum number of collections currently allowed for free (${maxCollections}).`;
+
       return {
-        warning: `You have reached the maximum number of collections currently allowed for free (${maxAllowed}).`,
+        warning: maxReachedWarningMessage,
       };
     }
 

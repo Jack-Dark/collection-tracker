@@ -1,6 +1,8 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
+import type { RouterPath } from '#/types';
+
 import { auth } from '#/auth/auth';
 import { errorHandlingMiddleware } from '#/auth/auth-middleware';
 
@@ -15,7 +17,8 @@ export const requestPasswordResetServerFn = createServerFn({
     const headers = getRequestHeaders();
 
     const encodedEmail = encodeURI(data.email).replace(/\+/g, '%2B');
-    const redirectTo = `/reset-password?email=${encodedEmail}`;
+    const redirectPath = '/reset-password' satisfies RouterPath;
+    const redirectTo = `${redirectPath}?email=${encodedEmail}`;
 
     const { message, status } = await auth.api.requestPasswordReset({
       body: {
