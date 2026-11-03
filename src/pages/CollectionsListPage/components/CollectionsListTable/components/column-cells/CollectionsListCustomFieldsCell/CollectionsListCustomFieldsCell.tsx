@@ -32,7 +32,6 @@ import { SelectField } from '#/components/Fields/SelectField';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { pluralize } from '#/helpers/pluralize';
-import { replaceValueInArrayField } from '#/helpers/replace-value-in-array-field';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 export const customFieldTypeLabelsMap = {
@@ -95,28 +94,11 @@ export const CollectionsListCustomFieldsCell = (props: {
   const [showAddOrEditCustomFieldsDialog, hideAddOrEditCustomFieldsDialog] =
     useDialog(() => {
       return (
-        <form.ArrayField name={`records[${rowIndex}].customFields`}>
-          {(customFieldFormField) => {
-            const { removeValue } = customFieldFormField;
-
-            const replaceValue = (
-              index: number,
-              value: CustomFieldFormSchemaDef,
-            ) => {
-              replaceValueInArrayField(customFieldFormField, index, value);
-            };
-
-            return (
-              <AddOrEditCustomFieldDialog
-                form={form}
-                onClose={hideAddOrEditCustomFieldsDialog}
-                removeValue={removeValue}
-                replaceValue={replaceValue}
-                rowIndex={rowIndex}
-              />
-            );
-          }}
-        </form.ArrayField>
+        <AddOrEditCustomFieldDialog
+          form={form}
+          onClose={hideAddOrEditCustomFieldsDialog}
+          rowIndex={rowIndex}
+        />
       );
     }, []);
 
@@ -413,11 +395,9 @@ export const DeleteCustomFieldDialog = (props: {
 export const AddOrEditCustomFieldDialog = (props: {
   form: CreateOrUpdateCollectionFormTypeDef;
   onClose: () => void;
-  removeValue: (index: number) => void;
-  replaceValue: (index: number, customField: CustomFieldFormSchemaDef) => void;
   rowIndex: number;
 }) => {
-  const { form, onClose, removeValue, replaceValue, rowIndex } = props;
+  const { form, onClose, rowIndex } = props;
 
   const [fieldTypeError, setFieldTypeError] = useState<string | undefined>();
 
@@ -477,152 +457,166 @@ export const AddOrEditCustomFieldDialog = (props: {
     lastEditedCustomField.data?.customField.type,
   ]);
 
-  return lastEditedCustomField.index === undefined ? null : (
-    <form.Field
-      name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}]`}
-    >
-      {(customFieldField) => {
-        const onCancel = () => {
-          if (
-            lastEditedCustomField.index !== undefined &&
-            lastEditedCustomField.data
-          ) {
-            onClose();
-
-            if (isNewRecord) {
-              removeValue(lastEditedCustomField.index);
-            } else {
-              replaceValue(
-                lastEditedCustomField.index,
-                lastEditedCustomField.data,
-              );
-            }
-          }
-        };
-
-        const onSave = async () => {
-          await onInterceptProcessingRequest(async () => {
-            if (lastEditedCustomField.index !== undefined) {
-              const { customField, order } = customFieldField.value;
-              const { id, name, type } = customField;
-
-              if (typeof id === 'string') {
-                const [newRecord] = await onCreateCustomFields({
-                  records: [{ name, type }],
-                });
-
-                replaceValue(lastEditedCustomField.index, {
-                  customField: {
-                    id: newRecord.id,
-                    name: newRecord.name,
-                    type: newRecord.type,
-                  },
-                  order,
-                });
-              } else {
-                await onUpdateCustomFields({
-                  records: [{ id, name, type }],
-                });
-              }
-
-              await invalidateGetCustomFields();
-              onClose();
-            }
-          });
-        };
-
-        const isValid =
-          !fieldTypeError &&
-          customFieldFormSchema.validate(customFieldField.value);
-
+  return (
+    <form.ArrayField name={`records[${rowIndex}].customFields`}>
+      {({ removeValue, replaceValue }) => {
         return lastEditedCustomField.index === undefined ? null : (
-          <Dialog
-            disableOnClose={processing}
-            Footer={() => {
-              return (
-                <>
-                  <Button
-                    disabled={processing}
-                    onClick={onCancel}
-                    text="Cancel"
-                    variant="mono"
-                  />
-                  <Button
-                    disabled={!isValid}
-                    onClick={onSave}
-                    processing={processing}
-                    text="Save"
-                  />
-                </>
+          <form.Field
+            name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}]`}
+          >
+            {(customFieldField) => {
+              const onCancel = () => {
+                if (
+                  lastEditedCustomField.index !== undefined &&
+                  lastEditedCustomField.data
+                ) {
+                  onClose();
+
+                  if (
+                    typeof lastEditedCustomField.data?.customField.id ===
+                    'string'
+                  ) {
+                    removeValue(lastEditedCustomField.index);
+                  } else {
+                    // ? data is constructed this way to solve type conflict with ID
+                    replaceValue(lastEditedCustomField.index, {
+                      ...lastEditedCustomField.data,
+                      customField: {
+                        ...lastEditedCustomField.data.customField,
+                        id: lastEditedCustomField.data?.customField.id,
+                      },
+                    });
+                  }
+                }
+              };
+
+              const onSave = async () => {
+                await onInterceptProcessingRequest(async () => {
+                  if (lastEditedCustomField.index !== undefined) {
+                    const { customField, order } = customFieldField.value;
+                    const { id, name, type } = customField;
+
+                    if (typeof id === 'string') {
+                      const [newRecord] = await onCreateCustomFields({
+                        records: [{ name, type }],
+                      });
+
+                      replaceValue(lastEditedCustomField.index, {
+                        customField: {
+                          id: newRecord.id,
+                          name: newRecord.name,
+                          type: newRecord.type,
+                        },
+                        order,
+                      });
+                    } else {
+                      await onUpdateCustomFields({
+                        records: [{ id, name, type }],
+                      });
+                    }
+
+                    await invalidateGetCustomFields();
+                    onClose();
+                  }
+                });
+              };
+
+              const isValid =
+                !fieldTypeError &&
+                customFieldFormSchema.validate(customFieldField.value);
+
+              return lastEditedCustomField.index === undefined ? null : (
+                <Dialog
+                  disableOnClose={processing}
+                  Footer={() => {
+                    return (
+                      <>
+                        <Button
+                          disabled={processing}
+                          onClick={onCancel}
+                          text="Cancel"
+                          variant="mono"
+                        />
+                        <Button
+                          disabled={!isValid}
+                          onClick={onSave}
+                          processing={processing}
+                          text="Save"
+                        />
+                      </>
+                    );
+                  }}
+                  Header={`${isNewRecord ? 'Create' : 'Edit'} Custom Field`}
+                  onClose={onCancel}
+                >
+                  <div className="grid gap-4">
+                    <form.Field
+                      name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].customField.name`}
+                    >
+                      {(nameField) => {
+                        return (
+                          <InputField
+                            error={nameField.errors}
+                            Label="Field Name"
+                            name={nameField.name}
+                            onValueChange={(value) => {
+                              nameField.handleChange(value);
+                            }}
+                            placeholder="Input column name..."
+                            value={nameField.value}
+                          />
+                        );
+                      }}
+                    </form.Field>
+
+                    <form.Field
+                      name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].customField.type`}
+                    >
+                      {(typeField) => {
+                        const formattedValue:
+                          (typeof customFieldDataTypeItems)[number] | null =
+                          typeField.value
+                            ? {
+                                disabled: false,
+                                id: typeField.value,
+                                label:
+                                  customFieldTypeLabelsMap[typeField.value],
+                              }
+                            : null;
+
+                        return (
+                          <SelectField
+                            autoFocus={!typeField.value}
+                            error={fieldTypeError || typeField.errors}
+                            items={customFieldDataTypeItems}
+                            Label="Input Type"
+                            name={typeField.name}
+                            onValueChange={(value) => {
+                              const type = value?.id;
+                              if (type) {
+                                typeField.handleChange(type);
+                              }
+                            }}
+                            placeholder="Select data type..."
+                            value={formattedValue}
+                          />
+                        );
+                      }}
+                    </form.Field>
+
+                    <p className="max-w-100 text-theme-t2 text-sm text-center">
+                      Note: This will{' '}
+                      {isNewRecord ? 'create the' : 'update your'} custom field,
+                      even if changes to your collection are dismissed.
+                    </p>
+                  </div>
+                </Dialog>
               );
             }}
-            Header={`${isNewRecord ? 'Create' : 'Edit'} Custom Field`}
-            onClose={onCancel}
-          >
-            <div className="grid gap-4">
-              <form.Field
-                name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].customField.name`}
-              >
-                {(nameField) => {
-                  return (
-                    <InputField
-                      autoFocus
-                      error={nameField.errors}
-                      Label="Field Name"
-                      name={nameField.name}
-                      onValueChange={(value) => {
-                        nameField.handleChange(value);
-                      }}
-                      placeholder="Input column name..."
-                      value={nameField.value}
-                    />
-                  );
-                }}
-              </form.Field>
-
-              <form.Field
-                name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].customField.type`}
-              >
-                {(typeField) => {
-                  const formattedValue:
-                    (typeof customFieldDataTypeItems)[number] | null =
-                    typeField.value
-                      ? {
-                          disabled: false,
-                          id: typeField.value,
-                          label: customFieldTypeLabelsMap[typeField.value],
-                        }
-                      : null;
-
-                  return (
-                    <SelectField
-                      autoFocus={!typeField.value}
-                      error={fieldTypeError || typeField.errors}
-                      items={customFieldDataTypeItems}
-                      Label="Input Type"
-                      name={typeField.name}
-                      onValueChange={(value) => {
-                        const type = value?.id;
-                        if (type) {
-                          typeField.handleChange(type);
-                        }
-                      }}
-                      placeholder="Select data type..."
-                      value={formattedValue}
-                    />
-                  );
-                }}
-              </form.Field>
-
-              <p className="max-w-100 text-theme-t2 text-sm text-center">
-                Note: This will {isNewRecord ? 'create the' : 'update your'}{' '}
-                custom field, even if changes to your collection are dismissed.
-              </p>
-            </div>
-          </Dialog>
+          </form.Field>
         );
       }}
-    </form.Field>
+    </form.ArrayField>
   );
 };
 
