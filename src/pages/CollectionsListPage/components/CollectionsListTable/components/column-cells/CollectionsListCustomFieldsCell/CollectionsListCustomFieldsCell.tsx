@@ -399,8 +399,6 @@ export const AddOrEditCustomFieldDialog = (props: {
 }) => {
   const { form, onClose, rowIndex } = props;
 
-  const [fieldTypeError, setFieldTypeError] = useState<string | undefined>();
-
   const lastEditedCustomField = useLastEditedCustomField();
 
   const { onInterceptProcessingRequest, processing } = useSpinner();
@@ -427,8 +425,6 @@ export const AddOrEditCustomFieldDialog = (props: {
       },
     );
 
-    let fieldTypeError: string | undefined;
-
     const typeItemsWithDisabledStates = fieldDataTypeItems.map(
       (fieldDataTypeItem) => {
         const isPlaceholderItem = !fieldDataTypeItem.id;
@@ -437,19 +433,15 @@ export const AddOrEditCustomFieldDialog = (props: {
           return { ...fieldDataTypeItem, disabled: true };
         }
 
-        const disabled = customFieldsInDbWithSameName.some(({ type }) => {
-          return type === fieldDataTypeItem.id;
-        });
+        const matchesExistingCustomField = customFieldsInDbWithSameName.some(
+          ({ type }) => {
+            return type === fieldDataTypeItem.id;
+          },
+        );
 
-        if (disabled) {
-          fieldTypeError = 'Matches existing custom field';
-        }
-
-        return { ...fieldDataTypeItem, disabled };
+        return { ...fieldDataTypeItem, disabled: matchesExistingCustomField };
       },
     );
-
-    setFieldTypeError(fieldTypeError);
 
     return typeItemsWithDisabledStates;
   }, [
@@ -521,9 +513,9 @@ export const AddOrEditCustomFieldDialog = (props: {
                 });
               };
 
-              const isValid =
-                !fieldTypeError &&
-                customFieldFormSchema.validate(customFieldField.value);
+              const isValid = customFieldFormSchema.validate(
+                customFieldField.value,
+              );
 
               return lastEditedCustomField.index === undefined ? null : (
                 <Dialog
@@ -587,7 +579,7 @@ export const AddOrEditCustomFieldDialog = (props: {
                         return (
                           <SelectField
                             autoFocus={!typeField.value}
-                            error={fieldTypeError || typeField.errors}
+                            error={typeField.errors}
                             items={customFieldDataTypeItems}
                             Label="Input Type"
                             name={typeField.name}
