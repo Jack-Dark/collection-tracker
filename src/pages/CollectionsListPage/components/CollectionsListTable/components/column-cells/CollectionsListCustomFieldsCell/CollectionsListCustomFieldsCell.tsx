@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { createAtom, useAtom } from '@tanstack/react-store';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import z from 'zod';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 import type { CustomFieldDataForCollectionDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
@@ -15,7 +16,10 @@ import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsLis
 
 import { useGetNumCollectionsWithCustomField } from '#/api/routes/collections/get-num-collections-with-custom-field/get-num-collections-with-custom-field.react-query';
 import { useCreateCustomFields } from '#/api/routes/custom-fields/create-custom-fields/create-custom-fields.react-query';
-import { customFieldFormSchema } from '#/api/routes/custom-fields/custom-fields.schema';
+import {
+  baseCustomFieldSchema,
+  customFieldFormSchema,
+} from '#/api/routes/custom-fields/custom-fields.schema';
 import { useDeleteCustomFields } from '#/api/routes/custom-fields/delete-custom-fields/delete-custom-fields.react-query';
 import {
   useGetCustomFields,
@@ -180,9 +184,16 @@ export const CollectionsListCustomFieldsCell = (props: {
 
                 if (lastAddedIndex >= 0) {
                   lastEditedCustomField.setIndex(lastAddedIndex);
-                  showAddOrEditCustomFieldsDialog();
                 } else {
                   lastEditedCustomField.setIndex(undefined);
+                }
+
+                const { success } = z
+                  .array(baseCustomFieldSchema)
+                  .safeParse(customFields);
+
+                if (!success) {
+                  showAddOrEditCustomFieldsDialog();
                 }
 
                 form.setFieldValue(
