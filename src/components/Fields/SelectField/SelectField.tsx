@@ -152,7 +152,6 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
                                 ),
                           )}
                           disabled={item?.disabled}
-                          key={itemToStringValue(item)}
                           value={item}
                         >
                           <Select.ItemText>

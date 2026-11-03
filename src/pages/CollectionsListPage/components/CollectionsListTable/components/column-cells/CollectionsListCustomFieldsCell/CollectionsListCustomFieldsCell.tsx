@@ -149,7 +149,7 @@ export const CollectionsListCustomFieldsCell = (props: {
               }}
               enableChipSort
               error={field.errors}
-              idProperty="name"
+              idProperty="id"
               isItemEqualToValue={(item, value) => {
                 return item?.id === value?.id;
               }}

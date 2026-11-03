@@ -302,15 +302,15 @@ export const ComboboxField = <
               >
                 {value.map((item, index) => {
                   const label = itemToStringLabel(item);
-                  const key = itemToStringValue(item);
+                  const id = itemToStringValue(item);
 
                   return (
                     <SortableChip
                       enableChipSort={enableChipSort}
-                      id={key}
+                      id={id}
                       index={index}
                       item={item}
-                      key={key}
+                      key={id}
                       label={label}
                       onRemoveChip={onRemoveChip}
                       RenderChip={RenderChip}
