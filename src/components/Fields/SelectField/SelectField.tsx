@@ -91,11 +91,11 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         onValueChange={(item) => {
           onValueChange(item);
         }}
-        open={autoFocus}
         value={value}
       >
         <Select.Trigger
           aria-label={ariaLabel}
+          autoFocus={autoFocus}
           className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-full border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer text-left"
         >
           <Select.Value
@@ -152,7 +152,6 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
                                 ),
                           )}
                           disabled={item?.disabled}
-                          key={itemToStringValue(item)}
                           value={item}
                         >
                           <Select.ItemText>

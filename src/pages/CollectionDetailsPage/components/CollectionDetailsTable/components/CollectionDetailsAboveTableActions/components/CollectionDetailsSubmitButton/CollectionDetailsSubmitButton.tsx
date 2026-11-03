@@ -33,11 +33,13 @@ export const CollectionDetailsSubmitButton = ({
               className="flex flex-nowrap gap-2 btn-sm md:btn-md"
               disabled={disabled}
               Icon={SaveIcon}
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
 
-                form.handleSubmit();
-                resetRowSelection();
+                const errors = await form.handleSubmit();
+                if (!errors?.length) {
+                  resetRowSelection();
+                }
               }}
               processing={isSubmitting}
               text="Save"

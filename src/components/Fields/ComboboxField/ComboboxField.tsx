@@ -137,15 +137,11 @@ export const ComboboxField = <
   const debouncedOnInputValueChanged = useMemo(() => {
     return _.debounce((query: string) => {
       if (allowCreatable) {
-        const newDisplayItems = [...displayItems];
-        const creatableIndex = 0;
-
-        const hasCreatable = !!displayItems[creatableIndex]?.creatable;
-        // ? 1 or 0
-        const indexToDelete = Number(hasCreatable);
-
-        // delete existing creatable item
-        newDisplayItems.splice(creatableIndex, indexToDelete);
+        const newDisplayItems = [...displayItems].filter(({ creatable }) => {
+          // ? filter out any previously creatable items
+          return !creatable;
+        });
+        const creatableIndex = -1;
 
         const trimmedQuery = query.trim();
         const normalizedQuery = getNormalizedValue(query);
@@ -185,9 +181,6 @@ export const ComboboxField = <
           } else {
             newDisplayItems.splice(creatableIndex, 0, creatableItem);
           }
-        } else {
-          // ? remove creatable item
-          newDisplayItems.splice(creatableIndex, 0);
         }
 
         setDisplayItems(newDisplayItems);
@@ -252,6 +245,7 @@ export const ComboboxField = <
       validationMode={validationMode}
     >
       <Combobox.Root
+        autoHighlight
         filter={filter}
         inputValue={query}
         isItemEqualToValue={isItemEqualToValue}
@@ -308,15 +302,15 @@ export const ComboboxField = <
               >
                 {value.map((item, index) => {
                   const label = itemToStringLabel(item);
-                  const key = itemToStringValue(item);
+                  const id = itemToStringValue(item);
 
                   return (
                     <SortableChip
                       enableChipSort={enableChipSort}
-                      id={key}
+                      id={id}
                       index={index}
                       item={item}
-                      key={key}
+                      key={id}
                       label={label}
                       onRemoveChip={onRemoveChip}
                       RenderChip={RenderChip}
