@@ -16,6 +16,19 @@ export const getSession = createServerFn({ method: 'GET' }).handler(
   },
 );
 
+export const formatSessionToUserContext = (
+  sessionResponse: Awaited<ReturnType<typeof auth.api.getSession>>,
+) => {
+  return {
+    email: sessionResponse?.user.email || '',
+    emailVerified: sessionResponse?.user.emailVerified || false,
+    id: sessionResponse?.user.id || '',
+    impersonatedBy: sessionResponse?.session.impersonatedBy,
+    name: sessionResponse?.user.name || '',
+    role: sessionResponse?.user.role,
+  };
+};
+
 export const ensureSession = createServerFn({ method: 'GET' }).handler(
   async () => {
     const session = await getSession();

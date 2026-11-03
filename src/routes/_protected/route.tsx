@@ -1,10 +1,9 @@
 import { createFileRoute, isRedirect } from '@tanstack/react-router';
 
-import { ensureSession } from '#/auth/auth-middleware';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/_protected')({
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({ location, context }) => {
     const redirectToSignIn = () => {
       return Route.redirect({
         search: { redirect: location.href },
@@ -13,13 +12,9 @@ export const Route = createFileRoute('/_protected')({
     };
 
     try {
-      const session = await ensureSession();
-
-      if (!session) {
+      if (!context.user.id) {
         throw redirectToSignIn();
       }
-
-      return { user: session.user };
     } catch (error) {
       // ? Re-throw redirects (they're intentional, not errors)
       if (isRedirect(error)) {
