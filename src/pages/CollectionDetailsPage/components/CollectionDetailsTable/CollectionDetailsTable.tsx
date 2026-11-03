@@ -1,4 +1,4 @@
-import { useForm } from '@tanstack/react-form';
+import { useForm, useSelector } from '@tanstack/react-form';
 import { useEffect, useMemo } from 'react';
 
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
@@ -102,6 +102,22 @@ export const CollectionDetailsTable = () => {
   const sortProps = useCollectionDetailsSortProps();
   const settingsProps = useCollectionDetailsSettingsProps();
 
+  const formErrors = useSelector(form.atom, ({ errors }) => {
+    return errors;
+  });
+
+  const rowIndexesWithErrors = useMemo(() => {
+    return formErrors.reduce<number[]>((acc, { path }) => {
+      const rowIndex = path?.[1];
+
+      if (rowIndex !== undefined) {
+        return [...acc, rowIndex as number];
+      } else {
+        return acc;
+      }
+    }, []);
+  }, [formErrors]);
+
   useEffect(() => {
     // ? clear edit state on unmount
     return resetEditingRowIds;
@@ -141,6 +157,11 @@ export const CollectionDetailsTable = () => {
                   />
                 );
               },
+            }}
+            getRowProps={({ index }) => {
+              const isError = rowIndexesWithErrors.includes(index);
+
+              return isError ? { 'data-status': 'error' } : {};
             }}
             pagination={paginationProps}
             search={searchProps}

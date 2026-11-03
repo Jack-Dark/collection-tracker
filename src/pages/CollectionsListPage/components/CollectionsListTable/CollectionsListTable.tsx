@@ -1,3 +1,4 @@
+import { useSelector } from '@tanstack/react-store';
 import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
@@ -61,6 +62,24 @@ export const CollectionsListTable = ({
   const paginationProps = useCollectionsListPaginationProps({ pagination });
   const sortProps = useCollectionsListSortProps();
 
+  const formErrors = useSelector(form.atom, ({ errors }) => {
+    return errors;
+  });
+
+  const rowIndexesWithErrors = useMemo(() => {
+    // TODO - REFACTOR: UPDATE FORM TYPE DEF TO INCLUDE ERRORS TYPE DEF. ONCE THAT WORKS, YOU SHOULD BE ABLE TO EXTRACT THIS LOGIC TO A HOOK
+    // @ts-expect-error
+    return formErrors.reduce<number[]>((acc, { path }) => {
+      const rowIndex = path?.[1];
+
+      if (rowIndex !== undefined) {
+        return [...acc, rowIndex as number];
+      } else {
+        return acc;
+      }
+    }, []);
+  }, [formErrors]);
+
   useEffect(() => {
     // ? clear edit state on unmount
     return resetEditingRowIds;
@@ -90,6 +109,11 @@ export const CollectionsListTable = ({
             columns={columns}
             data={field.value}
             disableRowSelection={isEditing}
+            getRowProps={({ index }) => {
+              const isError = rowIndexesWithErrors.includes(index);
+
+              return isError ? { 'data-status': 'error' } : {};
+            }}
             pagination={paginationProps}
             search={searchProps}
             showRowSelection
