@@ -1,22 +1,22 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
-
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
-import type { CreateCustomFieldValuesResponseDef } from '#/api/routes/custom-field-values/create-custom-field-value/create-custom-field-value.types';
+import type { CustomFieldValueBooleanDef } from '#/api/routes/custom-field-values/custom-field-values.types';
 
 import { useCreateCustomFieldValues } from '#/api/routes/custom-field-values/create-custom-field-value/create-custom-field-value.react-query';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { useLastAddedCustomFieldValues } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
 
-type CustomFieldValueCheckboxPropsDef<TField extends AnyFieldApi> = {
+type CustomFieldValueCheckboxPropsDef = {
+  autoFocus?: boolean;
   customField: {
     id: number;
     name: string;
     type: CustomFieldTypeDef;
   };
-  /** The specific custom field value form field where this component renders */
-  field: TField;
+  fieldValue: CustomFieldValueBooleanDef | undefined;
+  handleChange: (value: CustomFieldValueBooleanDef | undefined) => void;
+  Label?: string | React.JSXElementConstructor<{}>;
 };
 
 export const getCustomFieldValueCheckboxAriaLabel = (props: {
@@ -28,44 +28,49 @@ export const getCustomFieldValueCheckboxAriaLabel = (props: {
   return `${checked ? 'Uncheck' : 'Check'} ${customFieldName} for row` as const;
 };
 
-export const CustomFieldValueCheckbox = <TField extends AnyFieldApi>({
+export const CustomFieldValueCheckbox = ({
+  autoFocus,
   customField,
-  field,
-}: CustomFieldValueCheckboxPropsDef<TField>) => {
+  fieldValue,
+  handleChange,
+  Label,
+}: CustomFieldValueCheckboxPropsDef) => {
   const { onCreateCustomFieldValues, processing } =
-    useCreateCustomFieldValues();
+    useCreateCustomFieldValues<CustomFieldValueBooleanDef[]>();
 
   const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
 
-  const checked = !!field.value?.valueBoolean;
+  const checked = !!fieldValue?.valueBoolean;
 
   const ariaLabel = getCustomFieldValueCheckboxAriaLabel({
     checked,
     customFieldName: customField.name,
   });
 
-  const updateField = (value: CreateCustomFieldValuesResponseDef[number]) => {
+  const updateField: typeof handleChange = (value) => {
     updateLastAddedCustomFieldValues({
       [customField.id]: value,
     });
 
-    field.handleChange(value);
+    handleChange(value);
   };
 
   return (
     <CheckboxField
       aria-label={ariaLabel}
+      autoFocus={autoFocus}
       checked={checked}
       disabled={processing}
+      Label={Label}
       onCheckedChange={async (value) => {
-        const prevValue = field.value;
+        const prevValue = fieldValue;
 
-        const tempCustomFieldValue = {
+        const tempCustomFieldValue: CustomFieldValueBooleanDef = {
           id: uuidv4() as unknown as number,
           valueBoolean: value,
           valueNumber: null,
           valueText: null,
-        } satisfies CreateCustomFieldValuesResponseDef[number];
+        };
 
         // ? set temp custom field value for instant UI feedback
         updateField(tempCustomFieldValue);

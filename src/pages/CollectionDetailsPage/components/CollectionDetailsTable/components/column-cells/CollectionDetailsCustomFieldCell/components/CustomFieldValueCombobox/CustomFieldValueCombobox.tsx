@@ -1,11 +1,10 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
-
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type { CustomFieldValueStringDef } from '#/api/routes/custom-field-values/custom-field-values.types';
 
 import { useCreateCustomFieldValues } from '#/api/routes/custom-field-values/create-custom-field-value/create-custom-field-value.react-query';
 import {
@@ -19,28 +18,39 @@ import { useLastAddedCustomFieldValues } from '#/pages/CollectionDetailsPage/Col
 
 import { DeleteCustomFieldValueDialog } from './components/DeleteCustomFieldValueDialog';
 
-type CustomFieldValueComboboxPropsDef<TField extends AnyFieldApi> = {
-  collectionItemId: number | string;
+type CustomFieldValueComboboxPropsDef = {
+  autoFocus?: boolean;
   customField: {
     id: number;
     name: string;
     type: CustomFieldTypeDef;
   };
-  /** The specific custom field value form field where this component renders */
-  field: TField;
-};
+  fieldValue: CustomFieldValueStringDef | undefined;
+  handleChange: (value: CustomFieldValueStringDef | undefined) => void;
+  Label?: string | React.JSXElementConstructor<{}>;
+} & (
+  | {
+      collectionItemId: number | string;
+      enableDeletion: boolean;
+    }
+  | {
+      collectionItemId?: never;
+      enableDeletion?: never;
+    }
+);
 
-export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
+export const CustomFieldValueCombobox = ({
+  autoFocus,
   collectionItemId,
   customField,
-  field,
-}: CustomFieldValueComboboxPropsDef<TField>) => {
-  const [customFieldValueToDelete, setCustomFieldValueToDelete] = useState<{
-    id: number;
-    valueBoolean: null;
-    valueNumber: null;
-    valueText: string;
-  }>();
+  enableDeletion,
+  fieldValue,
+  handleChange,
+  Label,
+}: CustomFieldValueComboboxPropsDef) => {
+  const [customFieldValueToDelete, setCustomFieldValueToDelete] = useState<
+    CustomFieldValueStringDef | undefined
+  >();
 
   const { data, isFetching } = useGetCustomFieldValuesByCustomFieldId({
     placeholderData: [],
@@ -52,7 +62,9 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
   const invalidateGetCustomFieldValuesByCustomFieldId =
     useInvalidateGetCustomFieldValuesByCustomFieldId();
 
-  const { onCreateCustomFieldValues, processing } = useCreateCustomFieldValues({
+  const { onCreateCustomFieldValues, processing } = useCreateCustomFieldValues<
+    CustomFieldValueStringDef[]
+  >({
     onSuccess: async () => {
       await invalidateGetCustomFieldValuesByCustomFieldId({
         id: customField.id,
@@ -65,22 +77,24 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
   const [showDeleteCustomFieldValueDialog, hideCustomFieldValueDialog] =
     useDialog(() => {
       return (
-        customFieldValueToDelete && (
+        customFieldValueToDelete &&
+        enableDeletion && (
           <DeleteCustomFieldValueDialog
             collectionItemId={collectionItemId}
             customFieldValueToDelete={customFieldValueToDelete}
-            handleFieldChange={field.handleChange}
+            handleFieldChange={handleChange}
             onClose={hideCustomFieldValueDialog}
-            selectedCustomFieldValueId={field.value?.id}
+            selectedCustomFieldValueId={fieldValue?.id}
           />
         )
       );
-    }, [customFieldValueToDelete, field.value?.id]);
+    }, [customFieldValueToDelete, fieldValue?.id]);
 
   return (
     <ComboboxField
       allowCreatable
       ariaLabel={customField.name}
+      autoFocus={autoFocus}
       caseSensitiveCreation
       createNewItem={(label) => {
         return {
@@ -93,38 +107,29 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
       }}
       disabled={isFetching || processing}
       idProperty="id"
-      inputValue={field.value?.valueText ?? undefined}
+      inputValue={fieldValue?.valueText ?? undefined}
       items={data}
+      Label={Label}
       labelProperty="valueText"
-      name={field.name}
       onValueChange={async (selectedItem) => {
-        const handleValueChange = (
-          customFieldValue:
-            | {
-                id: number;
-                valueBoolean: boolean | null;
-                valueNumber: number | null;
-                valueText: string | null;
-              }
-            | undefined,
-        ) => {
+        const handleValueChange: typeof handleChange = (customFieldValue) => {
           updateLastAddedCustomFieldValues({
             [customField.id]: customFieldValue,
           });
-          field.handleChange(customFieldValue);
+          handleChange(customFieldValue);
         };
 
         if (selectedItem) {
           const customFieldValueExistsInDB =
             typeof selectedItem.id === 'number';
 
-          const isAlreadySelected = field.value?.id === selectedItem.id;
+          const isAlreadySelected = fieldValue?.id === selectedItem.id;
           if (isAlreadySelected) {
             // ? deselect item
             handleValueChange(undefined);
           } else if (customFieldValueExistsInDB) {
             // ? use selected item
-            const customFieldValue = {
+            const customFieldValue: CustomFieldValueStringDef = {
               id: selectedItem.id,
               valueBoolean: null,
               valueNumber: null,
@@ -155,32 +160,34 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
               <CheckIcon fontSize="inherit" />
             </SelectedIndicator>
 
-            <Button
-              aria-label="Delete"
-              className="text-gray-600 hover:text-red-700 cursor-pointer ml-auto px-2 py-1"
-              Icon={() => {
-                return <DeleteIcon fontSize="inherit" />;
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+            {enableDeletion && (
+              <Button
+                aria-label="Delete"
+                className="text-gray-600 hover:text-red-700 cursor-pointer ml-auto px-2 py-1"
+                Icon={() => {
+                  return <DeleteIcon fontSize="inherit" />;
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
 
-                setCustomFieldValueToDelete(item);
-                showDeleteCustomFieldValueDialog();
-              }}
-              size="custom"
-              variant="ghost"
-            />
+                  setCustomFieldValueToDelete(item);
+                  showDeleteCustomFieldValueDialog();
+                }}
+                size="custom"
+                variant="ghost"
+              />
+            )}
           </div>
         );
       }}
       value={
-        field.value
+        fieldValue
           ? {
-              id: field.value.id,
+              id: fieldValue.id,
               valueBoolean: null,
               valueNumber: null,
-              valueText: field.value.valueText || '',
+              valueText: fieldValue.valueText || '',
             }
           : undefined
       }

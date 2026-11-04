@@ -26,6 +26,7 @@ export const reactMutationKeys = {
   customFields: createMutationKeys('custom-fields'),
   customFieldValues: {
     ...createMutationKeys('custom-field-values'),
+    bulkUpdate: 'bulk-update-custom-field-values',
     unused: createMutationKeys('unused-custom-field-values'),
   },
   users: {
