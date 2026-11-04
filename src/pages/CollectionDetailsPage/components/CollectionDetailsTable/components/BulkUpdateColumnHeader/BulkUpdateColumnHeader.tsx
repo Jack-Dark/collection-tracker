@@ -14,7 +14,7 @@ export const BulkUpdateColumnHeader = (
 ) => {
   const { customField, form } = props;
 
-  const { isEditing } = useEditingCollectionItemsRowIds();
+  const { editingRowIds } = useEditingCollectionItemsRowIds();
 
   const [showBulkUpdateDialog, hideBulkUpdateDialog] = useDialog(() => {
     return (
@@ -32,7 +32,8 @@ export const BulkUpdateColumnHeader = (
       data-custom-field-id={customField.id}
     >
       {customField.name}
-      {isEditing && (
+
+      {editingRowIds.length > 1 && (
         <Popover
           Description="Bulk Update"
           isTriggerButton
