@@ -1,4 +1,5 @@
 import CheckIcon from '@mui/icons-material/Check';
+import { Suspense } from 'react';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 import type {
@@ -73,15 +74,17 @@ export const CollectionDetailsCustomFieldCell = (
             )}
 
             {customField.type === 'string' && (
-              <CustomFieldValueCombobox
-                collectionItemId={collectionItemId}
-                customField={customField}
-                enableDeletion
-                fieldValue={
-                  field.value as CustomFieldValueStringDef | undefined
-                }
-                handleChange={field.handleChange}
-              />
+              <Suspense>
+                <CustomFieldValueCombobox
+                  collectionItemId={collectionItemId}
+                  customField={customField}
+                  enableDeletion
+                  fieldValue={
+                    field.value as CustomFieldValueStringDef | undefined
+                  }
+                  handleChange={field.handleChange}
+                />
+              </Suspense>
             )}
           </>
         ) : (

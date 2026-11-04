@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 
 import type {
   CustomFieldValueDef,
@@ -96,15 +96,17 @@ export const BulkUpdateDialog = (props: BulkUpdateDialogPropsDef) => {
               )}
 
               {customField.type === 'string' && (
-                <CustomFieldValueCombobox
-                  autoFocus
-                  customField={customField}
-                  fieldValue={
-                    fieldValue as CustomFieldValueStringDef | undefined
-                  }
-                  handleChange={handleBulkUpdate}
-                  Label={label}
-                />
+                <Suspense>
+                  <CustomFieldValueCombobox
+                    autoFocus
+                    customField={customField}
+                    fieldValue={
+                      fieldValue as CustomFieldValueStringDef | undefined
+                    }
+                    handleChange={handleBulkUpdate}
+                    Label={label}
+                  />
+                </Suspense>
               )}
             </>
           );
