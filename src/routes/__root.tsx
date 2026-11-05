@@ -36,29 +36,23 @@ import appCss from '../styles.css?url';
 
 export const RouteNotFoundComponent = () => {
   return (
-    <RootDocument>
-      <PageWrapper>
-        <div className="grid gap-10">
-          <h1>Page Not Found</h1>
-          <p>
-            Ack! You caught us with our pants down! If you think this is bug,
-            you can help us out by reporting it.
-          </p>
-          <a href={githubUrl.issues} target="_blank">
-            <Button text="Report Bug" />
-          </a>
-        </div>
-      </PageWrapper>
-    </RootDocument>
+    <PageWrapper>
+      <div className="grid gap-10">
+        <h1>Page Not Found</h1>
+        <p>
+          Ack! You caught us with our pants down! If you think this is bug, you
+          can help us out by reporting it.
+        </p>
+        <a href={githubUrl.issues} target="_blank">
+          <Button text="Report Bug" />
+        </a>
+      </div>
+    </PageWrapper>
   );
 };
 
 export const RouteErrorComponent = (props: ErrorComponentProps) => {
-  return (
-    <RootDocument>
-      <RouteCatchBoundary {...props} />
-    </RootDocument>
-  );
+  return <RouteCatchBoundary {...props} />;
 };
 
 export const Route = createRootRouteWithContext<{
@@ -75,11 +69,10 @@ export const Route = createRootRouteWithContext<{
 
     const queryOptions = getNavMenuCollectionsQueryOptions();
 
-    const navMenuData = await context.queryClient.query(queryOptions);
+    await context.queryClient.query(queryOptions);
 
     return {
       theme: themeCookie,
-      navMenuCollections: navMenuData.collections,
     };
   },
   head: () => {
