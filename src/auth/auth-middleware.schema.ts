@@ -13,7 +13,7 @@ export const userRolesSchema = z.union(
 
 export const authSchema = z.object({
   id: z.string().min(1),
-  image: z.string().nullable().optional(),
+  impersonatedBy: z.string().nullable().optional(),
   name: z.string(),
   role: userRolesSchema.optional(),
 });

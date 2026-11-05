@@ -5,12 +5,7 @@ export type UserRoleDef = z.output<typeof userRolesSchema>;
 
 type AuthSchemaDef = z.output<typeof authSchema>;
 
-export type AuthContextDef = Record<
-  'user',
-  AuthSchemaDef & {
-    impersonatedBy?: string | null | undefined;
-  }
->;
+export type AuthContextDef = Record<'user', AuthSchemaDef>;
 
 export type DbQueryArgsDef<TData extends any, TContext = AuthContextDef> = [
   TData,

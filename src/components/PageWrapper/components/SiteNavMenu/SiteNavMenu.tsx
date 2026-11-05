@@ -104,7 +104,7 @@ export const useSiteNavMenuItems = () => {
               Icon: AdminPanelSettingsIcon,
               label: 'Admin: Users',
             },
-            user.impersonatedBy
+            user?.impersonatedBy
               ? {
                   href: '/sign-in',
                   label: 'Stop Impersonating',
