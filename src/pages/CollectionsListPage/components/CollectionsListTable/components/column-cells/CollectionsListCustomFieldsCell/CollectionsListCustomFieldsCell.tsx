@@ -4,7 +4,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { createAtom, useAtom } from '@tanstack/react-store';
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import z from 'zod';
 
@@ -70,10 +70,49 @@ const getFieldItemLabel = (type: CustomFieldTypeDef) => {
 
 export const CollectionsListCustomFieldsCell = (props: {
   form: CreateOrUpdateCollectionFormTypeDef;
-  index: number;
   rowId: string;
+  rowIndex: number;
 }) => {
-  const { form, index: rowIndex, rowId } = props;
+  const { form, rowId, rowIndex } = props;
+
+  const { getIsEditingRowId } = useEditingCollectionsRowIds();
+
+  const isEditingRow = getIsEditingRowId(rowId);
+
+  return (
+    <form.ArrayField name={`records[${rowIndex}].customFields`}>
+      {(field) => {
+        return isEditingRow ? (
+          <CollectionsListCustomFieldsEditableCell
+            form={form}
+            rowId={rowId}
+            rowIndex={rowIndex}
+          />
+        ) : field.value.length ? (
+          field.value.map(({ customField }) => {
+            return (
+              <span
+                className="group/controls flex items-center gap-2 flex-wrap"
+                key={customField.id}
+              >
+                <RenderCustomField item={customField} />
+              </span>
+            );
+          })
+        ) : (
+          <EmptyCellValue />
+        );
+      }}
+    </form.ArrayField>
+  );
+};
+
+export const CollectionsListCustomFieldsEditableCell = (props: {
+  form: CreateOrUpdateCollectionFormTypeDef;
+  rowId: string;
+  rowIndex: number;
+}) => {
+  const { form, rowId, rowIndex } = props;
 
   const { getIsEditingRowId } = useEditingCollectionsRowIds();
 
@@ -81,19 +120,11 @@ export const CollectionsListCustomFieldsCell = (props: {
 
   const lastEditedCustomField = useLastEditedCustomField();
 
-  const [updateItemsTimestamp, setUpdateItemsTimestamp] = useState<number>(0);
-
-  const { data: customFieldsInDb, isSuccess } = useGetCustomFields({
+  const { data: customFieldsInDb } = useGetCustomFields({
     enabled: isEditingRow,
     placeholderData: [],
     requestArgs: {},
   });
-
-  useLayoutEffect(() => {
-    if (isSuccess) {
-      setUpdateItemsTimestamp(Date.now());
-    }
-  }, [isSuccess, customFieldsInDb]);
 
   const [showAddOrEditCustomFieldsDialog, hideAddOrEditCustomFieldsDialog] =
     useDialog(() => {
@@ -128,7 +159,7 @@ export const CollectionsListCustomFieldsCell = (props: {
           };
         });
 
-        return isEditingRow ? (
+        return (
           <div className="w-full max-w-80">
             <ComboboxField
               allowCreatable
@@ -158,7 +189,6 @@ export const CollectionsListCustomFieldsCell = (props: {
                 return item?.id === value?.id;
               }}
               items={customFieldsInDb}
-              itemsDependencies={[updateItemsTimestamp]}
               labelProperty="name"
               multiple
               name={field.name}
@@ -266,8 +296,6 @@ export const CollectionsListCustomFieldsCell = (props: {
                         if (typeof item.id === 'string') {
                           lastEditedCustomField.setIndex(undefined);
                           lastEditedCustomField.setData(undefined);
-
-                          setUpdateItemsTimestamp(Date.now());
                         } else {
                           const itemIndex = field.value.findIndex(
                             ({ customField }) => {
@@ -295,19 +323,6 @@ export const CollectionsListCustomFieldsCell = (props: {
               }}
             />
           </div>
-        ) : field.value.length ? (
-          field.value.map(({ customField }) => {
-            return (
-              <span
-                className="group/controls flex items-center gap-2 flex-wrap"
-                key={customField.id}
-              >
-                <RenderCustomField item={customField} />
-              </span>
-            );
-          })
-        ) : (
-          <EmptyCellValue />
         );
       }}
     </form.ArrayField>
