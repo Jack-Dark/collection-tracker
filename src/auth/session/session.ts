@@ -3,8 +3,11 @@ import {
   createIsomorphicFn,
   createServerFn,
 } from '@tanstack/react-start';
-import { getRequestHeaders } from '@tanstack/react-start/server';
+import { getCookie, getRequestHeaders } from '@tanstack/react-start/server';
 import { ReasonPhrases } from 'http-status-codes';
+import Cookies from 'js-cookie';
+
+import type { ObjectValues } from '#/types';
 
 import type { ServerSession, ClientSession } from './session.types';
 
@@ -53,3 +56,23 @@ export const ensureSessionInMiddleware = async () => {
 
   return user;
 };
+
+export const lastUsedLoginMethods = {
+  email: 'email',
+  google: 'google',
+} as const;
+
+type LastUsedLoginMethod = ObjectValues<typeof lastUsedLoginMethods>;
+const lastUsedLoginMethodCookie = 'better-auth.last_used_login_method';
+
+export const getIsLastUsedLoginMethod = createIsomorphicFn()
+  .server((method: LastUsedLoginMethod) => {
+    const cookieValue = getCookie(lastUsedLoginMethodCookie);
+
+    return method === cookieValue;
+  })
+  .client((method: LastUsedLoginMethod) => {
+    const cookieValue = Cookies.get(lastUsedLoginMethodCookie);
+
+    return method === cookieValue;
+  });

@@ -53,7 +53,7 @@ export const getCollectionsListTableColumns = (
         return (
           <CollectionsListCustomFieldsCell
             form={form}
-            index={row.index}
+            rowIndex={row.index}
             rowId={row.id}
           />
         );
