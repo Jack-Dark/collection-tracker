@@ -1,5 +1,6 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { ClientOnly } from '@tanstack/react-router';
 
 import { useImpersonateUserStop } from '#/api/routes/users/impersonate-user-stop/impersonate-user-stop.react-query';
 import { getIsAdmin } from '#/auth/auth-middleware.helpers';
@@ -18,17 +19,19 @@ export const SiteNavMenu = () => {
   const { accountNavItems, primaryNavItems } = useSiteNavMenuItems();
 
   return (
-    <div className="hidden md:flex justify-between items-center bg-theme-surface-1 text-theme-t1 rounded-full">
-      <DesktopNavMenu items={primaryNavItems} />
+    <ClientOnly>
+      <div className="hidden md:flex justify-between items-center bg-theme-surface-1 text-theme-t1 rounded-full">
+        <DesktopNavMenu items={primaryNavItems} />
 
-      <div className="flex items-center">
-        <DesktopNavMenu items={accountNavItems} />
+        <div className="flex items-center">
+          <DesktopNavMenu items={accountNavItems} />
 
-        <div className="py-1 px-1 md:px-3 flex justify-center ">
-          <ThemeToggles />
+          <div className="py-1 px-1 md:px-3 flex justify-center ">
+            <ThemeToggles />
+          </div>
         </div>
       </div>
-    </div>
+    </ClientOnly>
   );
 };
 
