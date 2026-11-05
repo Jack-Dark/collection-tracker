@@ -116,11 +116,10 @@ export const collectionItemsTable = snakeCase.table('collection_items', {
   editionDetails: text('edition_details').default('').notNull(),
   id: serial().primaryKey(),
   images: json().$type<string[]>().default([]).notNull(),
-  isSpecialEdition: boolean('is_special_edition').notNull(),
+  isSpecialEdition: boolean('is_special_edition').notNull().default(false),
   name: text().notNull(),
   notes: text().default('').notNull(),
   userId: text('user_id')
-    .default('')
     .notNull()
     .references(
       () => {

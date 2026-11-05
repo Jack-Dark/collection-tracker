@@ -19,6 +19,7 @@ import {
   deleteCloudinaryAssetsByPublicIds,
 } from '#/lib/cloudinary';
 
+import type { InsertCollectionItemRecordDef } from '../collection-item.types';
 import type { UpdateCollectionItemsRequestArgsDef } from './update-collection-item-by-id.types';
 
 export const updateCollectionItemsDbQuery = async ({
@@ -67,10 +68,7 @@ export const updateCollectionItemsDbQuery = async ({
 
     const { collectionItems, collectionItemToCustomFieldValueRecords } =
       collectionItemRecords.reduce<{
-        collectionItems: Omit<
-          UpdateCollectionItemsRequestArgsDef['records'][number],
-          'customFieldValues'
-        >[];
+        collectionItems: InsertCollectionItemRecordDef[];
         collectionItemToCustomFieldValueRecords: InsertLinkCollectionItemsToCustomFieldValuesRecordDef[];
       }>(
         (acc, { customFieldValues, ...collectionItem }) => {
@@ -95,11 +93,14 @@ export const updateCollectionItemsDbQuery = async ({
           );
 
           return {
-            collectionItems: [...acc.collectionItems, collectionItem],
+            collectionItems: [
+              ...acc.collectionItems,
+              { ...collectionItem, userId },
+            ] satisfies InsertCollectionItemRecordDef[],
             collectionItemToCustomFieldValueRecords: [
               ...acc.collectionItemToCustomFieldValueRecords,
               ...collectionItemToCustomFieldValueRecords,
-            ],
+            ] satisfies InsertLinkCollectionItemsToCustomFieldValuesRecordDef[],
           };
         },
         {
@@ -217,7 +218,7 @@ export const updateCollectionItemsDbQuery = async ({
   });
 };
 
-const buildConflictUpdateColumns = <
+export const buildConflictUpdateColumns = <
   TTable extends PgTable,
   TColumns extends keyof TTable['_']['columns'],
 >(
@@ -237,9 +238,29 @@ const buildConflictUpdateColumns = <
   );
 };
 
+// TODO - REFACTOR: update function to use object instead of array for columns
+// const buildConflictUpdateColumns_NEW = <
+//   TTable extends PgTable,
+//   TColumns extends keyof TTable['_']['columns'],
+// >(
+//   table: TTable,
+//   columnsToUpdate: Record<TColumns, true>,
+// ) => {
+//   const allColumns = getColumns(table);
+
+//   const columnKeys = Object.keys(columnsToUpdate) as TColumns[];
+
+//   return columnKeys.reduce<Partial<Record<TColumns, SQL>>>((acc, columnKey) => {
+//     const colName = allColumns[columnKey].name;
+//     acc[columnKey] = sql.raw(`excluded.${colName}`);
+
+//     return acc;
+//   }, {});
+// };
+
 /** Returns all items in `arrayA` which are not in `arrayB`. */
-const getDifferenceBetweenArrays = <
-  TData extends Record<string, unknown>,
+export const getDifferenceBetweenArrays = <
+  TData extends any,
   TSchema extends ZodType<TData>,
 >(
   arrayA: TData[],

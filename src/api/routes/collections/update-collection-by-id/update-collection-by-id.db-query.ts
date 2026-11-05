@@ -1,4 +1,5 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray, or } from 'drizzle-orm';
+import z from 'zod';
 
 import type { InsertLinkCollectionsToCustomFieldsRecordDef } from '#/api/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
@@ -9,7 +10,13 @@ import {
   collectionsToCustomFieldsTable,
 } from '#/api/db-tables-schema';
 
+import type { InsertCollectionRecordDef } from '../base-collection.schema';
 import type { OnUpdateCollectionsArgsDef } from './update-collection-by-id.types';
+
+import {
+  buildConflictUpdateColumns,
+  getDifferenceBetweenArrays,
+} from '../../collection-items/update-collection-item-by-id/update-collection-item-by-id.db-query';
 
 export const updateCollectionByIdDbQuery = async ({
   context,
@@ -23,42 +30,170 @@ export const updateCollectionByIdDbQuery = async ({
     return [];
   }
 
-  for (const { customFields, ...record } of recordsToUpdate) {
-    await db.transaction(async (tx) => {
-      await Promise.all([
-        // ? Updates collection record
-        tx
-          .update(collectionsTable)
-          .set(record)
-          .where(
-            and(
-              eq(collectionsTable.id, record.id),
-              eq(collectionsTable.userId, userId),
-            ),
-          ),
+  const { collections, collectionsToCustomFieldsRecords } =
+    recordsToUpdate.reduce<{
+      collections: (Omit<
+        OnUpdateCollectionsArgsDef['records'][number],
+        'customFields'
+      > & { userId: string })[];
+      collectionsToCustomFieldsRecords: InsertLinkCollectionsToCustomFieldsRecordDef[];
+    }>(
+      (acc, { customFields, ...collection }) => {
+        const collectionsToCustomFieldsRecords = Object.values(
+          customFields,
+        ).reduce<InsertLinkCollectionsToCustomFieldsRecordDef[]>(
+          (acc, { customField, order }) => {
+            if (customField) {
+              return [
+                ...acc,
+                {
+                  collectionId: collection.id,
+                  customFieldId: customField.id,
+                  order,
+                  userId,
+                } satisfies InsertLinkCollectionsToCustomFieldsRecordDef,
+              ];
+            } else {
+              return acc;
+            }
+          },
+          [],
+        );
 
-        // ? Delete any existing links between this collection and custom fields
-        tx
-          .delete(collectionsToCustomFieldsTable)
-          .where(eq(collectionsToCustomFieldsTable.collectionId, record.id)),
-      ]);
+        return {
+          collections: [
+            ...acc.collections,
+            { ...collection, userId },
+          ] satisfies InsertCollectionRecordDef[],
+          collectionsToCustomFieldsRecords: [
+            ...acc.collectionsToCustomFieldsRecords,
+            ...collectionsToCustomFieldsRecords,
+          ] satisfies InsertLinkCollectionsToCustomFieldsRecordDef[],
+        };
+      },
+      {
+        collections: [],
+        collectionsToCustomFieldsRecords: [],
+      },
+    );
 
-      // ? Create brand new links between this collection and custom fields
-      const newCollectionToCustomFieldRecords: InsertLinkCollectionsToCustomFieldsRecordDef[] =
-        customFields.map(({ customField, order }) => {
-          return {
-            collectionId: record.id,
-            customFieldId: customField.id,
-            order,
-            userId,
-          };
+  const collectionIds = collections.map(({ id }) => {
+    return id;
+  });
+
+  await db.transaction(async (tx) => {
+    // ? Upsert collection item records
+    await tx
+      .insert(collectionsTable)
+      .values({
+        name: collections[0].name,
+        notes: collections[0].notes,
+        id: collections[0].id,
+        userId: collections[0].userId,
+      })
+      .onConflictDoUpdate({
+        target: collectionsTable.id,
+        set: buildConflictUpdateColumns(collectionsTable, ['name', 'notes']),
+      });
+
+    const existingJoinRecordsForCollectionItems = await tx
+      .selectDistinctOn(
+        [
+          collectionsToCustomFieldsTable.collectionId,
+          collectionsToCustomFieldsTable.customFieldId,
+        ],
+        {
+          collectionId: collectionsToCustomFieldsTable.collectionId,
+          customFieldId: collectionsToCustomFieldsTable.customFieldId,
+        },
+      )
+      .from(collectionsToCustomFieldsTable)
+      .where(
+        inArray(collectionsToCustomFieldsTable.collectionId, collectionIds),
+      );
+
+    // ? Upsert collection item to custom field value records
+    if (collectionsToCustomFieldsRecords.length) {
+      await tx
+        .insert(collectionsToCustomFieldsTable)
+        .values(collectionsToCustomFieldsRecords)
+        .onConflictDoNothing({
+          target: [
+            collectionsToCustomFieldsTable.collectionId,
+            collectionsToCustomFieldsTable.customFieldId,
+          ],
         });
+    }
 
-      if (newCollectionToCustomFieldRecords.length) {
-        await tx
-          .insert(collectionsToCustomFieldsTable)
-          .values(newCollectionToCustomFieldRecords);
-      }
-    });
-  }
+    const formattedLatestJoinRecordsForCollectionItems =
+      collectionsToCustomFieldsRecords.map(
+        ({ collectionId, customFieldId }) => {
+          return {
+            collectionId,
+            customFieldId,
+          };
+        },
+      );
+
+    const recordsToDelete = getDifferenceBetweenArrays(
+      existingJoinRecordsForCollectionItems,
+      formattedLatestJoinRecordsForCollectionItems,
+      z.object({
+        collectionId: z.number().min(1),
+        customFieldId: z.number().min(1),
+      }),
+    );
+
+    if (recordsToDelete.length) {
+      await tx.delete(collectionsToCustomFieldsTable).where(
+        or(
+          ...recordsToDelete.map(({ collectionId, customFieldId }) => {
+            return and(
+              eq(collectionsToCustomFieldsTable.collectionId, collectionId),
+              eq(collectionsToCustomFieldsTable.customFieldId, customFieldId),
+            );
+          }),
+        ),
+      );
+    }
+  });
+
+  // for (const { customFields, ...record } of recordsToUpdate) {
+  //   await db.transaction(async (tx) => {
+  //     await Promise.all([
+  //       // ? Updates collection record
+  //       tx
+  //         .update(collectionsTable)
+  //         .set(record)
+  //         .where(
+  //           and(
+  //             eq(collectionsTable.id, record.id),
+  //             eq(collectionsTable.userId, userId),
+  //           ),
+  //         ),
+
+  //       // ? Delete any existing links between this collection and custom fields
+  //       tx
+  //         .delete(collectionsToCustomFieldsTable)
+  //         .where(eq(collectionsToCustomFieldsTable.collectionId, record.id)),
+  //     ]);
+
+  //     // ? Create brand new links between this collection and custom fields
+  //     const newCollectionToCustomFieldRecords: InsertLinkCollectionsToCustomFieldsRecordDef[] =
+  //       customFields.map(({ customField, order }) => {
+  //         return {
+  //           collectionId: record.id,
+  //           customFieldId: customField.id,
+  //           order,
+  //           userId,
+  //         };
+  //       });
+
+  //     if (newCollectionToCustomFieldRecords.length) {
+  //       await tx
+  //         .insert(collectionsToCustomFieldsTable)
+  //         .values(newCollectionToCustomFieldRecords);
+  //     }
+  //   });
+  // }
 };
