@@ -1,6 +1,6 @@
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 
-import { db, pool } from './db';
+import { db, pool } from './db.ts';
 
 async function main() {
   console.log('Running production migrations...');
