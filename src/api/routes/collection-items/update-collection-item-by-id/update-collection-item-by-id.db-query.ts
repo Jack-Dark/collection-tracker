@@ -1,8 +1,4 @@
-import type { SQL } from 'drizzle-orm';
-import type { PgTable } from 'drizzle-orm/pg-core';
-import type { ZodType } from 'zod';
-
-import { and, eq, getColumns, inArray, or, sql } from 'drizzle-orm';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db-tables-schema.types';
@@ -14,6 +10,10 @@ import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
 } from '#/api/db-tables-schema';
+import {
+  buildConflictUpdateSetColumns,
+  getDifferenceBetweenArrays,
+} from '#/api/helpers';
 import {
   addCloudinaryTagsToPublicIds,
   deleteCloudinaryAssetsByPublicIds,
@@ -115,13 +115,13 @@ export const updateCollectionItemsDbQuery = async ({
       .values(collectionItems)
       .onConflictDoUpdate({
         target: collectionItemsTable.id,
-        set: buildConflictUpdateColumns(collectionItemsTable, [
-          'editionDetails',
-          'images',
-          'isSpecialEdition',
-          'name',
-          'notes',
-        ]),
+        set: buildConflictUpdateSetColumns(collectionItemsTable, {
+          editionDetails: true,
+          images: true,
+          isSpecialEdition: true,
+          name: true,
+          notes: true,
+        }),
       });
 
     const existingJoinRecordsForCollectionItems = await tx
@@ -215,69 +215,5 @@ export const updateCollectionItemsDbQuery = async ({
     // ? Remove images deleted by the user, if any
     // ! Perform last just in case there is an error earlier
     await deleteCloudinaryAssetsByPublicIds(...userDeletedPublicIds);
-  });
-};
-
-export const buildConflictUpdateColumns = <
-  TTable extends PgTable,
-  TColumns extends keyof TTable['_']['columns'],
->(
-  table: TTable,
-  columnsToUpdate: TColumns[],
-) => {
-  const allColumns = getColumns(table);
-
-  return columnsToUpdate.reduce<Partial<Record<TColumns, SQL>>>(
-    (acc, columnKey) => {
-      const colName = allColumns[columnKey].name;
-      acc[columnKey] = sql.raw(`excluded.${colName}`);
-
-      return acc;
-    },
-    {},
-  );
-};
-
-// TODO - REFACTOR: update function to use object instead of array for columns
-// const buildConflictUpdateColumns_NEW = <
-//   TTable extends PgTable,
-//   TColumns extends keyof TTable['_']['columns'],
-// >(
-//   table: TTable,
-//   columnsToUpdate: Record<TColumns, true>,
-// ) => {
-//   const allColumns = getColumns(table);
-
-//   const columnKeys = Object.keys(columnsToUpdate) as TColumns[];
-
-//   return columnKeys.reduce<Partial<Record<TColumns, SQL>>>((acc, columnKey) => {
-//     const colName = allColumns[columnKey].name;
-//     acc[columnKey] = sql.raw(`excluded.${colName}`);
-
-//     return acc;
-//   }, {});
-// };
-
-/** Returns all items in `arrayA` which are not in `arrayB`. */
-export const getDifferenceBetweenArrays = <
-  TData extends any,
-  TSchema extends ZodType<TData>,
->(
-  arrayA: TData[],
-  arrayB: TData[],
-  schema: TSchema,
-) => {
-  const arrayBAsStrings = arrayB.map((item) => {
-    const { data } = schema.safeParse(item);
-
-    return JSON.stringify(data);
-  });
-  const stringSetB = new Set(arrayBAsStrings);
-
-  return arrayA.filter((item) => {
-    const { data } = schema.safeParse(item);
-    const arrayAValue = JSON.stringify(data);
-
-    return !stringSetB.has(arrayAValue);
   });
 };

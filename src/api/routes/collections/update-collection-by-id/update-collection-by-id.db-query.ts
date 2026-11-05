@@ -14,9 +14,9 @@ import type { InsertCollectionRecordDef } from '../base-collection.schema';
 import type { OnUpdateCollectionsArgsDef } from './update-collection-by-id.types';
 
 import {
-  buildConflictUpdateColumns,
+  buildConflictUpdateSetColumns,
   getDifferenceBetweenArrays,
-} from '../../collection-items/update-collection-item-by-id/update-collection-item-by-id.db-query';
+} from '../../../helpers';
 
 export const updateCollectionByIdDbQuery = async ({
   context,
@@ -88,7 +88,10 @@ export const updateCollectionByIdDbQuery = async ({
       .values(collections)
       .onConflictDoUpdate({
         target: collectionsTable.id,
-        set: buildConflictUpdateColumns(collectionsTable, ['name', 'notes']),
+        set: buildConflictUpdateSetColumns(collectionsTable, {
+          name: true,
+          notes: true,
+        }),
       });
 
     const existingJoinRecordsForCollectionItems = await tx
