@@ -69,11 +69,10 @@ export const Route = createRootRouteWithContext<{
 
     const queryOptions = getNavMenuCollectionsQueryOptions();
 
-    const navMenuData = await context.queryClient.query(queryOptions);
+    await context.queryClient.query(queryOptions);
 
     return {
       theme: themeCookie,
-      navMenuCollections: navMenuData.collections,
     };
   },
   head: () => {
