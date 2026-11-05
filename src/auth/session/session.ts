@@ -43,7 +43,7 @@ export const getSession = createIsomorphicFn()
   .server(getServerSession)
   .client(getClientSession);
 
-/** Same as getSession, but throws an unauthorized error if user does not have an active session. Should only be called in middleware. If you need the session anywhere else use the root route */
+/** Same as getSession, but throws an unauthorized error if user does not have an active session. Should only be called in middleware. If you need the session anywhere else use the root route context. */
 export const ensureSessionInMiddleware = async () => {
   const user = await getSession();
 
