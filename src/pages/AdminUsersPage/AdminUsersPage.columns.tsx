@@ -1,5 +1,4 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import formatDate, { masks } from 'dateformat';
 
 import type { GetUsersResponseDef } from '#/api/routes/users/get-users/get-users.types';
 import type { TableFeaturesDef } from '#/components/Table';
@@ -8,6 +7,7 @@ import { useImpersonateUser } from '#/api/routes/users/impersonate-user/imperson
 import { getIsAdmin } from '#/auth/auth-middleware.helpers';
 import { MoreMenu } from '#/components/MoreMenu';
 import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
+import { useFormattedDate } from '#/hooks/use-formatted-date';
 
 const columnHelper = createColumnHelper<
   TableFeaturesDef,
@@ -30,7 +30,9 @@ export const columns = columnHelper.columns([
   }),
   columnHelper.accessor('createdAt', {
     cell: ({ getValue }) => {
-      return formatDate(getValue(), masks.paddedShortDate);
+      const formattedDate = useFormattedDate(getValue());
+
+      return formattedDate;
     },
     header: 'Created',
   }),
@@ -38,11 +40,9 @@ export const columns = columnHelper.columns([
     cell: ({ getValue }) => {
       const date = getValue();
 
-      return date ? (
-        formatDate(date, masks.paddedShortDate)
-      ) : (
-        <EmptyCellValue />
-      );
+      const formattedDate = useFormattedDate(date);
+
+      return date ? formattedDate : <EmptyCellValue />;
     },
     header: 'Last Active',
   }),

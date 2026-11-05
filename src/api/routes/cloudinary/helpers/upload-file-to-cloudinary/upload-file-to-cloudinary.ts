@@ -1,5 +1,7 @@
 import type { UploadApiResponse } from 'cloudinary';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import type { UploadFileToCloudinaryPropsDef } from './upload-file-to-cloudinary.types';
 
 import { uploadChunkToCloudinaryServerFn } from '../../upload-chunk-to-cloudinary/upload-chunk-to-cloudinary.serverFn';
@@ -33,7 +35,7 @@ export const uploadFileToCloudinary = async (
     const arrayBuffer = await file.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
     const totalChunks = Math.max(1, Math.ceil(bytes.length / chunkSize));
-    const uploadId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const uploadId = uuidv4();
 
     let photo: UploadApiResponse | null = null;
 

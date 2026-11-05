@@ -1,11 +1,11 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
-import formatDate, { masks } from 'dateformat';
 import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
 
 import { Button } from '#/components/Button';
+import { useFormattedDate } from '#/hooks/use-formatted-date';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 import { AddNewCollectionButton } from '../../CollectionsListAboveTableActions/components/AddNewCollectionButton';
@@ -44,6 +44,8 @@ export const CollectionsListCreatedAtCell = (props: {
       },
     },
   ]);
+
+  const formattedDate = useFormattedDate(value);
 
   return showNewRecordButtons ? (
     <form.ArrayField name="records">
@@ -94,6 +96,6 @@ export const CollectionsListCreatedAtCell = (props: {
       }}
     </form.ArrayField>
   ) : (
-    <p>{formatDate(value, masks.paddedShortDate)}</p>
+    <p>{formattedDate}</p>
   );
 };
