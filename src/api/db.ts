@@ -8,7 +8,7 @@ import { relations } from './db/relations.ts';
 
 neonConfig.webSocketConstructor = ws;
 
-export const pool = new Pool({ connectionString: configs.dbUrl });
+const pool = new Pool({ connectionString: configs.dbUrl });
 
 export const db = drizzle({
   client: pool,
