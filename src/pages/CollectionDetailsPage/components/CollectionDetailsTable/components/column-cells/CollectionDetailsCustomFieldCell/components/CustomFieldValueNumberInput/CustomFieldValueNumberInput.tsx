@@ -1,33 +1,50 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
+import type { Dispatch, SetStateAction } from 'react';
+
+import { useLayoutEffect } from 'react';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type { CustomFieldValueNumberDef } from '#/api/routes/custom-field-values/custom-field-values.types';
 
 import { useCreateCustomFieldValues } from '#/api/routes/custom-field-values/create-custom-field-value/create-custom-field-value.react-query';
 import { InputField } from '#/components/Fields/InputField';
 import { useLastAddedCustomFieldValues } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
 
-type CustomFieldValueNumberInputPropsDef<TField extends AnyFieldApi> = {
+type CustomFieldValueNumberInputPropsDef = {
+  autoFocus?: boolean;
   customField: {
     id: number;
     name: string;
     type: CustomFieldTypeDef;
   };
-  /** The specific custom field value form field where this component renders */
-  field: TField;
+  fieldValue: CustomFieldValueNumberDef | undefined;
+  handleChange: (value: CustomFieldValueNumberDef | undefined) => void;
+  Label?: string | React.JSXElementConstructor<{}>;
+  /** Provides a manner in which to receive the processing status of the input. */
+  setProcessing?: Dispatch<SetStateAction<boolean>>;
 };
 
-export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
+export const CustomFieldValueNumberInput = ({
+  autoFocus,
   customField,
-  field,
-}: CustomFieldValueNumberInputPropsDef<TField>) => {
+  fieldValue,
+  handleChange,
+  Label,
+  setProcessing,
+}: CustomFieldValueNumberInputPropsDef) => {
   const { onCreateCustomFieldValues, processing } =
-    useCreateCustomFieldValues();
+    useCreateCustomFieldValues<CustomFieldValueNumberDef[]>();
 
   const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
 
+  useLayoutEffect(() => {
+    setProcessing?.(processing);
+  }, [processing]);
+
   return (
     <InputField
+      autoFocus={autoFocus}
       disabled={processing}
+      Label={Label}
       onValueChange={async (value) => {
         if (value) {
           const formattedValue = Number(value);
@@ -42,18 +59,18 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
           updateLastAddedCustomFieldValues({
             [customField.id]: newCustomFieldValue,
           });
-          field.handleChange(newCustomFieldValue);
+          handleChange(newCustomFieldValue);
         } else {
           updateLastAddedCustomFieldValues({
             [customField.id]: undefined,
           });
-          field.handleChange(undefined);
+          handleChange(undefined);
         }
       }}
-      onValueChangeDebounceMs={500}
+      onValueChangeDebounceMs={300}
       placeholder={`Input ${customField.name}...`}
       type="number"
-      value={field.value?.valueNumber ?? ''}
+      value={fieldValue?.valueNumber ?? ''}
     />
   );
 };

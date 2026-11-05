@@ -28,7 +28,10 @@ import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 import { articlesToIgnore } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-ignore-sort-articles';
 
-import type { CustomFieldValuesByFieldId } from '../../custom-field-values/custom-field-values.types';
+import type {
+  CustomFieldValueDef,
+  CustomFieldValuesByFieldId,
+} from '../../custom-field-values/custom-field-values.types';
 import type { CollectionItemsTableColumn } from '../collection-item.types';
 import type { GetCollectionDetailsByIdRequestArgsDef } from './get-collection-details-by-id.types';
 
@@ -276,7 +279,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
                 return {
                   ...acc,
-                  [customFieldId]: rest,
+                  [customFieldId]: rest as CustomFieldValueDef,
                 };
               }
 
@@ -326,7 +329,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
             return {
               ...acc,
-              [customFieldId]: rest,
+              [customFieldId]: rest as CustomFieldValueDef,
             };
           }
 

@@ -36,7 +36,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
 
   const user = useUserContext();
 
-  const isImpersonating = user.impersonatedBy;
+  const isImpersonating = user?.impersonatedBy;
 
   return (
     <div className="p-1 md:p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-2 md:gap-4">

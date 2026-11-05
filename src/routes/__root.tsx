@@ -22,7 +22,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { StrictMode } from 'react';
 
 import { getNavMenuCollectionsQueryOptions } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
-import { formatSessionToUserContext, getSession } from '#/auth/auth-middleware';
+import { getSession } from '#/auth/session';
 import { Button } from '#/components/Button';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { PageWrapper } from '#/components/PageWrapper';
@@ -65,11 +65,9 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
   beforeLoad: async () => {
-    const session = await getSession();
+    const user = await getSession();
 
-    return {
-      user: formatSessionToUserContext(session),
-    };
+    return { user };
   },
   component: RootComponent,
   loader: async ({ context }) => {

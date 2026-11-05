@@ -1,4 +1,5 @@
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
+import { z } from 'zod';
 
 import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
@@ -10,10 +11,15 @@ import {
   collectionItemsToCustomFieldValuesTable,
 } from '#/api/db-tables-schema';
 import {
+  buildConflictUpdateSetColumns,
+  getDifferenceBetweenArrays,
+} from '#/api/helpers';
+import {
   addCloudinaryTagsToPublicIds,
   deleteCloudinaryAssetsByPublicIds,
 } from '#/lib/cloudinary';
 
+import type { InsertCollectionItemRecordDef } from '../collection-item.types';
 import type { UpdateCollectionItemsRequestArgsDef } from './update-collection-item-by-id.types';
 
 export const updateCollectionItemsDbQuery = async ({
@@ -60,34 +66,13 @@ export const updateCollectionItemsDbQuery = async ({
       [],
     );
 
-    await Promise.all(
-      collectionItemRecords.map(
-        async ({ customFieldValues, ...collectionItem }) => {
-          await Promise.all([
-            // ? Update collection item records
-            await tx
-              .update(collectionItemsTable)
-              .set(collectionItem)
-              .where(
-                and(
-                  eq(collectionItemsTable.id, collectionItem.id),
-                  eq(collectionItemsTable.userId, userId),
-                ),
-              ),
-
-            // ? Delete any existing links between this collection item and custom field values
-            await tx
-              .delete(collectionItemsToCustomFieldValuesTable)
-              .where(
-                eq(
-                  collectionItemsToCustomFieldValuesTable.collectionItemId,
-                  collectionItem.id,
-                ),
-              ),
-          ]);
-
-          // ? Create brand new links between the collection items and custom field values
-          const newCollectionItemToCustomFieldValueRecords = Object.values(
+    const { collectionItems, collectionItemToCustomFieldValueRecords } =
+      collectionItemRecords.reduce<{
+        collectionItems: InsertCollectionItemRecordDef[];
+        collectionItemToCustomFieldValueRecords: InsertLinkCollectionItemsToCustomFieldValuesRecordDef[];
+      }>(
+        (acc, { customFieldValues, ...collectionItem }) => {
+          const collectionItemToCustomFieldValueRecords = Object.values(
             customFieldValues,
           ).reduce<InsertLinkCollectionItemsToCustomFieldValuesRecordDef[]>(
             (acc, customFieldValue) => {
@@ -107,14 +92,109 @@ export const updateCollectionItemsDbQuery = async ({
             [],
           );
 
-          if (newCollectionItemToCustomFieldValueRecords.length) {
-            await tx
-              .insert(collectionItemsToCustomFieldValuesTable)
-              .values(newCollectionItemToCustomFieldValueRecords);
-          }
+          return {
+            collectionItems: [
+              ...acc.collectionItems,
+              { ...collectionItem, userId },
+            ] satisfies InsertCollectionItemRecordDef[],
+            collectionItemToCustomFieldValueRecords: [
+              ...acc.collectionItemToCustomFieldValueRecords,
+              ...collectionItemToCustomFieldValueRecords,
+            ] satisfies InsertLinkCollectionItemsToCustomFieldValuesRecordDef[],
+          };
         },
-      ),
+        {
+          collectionItems: [],
+          collectionItemToCustomFieldValueRecords: [],
+        },
+      );
+
+    // ? Upsert collection item records
+    await tx
+      .insert(collectionItemsTable)
+      .values(collectionItems)
+      .onConflictDoUpdate({
+        target: collectionItemsTable.id,
+        set: buildConflictUpdateSetColumns(collectionItemsTable, {
+          editionDetails: true,
+          images: true,
+          isSpecialEdition: true,
+          name: true,
+          notes: true,
+        }),
+      });
+
+    const existingJoinRecordsForCollectionItems = await tx
+      .selectDistinctOn(
+        [
+          collectionItemsToCustomFieldValuesTable.collectionItemId,
+          collectionItemsToCustomFieldValuesTable.customFieldValueId,
+        ],
+        {
+          collectionItemId:
+            collectionItemsToCustomFieldValuesTable.collectionItemId,
+          customFieldValueId:
+            collectionItemsToCustomFieldValuesTable.customFieldValueId,
+        },
+      )
+      .from(collectionItemsToCustomFieldValuesTable)
+      .where(
+        inArray(
+          collectionItemsToCustomFieldValuesTable.collectionItemId,
+          collectionItemIds,
+        ),
+      );
+
+    // ? Upsert collection item to custom field value records
+    if (collectionItemToCustomFieldValueRecords.length) {
+      await tx
+        .insert(collectionItemsToCustomFieldValuesTable)
+        .values(collectionItemToCustomFieldValueRecords)
+        .onConflictDoNothing({
+          target: [
+            collectionItemsToCustomFieldValuesTable.collectionItemId,
+            collectionItemsToCustomFieldValuesTable.customFieldValueId,
+          ],
+        });
+    }
+
+    const formattedLatestJoinRecordsForCollectionItems =
+      collectionItemToCustomFieldValueRecords.map(
+        ({ collectionItemId, customFieldValueId }) => {
+          return {
+            collectionItemId,
+            customFieldValueId,
+          };
+        },
+      );
+
+    const recordsToDelete = getDifferenceBetweenArrays(
+      existingJoinRecordsForCollectionItems,
+      formattedLatestJoinRecordsForCollectionItems,
+      z.object({
+        collectionItemId: z.number().min(1),
+        customFieldValueId: z.number().min(1),
+      }),
     );
+
+    if (recordsToDelete.length) {
+      await tx.delete(collectionItemsToCustomFieldValuesTable).where(
+        or(
+          ...recordsToDelete.map(({ collectionItemId, customFieldValueId }) => {
+            return and(
+              eq(
+                collectionItemsToCustomFieldValuesTable.collectionItemId,
+                collectionItemId,
+              ),
+              eq(
+                collectionItemsToCustomFieldValuesTable.customFieldValueId,
+                customFieldValueId,
+              ),
+            );
+          }),
+        ),
+      );
+    }
 
     const cloudinaryTagItems = collectionItemRecords.map(
       ({ collectionId, id: collectionItemId }, index) => {

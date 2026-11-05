@@ -27,7 +27,7 @@ export type ComboboxFieldPropsDef<
   TValue extends TValueRecordDef,
   TMultiple extends boolean | undefined = false,
 > = ComboboxRootProps<TValue, TMultiple> &
-  Pick<ComboboxInputProps, 'placeholder'> &
+  Pick<ComboboxInputProps, 'autoFocus' | 'placeholder'> &
   FieldWrapperProps & {
     allowCreatable?: boolean;
     ariaLabel?: string;

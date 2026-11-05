@@ -38,6 +38,7 @@ export const ComboboxField = <
     allowCreatable,
     Label,
     ariaLabel = typeof Label === 'string' ? Label : undefined,
+    autoFocus,
     caseSensitiveCreation,
     caseSensitiveFilter,
     className,
@@ -329,6 +330,7 @@ export const ComboboxField = <
               return multiple ? (
                 <Combobox.Input
                   aria-label={ariaLabel}
+                  autoFocus={autoFocus}
                   className={classNames}
                   placeholder={placeholder}
                   value={query}
@@ -336,6 +338,7 @@ export const ComboboxField = <
               ) : (
                 <Combobox.Input
                   aria-label={ariaLabel}
+                  autoFocus={autoFocus}
                   className={classNames}
                   placeholder={placeholder}
                 />

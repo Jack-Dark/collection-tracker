@@ -7,6 +7,7 @@ import {
   snakeCase,
   integer,
   numeric,
+  primaryKey,
 } from 'drizzle-orm/pg-core';
 
 import type { UserRoleDef } from '#/auth/auth-middleware.types';
@@ -115,11 +116,10 @@ export const collectionItemsTable = snakeCase.table('collection_items', {
   editionDetails: text('edition_details').default('').notNull(),
   id: serial().primaryKey(),
   images: json().$type<string[]>().default([]).notNull(),
-  isSpecialEdition: boolean('is_special_edition').notNull(),
+  isSpecialEdition: boolean('is_special_edition').notNull().default(false),
   name: text().notNull(),
   notes: text().default('').notNull(),
   userId: text('user_id')
-    .default('')
     .notNull()
     .references(
       () => {
@@ -189,7 +189,6 @@ export const collectionsToCustomFieldsTable = snakeCase.table(
         },
         { onDelete: 'cascade' },
       ),
-    id: serial().primaryKey(),
     order: integer().notNull().default(0),
     userId: text()
       .notNull()
@@ -200,6 +199,13 @@ export const collectionsToCustomFieldsTable = snakeCase.table(
         { onDelete: 'cascade' },
       ),
     ...timestamps,
+  },
+  (table) => {
+    return [
+      primaryKey({
+        columns: [table.collectionId, table.customFieldId],
+      }),
+    ];
   },
 );
 
@@ -222,7 +228,6 @@ export const collectionItemsToCustomFieldValuesTable = snakeCase.table(
         },
         { onDelete: 'cascade' },
       ),
-    id: serial().primaryKey(),
     userId: text()
       .notNull()
       .references(
@@ -232,5 +237,12 @@ export const collectionItemsToCustomFieldValuesTable = snakeCase.table(
         { onDelete: 'cascade' },
       ),
     ...timestamps,
+  },
+  (table) => {
+    return [
+      primaryKey({
+        columns: [table.collectionItemId, table.customFieldValueId],
+      }),
+    ];
   },
 );

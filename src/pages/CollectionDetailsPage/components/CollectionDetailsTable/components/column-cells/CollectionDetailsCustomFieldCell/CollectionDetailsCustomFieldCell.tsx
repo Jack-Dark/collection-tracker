@@ -2,6 +2,11 @@ import CheckIcon from '@mui/icons-material/Check';
 import { Suspense } from 'react';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type {
+  CustomFieldValueBooleanDef,
+  CustomFieldValueNumberDef,
+  CustomFieldValueStringDef,
+} from '#/api/routes/custom-field-values/custom-field-values.types';
 
 import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
@@ -51,14 +56,20 @@ export const CollectionDetailsCustomFieldCell = (
             {customField.type === 'boolean' && (
               <CustomFieldValueCheckbox
                 customField={customField}
-                field={field}
+                fieldValue={
+                  field.value as CustomFieldValueBooleanDef | undefined
+                }
+                handleChange={field.handleChange}
               />
             )}
 
             {customField.type === 'number' && (
               <CustomFieldValueNumberInput
                 customField={customField}
-                field={field}
+                fieldValue={
+                  field.value as CustomFieldValueNumberDef | undefined
+                }
+                handleChange={field.handleChange}
               />
             )}
 
@@ -67,7 +78,11 @@ export const CollectionDetailsCustomFieldCell = (
                 <CustomFieldValueCombobox
                   collectionItemId={collectionItemId}
                   customField={customField}
-                  field={field}
+                  enableDeletion
+                  fieldValue={
+                    field.value as CustomFieldValueStringDef | undefined
+                  }
+                  handleChange={field.handleChange}
                 />
               </Suspense>
             )}
