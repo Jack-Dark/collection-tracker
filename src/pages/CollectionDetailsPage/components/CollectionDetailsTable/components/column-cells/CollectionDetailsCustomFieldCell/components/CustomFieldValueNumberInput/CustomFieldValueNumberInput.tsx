@@ -1,3 +1,7 @@
+import type { Dispatch, SetStateAction } from 'react';
+
+import { useLayoutEffect } from 'react';
+
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 import type { CustomFieldValueNumberDef } from '#/api/routes/custom-field-values/custom-field-values.types';
 
@@ -15,6 +19,8 @@ type CustomFieldValueNumberInputPropsDef = {
   fieldValue: CustomFieldValueNumberDef | undefined;
   handleChange: (value: CustomFieldValueNumberDef | undefined) => void;
   Label?: string | React.JSXElementConstructor<{}>;
+  /** Provides a manner in which to receive the processing status of the input. */
+  setProcessing?: Dispatch<SetStateAction<boolean>>;
 };
 
 export const CustomFieldValueNumberInput = ({
@@ -23,11 +29,16 @@ export const CustomFieldValueNumberInput = ({
   fieldValue,
   handleChange,
   Label,
+  setProcessing,
 }: CustomFieldValueNumberInputPropsDef) => {
   const { onCreateCustomFieldValues, processing } =
     useCreateCustomFieldValues<CustomFieldValueNumberDef[]>();
 
   const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
+
+  useLayoutEffect(() => {
+    setProcessing?.(processing);
+  }, [processing]);
 
   return (
     <InputField
@@ -56,7 +67,7 @@ export const CustomFieldValueNumberInput = ({
           handleChange(undefined);
         }
       }}
-      onValueChangeDebounceMs={500}
+      onValueChangeDebounceMs={300}
       placeholder={`Input ${customField.name}...`}
       type="number"
       value={fieldValue?.valueNumber ?? ''}

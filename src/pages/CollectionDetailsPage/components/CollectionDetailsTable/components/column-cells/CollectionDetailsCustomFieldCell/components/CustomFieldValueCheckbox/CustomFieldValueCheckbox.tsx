@@ -1,3 +1,6 @@
+import type { Dispatch, SetStateAction } from 'react';
+
+import { useLayoutEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
@@ -17,6 +20,8 @@ type CustomFieldValueCheckboxPropsDef = {
   fieldValue: CustomFieldValueBooleanDef | undefined;
   handleChange: (value: CustomFieldValueBooleanDef | undefined) => void;
   Label?: string | React.JSXElementConstructor<{}>;
+  /** Provides a manner in which to receive the processing status of the input. */
+  setProcessing?: Dispatch<SetStateAction<boolean>>;
 };
 
 export const getCustomFieldValueCheckboxAriaLabel = (props: {
@@ -34,6 +39,7 @@ export const CustomFieldValueCheckbox = ({
   fieldValue,
   handleChange,
   Label,
+  setProcessing,
 }: CustomFieldValueCheckboxPropsDef) => {
   const { onCreateCustomFieldValues, processing } =
     useCreateCustomFieldValues<CustomFieldValueBooleanDef[]>();
@@ -54,6 +60,10 @@ export const CustomFieldValueCheckbox = ({
 
     handleChange(value);
   };
+
+  useLayoutEffect(() => {
+    setProcessing?.(processing);
+  }, [processing]);
 
   return (
     <CheckboxField

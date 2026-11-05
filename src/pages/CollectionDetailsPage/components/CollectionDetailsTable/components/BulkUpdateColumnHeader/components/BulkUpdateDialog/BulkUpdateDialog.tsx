@@ -21,6 +21,7 @@ import { CustomFieldValueNumberInput } from '../../../column-cells/CollectionDet
 export const BulkUpdateDialog = (props: BulkUpdateDialogPropsDef) => {
   const { customField, form, hideDialog } = props;
 
+  const [processing, setProcessing] = useState<boolean>(false);
   const [fieldValue, setFieldValue] = useState<
     CustomFieldValueDef | undefined
   >();
@@ -31,87 +32,92 @@ export const BulkUpdateDialog = (props: BulkUpdateDialogPropsDef) => {
   const label = `Update ${customField.name} for ${editingRowIds.length} ${pluralize('item', editingRowIds.length)}`;
 
   return (
-    <Dialog
-      Footer={() => {
+    <form.Field name="collectionItems">
+      {(field) => {
+        const handleBulkUpdate = () => {
+          const valuesWithCustomFieldChange = field.value.map((row) => {
+            const isEditing = getIsEditingRowId(String(row.id));
+
+            return isEditing
+              ? {
+                  ...row,
+                  customFieldValues: {
+                    ...row.customFieldValues,
+                    [customField.id]: fieldValue,
+                  },
+                }
+              : row;
+          });
+
+          field.handleChange(valuesWithCustomFieldChange);
+
+          hideDialog();
+        };
+
         return (
-          <>
-            <Button onClick={hideDialog} text="Cancel" variant="mono" />
-            <Button onClick={hideDialog} text="Save" />
-          </>
+          <Dialog
+            disableOnClose={processing}
+            Footer={() => {
+              return (
+                <>
+                  <Button
+                    disabled={processing}
+                    onClick={hideDialog}
+                    text="Cancel"
+                    variant="mono"
+                  />
+                  <Button
+                    disabled={processing}
+                    onClick={handleBulkUpdate}
+                    text="Update"
+                  />
+                </>
+              );
+            }}
+            Header="Bulk Update"
+            onClose={hideDialog}
+          >
+            {customField.type === 'boolean' && (
+              <CustomFieldValueCheckbox
+                autoFocus
+                customField={customField}
+                fieldValue={
+                  fieldValue as CustomFieldValueBooleanDef | undefined
+                }
+                handleChange={setFieldValue}
+                Label={label}
+                setProcessing={setProcessing}
+              />
+            )}
+
+            {customField.type === 'number' && (
+              <CustomFieldValueNumberInput
+                autoFocus
+                customField={customField}
+                fieldValue={fieldValue as CustomFieldValueNumberDef | undefined}
+                handleChange={setFieldValue}
+                Label={label}
+                setProcessing={setProcessing}
+              />
+            )}
+
+            {customField.type === 'string' && (
+              <Suspense>
+                <CustomFieldValueCombobox
+                  autoFocus
+                  customField={customField}
+                  fieldValue={
+                    fieldValue as CustomFieldValueStringDef | undefined
+                  }
+                  handleChange={setFieldValue}
+                  Label={label}
+                  setProcessing={setProcessing}
+                />
+              </Suspense>
+            )}
+          </Dialog>
         );
       }}
-      Header="Bulk Update"
-      onClose={hideDialog}
-    >
-      <form.Field name="collectionItems">
-        {(field) => {
-          const handleBulkUpdate = <
-            TCustomFieldValue extends CustomFieldValueDef,
-          >(
-            customFieldValue: TCustomFieldValue | undefined,
-          ) => {
-            setFieldValue(customFieldValue);
-
-            const valuesWithCustomFieldChange = field.value.map((row) => {
-              const isEditing = getIsEditingRowId(String(row.id));
-
-              return isEditing
-                ? {
-                    ...row,
-                    customFieldValues: {
-                      ...row.customFieldValues,
-                      [customField.id]: customFieldValue,
-                    },
-                  }
-                : row;
-            });
-
-            field.handleChange(valuesWithCustomFieldChange);
-          };
-
-          return (
-            <>
-              {customField.type === 'boolean' && (
-                <CustomFieldValueCheckbox
-                  autoFocus
-                  customField={customField}
-                  fieldValue={
-                    fieldValue as CustomFieldValueBooleanDef | undefined
-                  }
-                  handleChange={handleBulkUpdate}
-                  Label={label}
-                />
-              )}
-
-              {customField.type === 'number' && (
-                <CustomFieldValueNumberInput
-                  autoFocus
-                  customField={customField}
-                  fieldValue={
-                    fieldValue as CustomFieldValueNumberDef | undefined
-                  }
-                  handleChange={handleBulkUpdate}
-                  Label={label}
-                />
-              )}
-
-              {customField.type === 'string' && (
-                <Suspense>
-                  <CustomFieldValueCombobox
-                    autoFocus
-                    customField={customField}
-                    fieldValue={
-                      fieldValue as CustomFieldValueStringDef | undefined
-                    }
-                    handleChange={handleBulkUpdate}
-                    Label={label}
-                  />
-                </Suspense>
-              )}
-            </>
-          );
-        }}
-      </form.Field>
-    </Dialog>
+    </form.Field>
   );
 };

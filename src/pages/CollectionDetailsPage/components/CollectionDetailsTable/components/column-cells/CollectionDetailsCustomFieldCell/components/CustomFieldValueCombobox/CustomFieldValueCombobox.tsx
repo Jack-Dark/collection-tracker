@@ -1,6 +1,8 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
@@ -28,6 +30,8 @@ type CustomFieldValueComboboxPropsDef = {
   fieldValue: CustomFieldValueStringDef | undefined;
   handleChange: (value: CustomFieldValueStringDef | undefined) => void;
   Label?: string | React.JSXElementConstructor<{}>;
+  /** Provides a manner in which to receive the processing status of the input. */
+  setProcessing?: Dispatch<SetStateAction<boolean>>;
 } & (
   | {
       collectionItemId: number | string;
@@ -47,6 +51,7 @@ export const CustomFieldValueCombobox = ({
   fieldValue,
   handleChange,
   Label,
+  setProcessing,
 }: CustomFieldValueComboboxPropsDef) => {
   const [customFieldValueToDelete, setCustomFieldValueToDelete] = useState<
     CustomFieldValueStringDef | undefined
@@ -89,6 +94,10 @@ export const CustomFieldValueCombobox = ({
         )
       );
     }, [customFieldValueToDelete, fieldValue?.id]);
+
+  useLayoutEffect(() => {
+    setProcessing?.(processing);
+  }, [processing]);
 
   return (
     <ComboboxField
