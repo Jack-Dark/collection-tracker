@@ -1,9 +1,9 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "3e0341c3-3736-4579-af70-3888b2abba84",
+  "id": "638496a9-ac6c-4ec7-9951-421580a1ef13",
   "prevIds": [
-    "c7c25c04-f6a9-4cd1-9f60-b3b3bc39fbcf"
+    "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
     {
@@ -134,19 +134,6 @@
     {
       "type": "text",
       "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "issuer",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "accounts"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
       "notNull": false,
       "dimensions": 0,
       "default": null,
@@ -238,19 +225,6 @@
     {
       "type": "timestamp",
       "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "accounts"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
       "default": "now()",
@@ -270,45 +244,6 @@
       "generated": null,
       "identity": null,
       "name": "collection_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collection_items"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "custom_field1_value",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collection_items"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "custom_field2_value",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collection_items"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "custom_field3_value",
       "entityType": "columns",
       "schema": "public",
       "table": "collection_items"
@@ -357,7 +292,7 @@
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": null,
+      "default": "false",
       "generated": null,
       "identity": null,
       "name": "is_special_edition",
@@ -396,7 +331,7 @@
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": "''",
+      "default": null,
       "generated": null,
       "identity": null,
       "name": "user_id",
@@ -420,19 +355,6 @@
     {
       "type": "timestamp",
       "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collection_items"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
       "default": "now()",
@@ -446,7 +368,7 @@
     {
       "type": "integer",
       "typeSchema": null,
-      "notNull": false,
+      "notNull": true,
       "dimensions": 0,
       "default": null,
       "generated": null,
@@ -459,7 +381,7 @@
     {
       "type": "integer",
       "typeSchema": null,
-      "notNull": false,
+      "notNull": true,
       "dimensions": 0,
       "default": null,
       "generated": null,
@@ -470,22 +392,9 @@
       "table": "collection_items_to_custom_field_values"
     },
     {
-      "type": "serial",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collection_items_to_custom_field_values"
-    },
-    {
       "type": "text",
       "typeSchema": null,
-      "notNull": false,
+      "notNull": true,
       "dimensions": 0,
       "default": null,
       "generated": null,
@@ -496,82 +405,30 @@
       "table": "collection_items_to_custom_field_values"
     },
     {
-      "type": "boolean",
+      "type": "timestamp",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": "false",
+      "default": "now()",
       "generated": null,
       "identity": null,
-      "name": "custom_field1_enabled",
+      "name": "created_at",
       "entityType": "columns",
       "schema": "public",
-      "table": "collections"
+      "table": "collection_items_to_custom_field_values"
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "custom_field1_label",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collections"
-    },
-    {
-      "type": "boolean",
+      "type": "timestamp",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": "false",
+      "default": "now()",
       "generated": null,
       "identity": null,
-      "name": "custom_field2_enabled",
+      "name": "updated_at",
       "entityType": "columns",
       "schema": "public",
-      "table": "collections"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "custom_field2_label",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collections"
-    },
-    {
-      "type": "boolean",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "false",
-      "generated": null,
-      "identity": null,
-      "name": "custom_field3_enabled",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collections"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "custom_field3_label",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collections"
+      "table": "collection_items_to_custom_field_values"
     },
     {
       "type": "serial",
@@ -604,7 +461,7 @@
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": null,
+      "default": "''",
       "generated": null,
       "identity": null,
       "name": "notes",
@@ -641,19 +498,6 @@
     {
       "type": "timestamp",
       "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collections"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
       "default": "now()",
@@ -667,7 +511,7 @@
     {
       "type": "integer",
       "typeSchema": null,
-      "notNull": false,
+      "notNull": true,
       "dimensions": 0,
       "default": null,
       "generated": null,
@@ -680,7 +524,7 @@
     {
       "type": "integer",
       "typeSchema": null,
-      "notNull": false,
+      "notNull": true,
       "dimensions": 0,
       "default": null,
       "generated": null,
@@ -691,22 +535,9 @@
       "table": "collections_to_custom_fields"
     },
     {
-      "type": "serial",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "collections_to_custom_fields"
-    },
-    {
       "type": "integer",
       "typeSchema": null,
-      "notNull": false,
+      "notNull": true,
       "dimensions": 0,
       "default": "0",
       "generated": null,
@@ -719,12 +550,38 @@
     {
       "type": "text",
       "typeSchema": null,
-      "notNull": false,
+      "notNull": true,
       "dimensions": 0,
       "default": null,
       "generated": null,
       "identity": null,
       "name": "user_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "collections_to_custom_fields"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "collections_to_custom_fields"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
       "entityType": "columns",
       "schema": "public",
       "table": "collections_to_custom_fields"
@@ -760,7 +617,7 @@
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": "''",
+      "default": null,
       "generated": null,
       "identity": null,
       "name": "user_id",
@@ -769,14 +626,40 @@
       "table": "custom_field_values"
     },
     {
-      "type": "json",
+      "type": "boolean",
       "typeSchema": null,
-      "notNull": true,
+      "notNull": false,
       "dimensions": 0,
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "value",
+      "name": "value_boolean",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "custom_field_values"
+    },
+    {
+      "type": "numeric",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "value_number",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "custom_field_values"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "value_text",
       "entityType": "columns",
       "schema": "public",
       "table": "custom_field_values"
@@ -790,19 +673,6 @@
       "generated": null,
       "identity": null,
       "name": "created_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "custom_field_values"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
       "entityType": "columns",
       "schema": "public",
       "table": "custom_field_values"
@@ -888,19 +758,6 @@
     {
       "type": "timestamp",
       "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "custom_fields"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
       "default": "now()",
@@ -933,6 +790,19 @@
       "generated": null,
       "identity": null,
       "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "sessions"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "impersonated_by",
       "entityType": "columns",
       "schema": "public",
       "table": "sessions"
@@ -1005,19 +875,6 @@
     {
       "type": "timestamp",
       "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "sessions"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
       "default": "now()",
@@ -1027,6 +884,45 @@
       "entityType": "columns",
       "schema": "public",
       "table": "sessions"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "ban_expires",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "banned",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "ban_reason",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
     },
     {
       "type": "text",
@@ -1081,6 +977,32 @@
       "table": "users"
     },
     {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "250",
+      "generated": null,
+      "identity": null,
+      "name": "max_collection_items",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "20",
+      "generated": null,
+      "identity": null,
+      "name": "max_collections",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -1094,6 +1016,19 @@
       "table": "users"
     },
     {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'user'",
+      "generated": null,
+      "identity": null,
+      "name": "role",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
       "type": "timestamp",
       "typeSchema": null,
       "notNull": true,
@@ -1102,19 +1037,6 @@
       "generated": null,
       "identity": null,
       "name": "created_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "users"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
       "entityType": "columns",
       "schema": "public",
       "table": "users"
@@ -1200,19 +1122,6 @@
     {
       "type": "timestamp",
       "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "verifications"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
       "default": "now()",
@@ -1235,7 +1144,7 @@
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
-      "name": "accounts_user_id_users_id_fk",
+      "name": "accounts_user_id_users_id_fkey",
       "entityType": "fks",
       "schema": "public",
       "table": "accounts"
@@ -1252,7 +1161,7 @@
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
-      "name": "collection_items_collection_id_collections_id_fk",
+      "name": "collection_items_collection_id_collections_id_fkey",
       "entityType": "fks",
       "schema": "public",
       "table": "collection_items"
@@ -1269,7 +1178,7 @@
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
-      "name": "collection_items_user_id_users_id_fk",
+      "name": "collection_items_user_id_users_id_fkey",
       "entityType": "fks",
       "schema": "public",
       "table": "collection_items"
@@ -1337,7 +1246,7 @@
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
-      "name": "collections_user_id_users_id_fk",
+      "name": "collections_user_id_users_id_fkey",
       "entityType": "fks",
       "schema": "public",
       "table": "collections"
@@ -1456,10 +1365,32 @@
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
-      "name": "sessions_user_id_users_id_fk",
+      "name": "sessions_user_id_users_id_fkey",
       "entityType": "fks",
       "schema": "public",
       "table": "sessions"
+    },
+    {
+      "columns": [
+        "collection_item_id",
+        "custom_field_value_id"
+      ],
+      "nameExplicit": true,
+      "name": "collection_items_to_custom_field_values_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "collection_items_to_custom_field_values"
+    },
+    {
+      "columns": [
+        "collection_id",
+        "custom_field_id"
+      ],
+      "nameExplicit": true,
+      "name": "collections_to_custom_fields_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "collections_to_custom_fields"
     },
     {
       "columns": [
@@ -1486,29 +1417,9 @@
         "id"
       ],
       "nameExplicit": false,
-      "name": "collection_items_to_custom_field_values_pkey",
-      "schema": "public",
-      "table": "collection_items_to_custom_field_values",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
       "name": "collections_pkey",
       "schema": "public",
       "table": "collections",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "collections_to_custom_fields_pkey",
-      "schema": "public",
-      "table": "collections_to_custom_fields",
       "entityType": "pks"
     },
     {
@@ -1562,26 +1473,26 @@
       "entityType": "pks"
     },
     {
-      "nameExplicit": false,
+      "nameExplicit": true,
       "columns": [
         "token"
       ],
       "nullsNotDistinct": false,
       "name": "sessions_token_unique",
+      "entityType": "uniques",
       "schema": "public",
-      "table": "sessions",
-      "entityType": "uniques"
+      "table": "sessions"
     },
     {
-      "nameExplicit": false,
+      "nameExplicit": true,
       "columns": [
         "email"
       ],
       "nullsNotDistinct": false,
       "name": "users_email_unique",
+      "entityType": "uniques",
       "schema": "public",
-      "table": "users",
-      "entityType": "uniques"
+      "table": "users"
     }
   ],
   "renames": []
