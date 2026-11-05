@@ -57,7 +57,7 @@ export const softAuthApiRouteMiddleware = createMiddleware().server(
   async ({ next }) => {
     const user = await getSession();
 
-    if (user) {
+    if (user?.id) {
       const { data, error, success } = authSchema.safeParse(user);
 
       if (success) {
