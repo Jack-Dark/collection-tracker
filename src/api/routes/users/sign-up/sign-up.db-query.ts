@@ -49,26 +49,23 @@ export const createNewUserExampleRecordsDbQuery = async ({
       ])
       .returning({ id: customFieldsTable.id });
 
-    await tx
-      .insert(collectionsToCustomFieldsTable)
-      .values([
-        {
-          userId,
-          collectionId,
-          customFieldId: customFieldTextId,
-        },
-        {
-          userId,
-          collectionId,
-          customFieldId: customFieldNumberId,
-        },
-        {
-          userId,
-          collectionId,
-          customFieldId: customFieldBooleanId,
-        },
-      ])
-      .returning({ id: collectionsToCustomFieldsTable.id });
+    await tx.insert(collectionsToCustomFieldsTable).values([
+      {
+        userId,
+        collectionId,
+        customFieldId: customFieldTextId,
+      },
+      {
+        userId,
+        collectionId,
+        customFieldId: customFieldNumberId,
+      },
+      {
+        userId,
+        collectionId,
+        customFieldId: customFieldBooleanId,
+      },
+    ]);
 
     const [{ id: collectionItemId }] = await tx
       .insert(collectionItemsTable)
@@ -101,17 +98,14 @@ export const createNewUserExampleRecordsDbQuery = async ({
       ])
       .returning({ id: customFieldValuesTable.id });
 
-    await tx
-      .insert(collectionItemsToCustomFieldValuesTable)
-      .values(
-        customFieldValueIds.map(({ id }) => {
-          return {
-            userId,
-            collectionItemId,
-            customFieldValueId: id,
-          };
-        }),
-      )
-      .returning({ id: collectionItemsToCustomFieldValuesTable.id });
+    await tx.insert(collectionItemsToCustomFieldValuesTable).values(
+      customFieldValueIds.map(({ id }) => {
+        return {
+          userId,
+          collectionItemId,
+          customFieldValueId: id,
+        };
+      }),
+    );
   });
 };

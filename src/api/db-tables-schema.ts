@@ -7,6 +7,7 @@ import {
   snakeCase,
   integer,
   numeric,
+  primaryKey,
 } from 'drizzle-orm/pg-core';
 
 import type { UserRoleDef } from '#/auth/auth-middleware.types';
@@ -189,7 +190,6 @@ export const collectionsToCustomFieldsTable = snakeCase.table(
         },
         { onDelete: 'cascade' },
       ),
-    id: serial().primaryKey(),
     order: integer().notNull().default(0),
     userId: text()
       .notNull()
@@ -200,6 +200,13 @@ export const collectionsToCustomFieldsTable = snakeCase.table(
         { onDelete: 'cascade' },
       ),
     ...timestamps,
+  },
+  (table) => {
+    return [
+      primaryKey({
+        columns: [table.collectionId, table.customFieldId],
+      }),
+    ];
   },
 );
 
@@ -222,7 +229,6 @@ export const collectionItemsToCustomFieldValuesTable = snakeCase.table(
         },
         { onDelete: 'cascade' },
       ),
-    id: serial().primaryKey(),
     userId: text()
       .notNull()
       .references(
@@ -232,5 +238,12 @@ export const collectionItemsToCustomFieldValuesTable = snakeCase.table(
         { onDelete: 'cascade' },
       ),
     ...timestamps,
+  },
+  (table) => {
+    return [
+      primaryKey({
+        columns: [table.collectionItemId, table.customFieldValueId],
+      }),
+    ];
   },
 );
