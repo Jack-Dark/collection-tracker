@@ -8,7 +8,7 @@ import { useRequestVerificationEmail } from '#/api/routes/users/request-verifica
 import { useUpdateEmail } from '#/api/routes/users/update-email/update-email.react-query';
 import { useUpdateUser } from '#/api/routes/users/update-user/update-user.react-query';
 import { updateUserFormSchema } from '#/api/routes/users/update-user/update-user.schema';
-import { authClient } from '#/auth/auth-client';
+import { getIsLastUsedLoginMethod, lastUsedLoginMethods } from '#/auth/session';
 import { Button } from '#/components/Button';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { InputField } from '#/components/Fields/InputField';
@@ -27,8 +27,8 @@ export const AccountPage = () => {
 
   const user = useUserContext();
 
-  const isEmailSession = authClient.isLastUsedLoginMethod('email');
-  const isGoogleSession = authClient.isLastUsedLoginMethod('google');
+  const isEmailSession = getIsLastUsedLoginMethod(lastUsedLoginMethods.email);
+  const isGoogleSession = getIsLastUsedLoginMethod(lastUsedLoginMethods.google);
 
   const [showUpdatePasswordDialog, hideUpdatePasswordDialog] = useDialog(() => {
     return <UpdatePasswordDialog hideDialog={hideUpdatePasswordDialog} />;
