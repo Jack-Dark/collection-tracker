@@ -49,7 +49,7 @@ export const BulkUpdateColumnHeader = (
                   );
                 }}
                 onClick={showBulkUpdateDialog}
-                size="xs"
+                size="sm"
                 variant="secondary"
               />
             );
