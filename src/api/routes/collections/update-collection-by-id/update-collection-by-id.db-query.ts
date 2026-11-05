@@ -157,43 +157,4 @@ export const updateCollectionByIdDbQuery = async ({
       );
     }
   });
-
-  // for (const { customFields, ...record } of recordsToUpdate) {
-  //   await db.transaction(async (tx) => {
-  //     await Promise.all([
-  //       // ? Updates collection record
-  //       tx
-  //         .update(collectionsTable)
-  //         .set(record)
-  //         .where(
-  //           and(
-  //             eq(collectionsTable.id, record.id),
-  //             eq(collectionsTable.userId, userId),
-  //           ),
-  //         ),
-
-  //       // ? Delete any existing links between this collection and custom fields
-  //       tx
-  //         .delete(collectionsToCustomFieldsTable)
-  //         .where(eq(collectionsToCustomFieldsTable.collectionId, record.id)),
-  //     ]);
-
-  //     // ? Create brand new links between this collection and custom fields
-  //     const newCollectionToCustomFieldRecords: InsertLinkCollectionsToCustomFieldsRecordDef[] =
-  //       customFields.map(({ customField, order }) => {
-  //         return {
-  //           collectionId: record.id,
-  //           customFieldId: customField.id,
-  //           order,
-  //           userId,
-  //         };
-  //       });
-
-  //     if (newCollectionToCustomFieldRecords.length) {
-  //       await tx
-  //         .insert(collectionsToCustomFieldsTable)
-  //         .values(newCollectionToCustomFieldRecords);
-  //     }
-  //   });
-  // }
 };
