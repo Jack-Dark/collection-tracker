@@ -85,12 +85,7 @@ export const updateCollectionByIdDbQuery = async ({
     // ? Upsert collection item records
     await tx
       .insert(collectionsTable)
-      .values({
-        name: collections[0].name,
-        notes: collections[0].notes,
-        id: collections[0].id,
-        userId: collections[0].userId,
-      })
+      .values(collections)
       .onConflictDoUpdate({
         target: collectionsTable.id,
         set: buildConflictUpdateColumns(collectionsTable, ['name', 'notes']),
