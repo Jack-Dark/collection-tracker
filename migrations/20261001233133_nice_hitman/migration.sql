@@ -1,1 +1,0 @@
-ALTER TABLE "collections_to_custom_fields" ADD COLUMN "order" integer DEFAULT 0;
