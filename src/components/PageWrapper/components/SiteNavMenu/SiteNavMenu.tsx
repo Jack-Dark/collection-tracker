@@ -109,12 +109,12 @@ export const useSiteNavMenuItems = () => {
             },
             user?.impersonatedBy
               ? {
-                  href: '/sign-in',
+                  href: '/sign-in' satisfies RouterPath,
                   label: 'Stop Impersonating',
                   onClick: onImpersonateUserStop,
                 }
               : {
-                  href: '/sign-out',
+                  href: '/sign-out' satisfies RouterPath,
                   label: 'Log Out',
                 },
           ],
