@@ -27,12 +27,14 @@ const formatSessionToUserContext = (
 const getServerSession = createServerFn({ method: 'GET' }).handler(async () => {
   const headers = getRequestHeaders();
   const response = await auth.api.getSession({ headers });
+  console.log('🚀 ~ SERVER SESSION:', JSON.stringify(response));
 
   return formatSessionToUserContext(response);
 });
 
 const getClientSession = createClientOnlyFn(async () => {
   const { data: response } = await authClient.getSession();
+  console.log('🚀 ~ CLIENT SESSION:', JSON.stringify(response));
 
   return formatSessionToUserContext(response);
 });

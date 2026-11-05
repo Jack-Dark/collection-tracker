@@ -13,6 +13,7 @@ export const Route = createFileRoute('/_protected')({
     };
 
     try {
+      console.log('🚀 ~ protected route context:', context.user);
       if (!context.user.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw redirectToSignIn();
