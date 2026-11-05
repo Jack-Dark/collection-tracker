@@ -22,6 +22,20 @@ export function RouteCatchBoundary({ error }: ErrorComponentProps) {
     console.error(error);
   }, [error]);
 
+  // ? Detect Vite / Nitro chunk load failures
+  if (
+    error instanceof Error &&
+    (error.message.includes('Failed to fetch dynamically imported module') ||
+      error.message.includes('error loading dynamically imported module'))
+  ) {
+    // ? Force a hard reload to get the new Netlify production assets
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
+
+    return null;
+  }
+
   return (
     <div className="min-w-0 flex-1 p-4 flex flex-col items-center justify-center gap-6">
       <ErrorComponent error={error} />
