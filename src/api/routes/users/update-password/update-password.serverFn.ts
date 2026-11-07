@@ -1,18 +1,16 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
-import { auth } from '#/auth/auth';
-import {
-  authApiRouteMiddleware,
-  errorHandlingMiddleware,
-} from '#/auth/auth-middleware';
+import { errorHandlingMiddleware } from '#/api/middleware/error-handling-middleware';
+import { requireUserContextMiddleware } from '#/api/middleware/require-user-context-middleware';
+import { auth } from '#/auth/auth-server';
 
 import { updatePasswordRequestSchema } from './update-password.schema';
 
 export const updatePasswordServerFn = createServerFn({
   method: 'POST',
 })
-  .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
+  .middleware([errorHandlingMiddleware, requireUserContextMiddleware])
   .validator(updatePasswordRequestSchema)
   .handler(async ({ data }) => {
     const headers = getRequestHeaders();

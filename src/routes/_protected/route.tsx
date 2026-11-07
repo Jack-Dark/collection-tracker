@@ -1,7 +1,7 @@
 import { createFileRoute, isRedirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
-import { getSession } from '#/auth/session';
+import { getUserSession } from '#/auth/user-session/get-user-session';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/_protected')({
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_protected')({
     };
 
     try {
-      const user = await getSession();
+      const user = await getUserSession();
 
       if (!user.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);

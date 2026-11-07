@@ -3,7 +3,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { ClientOnly } from '@tanstack/react-router';
 
 import { useImpersonateUserStop } from '#/api/routes/users/impersonate-user-stop/impersonate-user-stop.react-query';
-import { getIsAdmin } from '#/auth/auth-middleware.helpers';
+import { getIsAdmin } from '#/auth/helpers/get-is-admin';
 import { DesktopNavMenu } from '#/components/NavMenu/components/DesktopNavMenu';
 import { useUserContext } from '#/hooks/use-user-context';
 

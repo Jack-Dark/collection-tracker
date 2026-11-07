@@ -4,7 +4,7 @@ import type { GetUsersResponseDef } from '#/api/routes/users/get-users/get-users
 import type { TableFeaturesDef } from '#/components/Table';
 
 import { useImpersonateUser } from '#/api/routes/users/impersonate-user/impersonate-user.react-query';
-import { getIsAdmin } from '#/auth/auth-middleware.helpers';
+import { getIsAdmin } from '#/auth/helpers/get-is-admin';
 import { MoreMenu } from '#/components/MoreMenu';
 import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { useFormattedDate } from '#/hooks/use-formatted-date';

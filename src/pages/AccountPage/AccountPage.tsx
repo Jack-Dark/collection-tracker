@@ -8,7 +8,8 @@ import { useRequestVerificationEmail } from '#/api/routes/users/request-verifica
 import { useUpdateEmail } from '#/api/routes/users/update-email/update-email.react-query';
 import { useUpdateUser } from '#/api/routes/users/update-user/update-user.react-query';
 import { updateUserFormSchema } from '#/api/routes/users/update-user/update-user.schema';
-import { getIsLastUsedLoginMethod, lastUsedLoginMethods } from '#/auth/session';
+import { getIsLastUsedLoginMethod } from '#/auth/get-last-used-login-method';
+import { lastUsedLoginMethods } from '#/auth/get-last-used-login-method/get-last-used-login-method.constants';
 import { Button } from '#/components/Button';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { InputField } from '#/components/Fields/InputField';
@@ -80,178 +81,182 @@ export const AccountPage = () => {
     },
   });
 
-  return user ? (
+  return (
     <PageWrapper>
       <div className="grid gap-10">
         <h1>Account</h1>
 
-        <form className="flex">
-          <div className="grid grid-cols-[1fr_max-content] gap-4 items-center">
-            <form.Field name="name">
-              {(field) => {
-                return (
-                  <>
-                    {isEditingName ? (
-                      <InputField
-                        name={field.name}
-                        onValueChange={field.handleChange}
-                        value={field.value}
-                      />
-                    ) : (
-                      <p>{field.value}</p>
-                    )}
-                  </>
-                );
-              }}
-            </form.Field>
-
-            {isEditingName ? (
-              <div className="flex gap-2">
-                <FormSubmitButton
-                  className="justify-self-start"
-                  form={form}
-                  size="sm"
-                  text="Save"
-                  type="submit"
-                />
-                <Button
-                  className="justify-self-start"
-                  onClick={() => {
-                    setIsEditingName(false);
-                  }}
-                  size="sm"
-                  text="Cancel"
-                  variant="mono"
-                />
-              </div>
-            ) : (
-              <Button
-                className="justify-self-start"
-                disabled={isEditingEmail}
-                onClick={() => {
-                  setIsEditingName(true);
-                }}
-                size="sm"
-                text="Edit"
-                variant="secondary"
-              />
-            )}
-
-            {isEmailSession && (
-              <>
-                <form.Field name="email">
+        {user?.id && (
+          <>
+            <div className="flex">
+              <div className="grid grid-cols-[1fr_max-content] gap-4 items-center">
+                <form.Field name="name">
                   {(field) => {
                     return (
                       <>
-                        {isEditingEmail ? (
+                        {isEditingName ? (
                           <InputField
                             name={field.name}
                             onValueChange={field.handleChange}
-                            type="email"
                             value={field.value}
                           />
                         ) : (
-                          <div className="flex gap-2 items-center">
-                            <p>
-                              {
-                                // ? Intentionally using user context instead of field value as user must verify the change via email before changes will take effect
-                                user.email
-                              }
-                            </p>
-
-                            {user.emailVerified && (
-                              <Popover
-                                Description="Email Verified"
-                                Trigger={() => {
-                                  return (
-                                    <VerifiedIcon
-                                      className="text-primary-500"
-                                      fontSize="small"
-                                    />
-                                  );
-                                }}
-                              />
-                            )}
-                          </div>
+                          <p>{field.value}</p>
                         )}
                       </>
                     );
                   }}
                 </form.Field>
 
-                <div className="flex gap-2">
-                  {isEditingEmail ? (
-                    <>
-                      <FormSubmitButton
-                        className="justify-self-start"
-                        form={form}
-                        size="sm"
-                        text="Save"
-                        type="submit"
-                      />
-                      <Button
-                        className="justify-self-start"
-                        onClick={() => {
-                          setIsEditingEmail(false);
-                        }}
-                        size="sm"
-                        text="Cancel"
-                        variant="mono"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        className="justify-self-start"
-                        disabled={isEditingName}
-                        onClick={() => {
-                          setIsEditingEmail(true);
-                        }}
-                        size="sm"
-                        text="Edit"
-                        variant="secondary"
-                      />
+                {isEditingName ? (
+                  <div className="flex gap-2">
+                    <FormSubmitButton
+                      className="justify-self-start"
+                      form={form}
+                      size="sm"
+                      text="Save"
+                      type="submit"
+                    />
+                    <Button
+                      className="justify-self-start"
+                      onClick={() => {
+                        setIsEditingName(false);
+                      }}
+                      size="sm"
+                      text="Cancel"
+                      variant="mono"
+                    />
+                  </div>
+                ) : (
+                  <Button
+                    className="justify-self-start"
+                    disabled={isEditingEmail}
+                    onClick={() => {
+                      setIsEditingName(true);
+                    }}
+                    size="sm"
+                    text="Edit"
+                    variant="secondary"
+                  />
+                )}
 
-                      {!user.emailVerified && (
-                        <Button
-                          className="justify-self-start"
-                          onClick={async () => {
-                            await onRequestVerificationEmail({
-                              email: user.email,
-                            });
-                          }}
-                          size="sm"
-                          text="Resend verification email"
-                          variant="mono"
-                        />
+                {isEmailSession && (
+                  <>
+                    <form.Field name="email">
+                      {(field) => {
+                        return (
+                          <>
+                            {isEditingEmail ? (
+                              <InputField
+                                name={field.name}
+                                onValueChange={field.handleChange}
+                                type="email"
+                                value={field.value}
+                              />
+                            ) : (
+                              <div className="flex gap-2 items-center">
+                                <p>
+                                  {
+                                    // ? Intentionally using user context instead of field value as user must verify the change via email before changes will take effect
+                                    user.email
+                                  }
+                                </p>
+
+                                {user.emailVerified && (
+                                  <Popover
+                                    Description="Email Verified"
+                                    Trigger={() => {
+                                      return (
+                                        <VerifiedIcon
+                                          className="text-primary-500"
+                                          fontSize="small"
+                                        />
+                                      );
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </>
+                        );
+                      }}
+                    </form.Field>
+
+                    <div className="flex gap-2">
+                      {isEditingEmail ? (
+                        <>
+                          <FormSubmitButton
+                            className="justify-self-start"
+                            form={form}
+                            size="sm"
+                            text="Save"
+                            type="submit"
+                          />
+                          <Button
+                            className="justify-self-start"
+                            onClick={() => {
+                              setIsEditingEmail(false);
+                            }}
+                            size="sm"
+                            text="Cancel"
+                            variant="mono"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            className="justify-self-start"
+                            disabled={isEditingName}
+                            onClick={() => {
+                              setIsEditingEmail(true);
+                            }}
+                            size="sm"
+                            text="Edit"
+                            variant="secondary"
+                          />
+
+                          {!user.emailVerified && (
+                            <Button
+                              className="justify-self-start"
+                              onClick={async () => {
+                                await onRequestVerificationEmail({
+                                  email: user.email,
+                                });
+                              }}
+                              size="sm"
+                              text="Resend verification email"
+                              variant="mono"
+                            />
+                          )}
+                        </>
                       )}
-                    </>
-                  )}
-                </div>
-              </>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {isEmailSession && (
+              <Button
+                className="justify-self-start"
+                onClick={showUpdatePasswordDialog}
+                size="sm"
+                text="Update Password"
+                variant="secondary"
+              />
             )}
-          </div>
-        </form>
 
-        {isEmailSession && (
-          <Button
-            className="justify-self-start"
-            onClick={showUpdatePasswordDialog}
-            size="sm"
-            text="Update Password"
-            variant="secondary"
-          />
+            {isGoogleSession && (
+              <div className="p-1 pr-2 justify-self-start flex items-center gap-2 justify-center border border-theme-divider-2 rounded-full">
+                <GoogleIcon />
+                <p>{user.email}</p>
+              </div>
+            )}
+
+            <DeleteAccountButton />
+          </>
         )}
-
-        {isGoogleSession && (
-          <div className="p-1 pr-2 justify-self-start flex items-center gap-2 justify-center border border-theme-divider-2 rounded-full">
-            <GoogleIcon />
-            <p>{user.email}</p>
-          </div>
-        )}
-
-        <DeleteAccountButton />
       </div>
     </PageWrapper>
-  ) : null;
+  );
 };

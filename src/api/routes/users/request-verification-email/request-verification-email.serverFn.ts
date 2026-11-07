@@ -3,18 +3,16 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 
 import type { RouterPath } from '#/types';
 
-import { auth } from '#/auth/auth';
-import {
-  authApiRouteMiddleware,
-  errorHandlingMiddleware,
-} from '#/auth/auth-middleware';
+import { errorHandlingMiddleware } from '#/api/middleware/error-handling-middleware';
+import { requireUserContextMiddleware } from '#/api/middleware/require-user-context-middleware';
+import { auth } from '#/auth/auth-server';
 
 import { requestVerificationEmailRequestSchema } from './request-verification-email.schema';
 
 export const requestVerificationEmailServerFn = createServerFn({
   method: 'POST',
 })
-  .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
+  .middleware([errorHandlingMiddleware, requireUserContextMiddleware])
   .validator(requestVerificationEmailRequestSchema)
   .handler(async ({ data }) => {
     const headers = getRequestHeaders();

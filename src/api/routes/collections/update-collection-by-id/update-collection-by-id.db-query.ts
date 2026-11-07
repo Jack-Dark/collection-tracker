@@ -2,7 +2,7 @@ import { and, eq, inArray, or } from 'drizzle-orm';
 import z from 'zod';
 
 import type { InsertLinkCollectionsToCustomFieldsRecordDef } from '#/api/db-tables-schema.types';
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { DbQueryArgsDef } from '#/auth/auth.types';
 
 import { db } from '#/api/db';
 import {

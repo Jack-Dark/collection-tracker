@@ -1,7 +1,7 @@
 import { and, eq, ilike } from 'drizzle-orm';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { DbQueryArgsDef } from '#/auth/auth.types';
 
 import { db } from '#/api/db';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';

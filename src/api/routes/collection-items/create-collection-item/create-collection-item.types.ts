@@ -1,7 +1,7 @@
 import type z from 'zod';
 
 import type { QueryResponseDef } from '#/api/db-tables-schema.types';
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { DbQueryArgsDef } from '#/auth/auth.types';
 
 import type { createCollectionItemsDbQuery } from './create-collection-item.db-query';
 import type {

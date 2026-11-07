@@ -1,6 +1,6 @@
 import { and, eq, notExists, sql } from 'drizzle-orm';
 
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { DbQueryArgsDef } from '#/auth/auth.types';
 
 import { db } from '#/api/db';
 import {
