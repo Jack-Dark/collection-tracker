@@ -42,9 +42,14 @@ export type CollectionItemsFiltersFormDef = ReactFormType<
 export const getIsFilterValueApplied = (
   filterValue: CollectionItemsFilterValueSchemaDef,
 ) => {
-  const { items, range, value } = filterValue;
+  const { items, rangeMax, rangeMin, value } = filterValue;
 
-  return !!items?.length || !!range || (value !== null && value !== undefined);
+  return (
+    !!items?.length ||
+    !!rangeMax ||
+    !!rangeMin ||
+    (value !== null && value !== undefined)
+  );
 };
 
 export const useCollectionDetailsFiltersProps = (props: {

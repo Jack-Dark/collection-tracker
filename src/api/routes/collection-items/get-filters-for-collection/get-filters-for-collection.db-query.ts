@@ -107,18 +107,18 @@ export const getFiltersForCollectionDbQuery = async ({
               label: string;
               value: string;
             }[];
-            range?: undefined;
+            rangeMax?: undefined;
+            rangeMin?: undefined;
           })
         | (CustomFieldData<'number'> & {
             items?: undefined;
-            range: {
-              max: number;
-              min: number;
-            };
+            rangeMax: number;
+            rangeMin: number;
           })
         | (CustomFieldData<'boolean'> & {
             items?: undefined;
-            range?: undefined;
+            rangeMax?: undefined;
+            rangeMin?: undefined;
           })
       )[]
     >((acc, customField, index) => {
@@ -177,10 +177,8 @@ export const getFiltersForCollectionDbQuery = async ({
               ...acc,
               {
                 ...customField,
-                range: {
-                  max,
-                  min,
-                },
+                rangeMax: max,
+                rangeMin: min,
                 type: customField.type,
               },
             ];

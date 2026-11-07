@@ -125,18 +125,23 @@ export const getCollectionDetailsByIdDbQuery = async ({
           ];
         }
       } else if (filter.type === 'number') {
-        const { range } = filter;
-        const { max, min } = range;
+        const { rangeMax, rangeMin } = filter;
 
-        return [
-          ...acc,
-          getWhereCustomFieldValuesMatch({
-            asExists: true,
-            customFieldId,
-            tx,
-            where: between(customFieldValuesTable.valueNumber, min, max),
-          }),
-        ];
+        if (rangeMin !== undefined && rangeMax !== undefined) {
+          return [
+            ...acc,
+            getWhereCustomFieldValuesMatch({
+              asExists: true,
+              customFieldId,
+              tx,
+              where: between(
+                customFieldValuesTable.valueNumber,
+                rangeMin,
+                rangeMax,
+              ),
+            }),
+          ];
+        }
       } else if (filter.type === 'boolean') {
         const { value } = filter;
         if (value === true) {
