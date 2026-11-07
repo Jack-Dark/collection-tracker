@@ -6,9 +6,7 @@ import { CollectionsListPage } from '#/pages/CollectionsListPage';
 import { createMetaTags } from '#/routes/__root';
 
 export const Route = createFileRoute('/_protected/collections/')({
-  component: (props) => {
-    return <CollectionsListPage {...props} />;
-  },
+  component: CollectionsListPage,
   validateSearch: collectionsListSearchQueriesSchema,
   loaderDeps: ({ search }) => {
     return search;
@@ -18,7 +16,7 @@ export const Route = createFileRoute('/_protected/collections/')({
       params: searchQueries,
     });
 
-    return context.queryClient.query(queryOptions);
+    await context.queryClient.query(queryOptions);
   },
   head: () => {
     const title = 'Collections: Collection Tracker';

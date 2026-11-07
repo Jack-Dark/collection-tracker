@@ -277,7 +277,7 @@ export const ComboboxField = <
         value={value}
       >
         <div className="max-w-full grid gap-2">
-          {Array.isArray(value) && (
+          {Array.isArray(value) && !!value.length && (
             <DragDropProvider
               onDragEnd={(event) => {
                 if (event.canceled) return;
