@@ -1,5 +1,5 @@
 import type { TableTransactionDef } from '#/api/db-tables-schema.types';
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { DbQueryArgsDef } from '#/auth/auth.types';
 
 import type { DeleteUserRequestArgsDef } from './delete-user.types';
 

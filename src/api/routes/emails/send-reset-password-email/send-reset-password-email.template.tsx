@@ -1,6 +1,6 @@
 import { renderToString } from 'react-dom/server';
 
-import { resetPasswordTokenExpiresInMinutes } from '#/auth/auth';
+import { resetPasswordTokenExpiresInMinutes } from '#/auth/auth-server';
 
 import type { ResetPasswordEmailTemplatePropsDef } from './send-reset-password-email.types';
 

@@ -6,8 +6,8 @@ export const useUserContext = () => {
   const { user } = RootRoute.useRouteContext();
 
   useEffect(() => {
-    console.log('🚀 ~ useUserContext ~ user:', user);
-  }, [user]);
+    // console.log('🚀 ~ useUserContext ~ user:', user);
+  }, []);
 
   return user;
 };

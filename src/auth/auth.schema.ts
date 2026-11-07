@@ -1,9 +1,6 @@
 import z from 'zod';
 
-export const userRoles = {
-  admin: 'admin',
-  user: 'user',
-} as const;
+import { userRoles } from './auth.constants';
 
 export const userRolesSchema = z.union(
   Object.values(userRoles).map((role) => {

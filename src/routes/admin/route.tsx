@@ -1,7 +1,7 @@
 import { createFileRoute, isRedirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
-import { getIsAdmin } from '#/auth/auth-middleware.helpers';
+import { getIsAdmin } from '#/auth/helpers/get-is-admin';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/admin')({

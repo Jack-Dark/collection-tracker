@@ -136,17 +136,15 @@ export const CollectionsListPage: RouteComponent = () => {
     },
   });
 
-  useEffect(() => {
-    return () => {
-      resetEditingRowIds();
-    };
-  }, []);
-
   useLayoutEffect(() => {
     if (isSuccess) {
       form.reset();
     }
   }, [isSuccess, data]);
+
+  useEffect(() => {
+    return resetEditingRowIds;
+  }, []);
 
   return (
     <PageWrapper

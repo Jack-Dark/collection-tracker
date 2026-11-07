@@ -11,9 +11,9 @@ import {
   unique,
 } from 'drizzle-orm/pg-core';
 
-import type { UserRoleDef } from '#/auth/auth-middleware.types';
+import type { UserRoleDef } from '#/auth/auth.types';
 
-import { userRoles } from '#/auth/auth-middleware.schema';
+import { userRoles } from '#/auth/auth.constants';
 
 import type { CustomFieldTypeDef } from './db-tables-schema.types';
 

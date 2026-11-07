@@ -1,5 +1,5 @@
 import type z from '../../node_modules/zod/v4/classic/external.d.cts';
-import type { authSchema, userRolesSchema } from './auth-middleware.schema';
+import type { authSchema, userRolesSchema } from './auth.schema';
 
 export type UserRoleDef = z.output<typeof userRolesSchema>;
 
