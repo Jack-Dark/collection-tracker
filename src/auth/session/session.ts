@@ -1,8 +1,4 @@
-import {
-  createClientOnlyFn,
-  createIsomorphicFn,
-  createServerFn,
-} from '@tanstack/react-start';
+import { createIsomorphicFn } from '@tanstack/react-start';
 import { getCookie, getRequestHeaders } from '@tanstack/react-start/server';
 import { ReasonPhrases } from 'http-status-codes';
 import Cookies from 'js-cookie';
@@ -27,24 +23,20 @@ const formatSessionToUserContext = (
   };
 };
 
-const getServerSession = createServerFn({ method: 'GET' }).handler(async () => {
-  const headers = getRequestHeaders();
-  const response = await auth.api.getSession({ headers });
-  console.log('🚀 ~ SERVER SESSION:', JSON.stringify(response));
-
-  return formatSessionToUserContext(response);
-});
-
-const getClientSession = createClientOnlyFn(async () => {
-  const { data: response } = await authClient.getSession();
-  console.log('🚀 ~ CLIENT SESSION:', JSON.stringify(response));
-
-  return formatSessionToUserContext(response);
-});
-
 export const getSession = createIsomorphicFn()
-  .server(getServerSession)
-  .client(getClientSession);
+  .server(async () => {
+    const headers = getRequestHeaders();
+    const response = await auth.api.getSession({ headers });
+    console.log('🚀 ~ SERVER SESSION:', JSON.stringify(response));
+
+    return formatSessionToUserContext(response);
+  })
+  .client(async () => {
+    const { data: response } = await authClient.getSession();
+    console.log('🚀 ~ CLIENT SESSION:', JSON.stringify(response));
+
+    return formatSessionToUserContext(response);
+  });
 
 /** Same as getSession, but throws an unauthorized error if user does not have an active session. Should only be called in middleware. If you need the session anywhere else use the root route context. */
 export const ensureSessionInMiddleware = async () => {
