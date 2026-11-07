@@ -83,6 +83,7 @@ export const softAuthApiRouteMiddleware = createMiddleware().server(
   },
 );
 
+// ! extracting this middleware resolves the server error (in VSCode I technically had to extract all the other middlewares into a separate file because it doesn't want to pull this one out. Not sure why)
 export const errorHandlingMiddleware = createMiddleware().server(
   async ({ next }) => {
     try {
