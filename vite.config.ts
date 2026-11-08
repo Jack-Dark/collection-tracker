@@ -21,13 +21,13 @@ const config = defineConfig(({ mode }) => {
   const isDevMode = mode !== 'production';
 
   return {
-    build: { sourcemap: isDevMode },
+    build: {
+      minify: false,
+      sourcemap: isDevMode,
+    },
     css: { devSourcemap: isDevMode },
     define: {
-      // 'process.env.NODE_ENV': JSON.stringify(mode),
-
-      // force dev mode in production to make tracking down hydration errors easier
-      'process.env.NODE_ENV': JSON.stringify('development'),
+      'process.env.NODE_ENV': JSON.stringify(mode),
     },
     optimizeDeps: {
       include: ['@mui/icons-material'],
