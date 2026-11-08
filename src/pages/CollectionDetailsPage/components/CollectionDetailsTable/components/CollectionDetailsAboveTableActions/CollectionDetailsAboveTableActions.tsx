@@ -4,7 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import {
   useHotkeys,
   useAppHotkeys,
-  formatForDisplay,
+  useFormatForDisplay,
 } from '@tanstack/react-hotkeys';
 import { useRef } from 'react';
 
@@ -98,7 +98,8 @@ export const CollectionDetailsAboveTableActions = ({
     },
   ]);
 
-  const formattedNewHotkey = formatForDisplay(hotkeys.new);
+  const formatHotkey = useFormatForDisplay();
+  const formattedNewHotkey = formatHotkey(hotkeys.new);
 
   return (
     <div className="flex justify-between">

@@ -2,8 +2,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
-  formatForDisplay,
   useAppHotkeys,
+  useFormatForDisplay,
   useHotkeys,
 } from '@tanstack/react-hotkeys';
 import { useRef } from 'react';
@@ -93,7 +93,8 @@ export const CollectionsListAboveTableActions = (props: {
     },
   ]);
 
-  const formattedNewHotkey = formatForDisplay(hotkeys.new);
+  const formatHotkey = useFormatForDisplay();
+  const formattedNewHotkey = formatHotkey(hotkeys.new);
 
   return (
     <form.ArrayField name="records">

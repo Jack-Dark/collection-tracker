@@ -8,7 +8,7 @@ import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
-import { HotkeysProvider } from '@tanstack/react-hotkeys';
+import { detectPlatform, HotkeysProvider } from '@tanstack/react-hotkeys';
 import { HotkeysDevtoolsPanel } from '@tanstack/react-hotkeys-devtools';
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
@@ -19,6 +19,8 @@ import {
   createRootRouteWithContext,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
+import { createIsomorphicFn } from '@tanstack/react-start';
+import { getRequestHeader } from '@tanstack/react-start/server';
 import { StrictMode } from 'react';
 
 import { getNavMenuCollectionsQueryOptions } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
@@ -138,6 +140,14 @@ function RootComponent() {
   );
 }
 
+const getPlatform = createIsomorphicFn()
+  .server(() => {
+    return detectPlatform(getRequestHeader('user-agent'));
+  })
+  .client(() => {
+    return detectPlatform();
+  });
+
 const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
   const queryClient = useQueryClient();
   const emotionCache = createCache({ key: 'css' });
@@ -147,7 +157,10 @@ const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
     <QueryClientProvider client={queryClient}>
       <CacheProvider value={emotionCache}>
         <ThemeProvider initialTheme={theme}>
-          <HotkeysProvider appHotkeys={appHotkeys}>
+          <HotkeysProvider
+            appHotkeys={appHotkeys}
+            defaultOptions={{ platform: getPlatform() }}
+          >
             <DialogProvider>{children}</DialogProvider>
           </HotkeysProvider>
         </ThemeProvider>
