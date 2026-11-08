@@ -4,19 +4,17 @@ import CoffeeIcon from '@mui/icons-material/Coffee';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import { Link, ClientOnly } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { Suspense } from 'react';
 import { twJoin } from 'tailwind-merge';
 
 import { githubUrl } from '#/constants/githubUrl';
 import { useUserContext } from '#/hooks/use-user-context';
 
-import { MobileNavMenu } from '../NavMenu/components/MobileNavMenu';
-import { ListMobileMenuItems } from '../NavMenu/components/MobileNavMenu/components/ListMobileMenuItems';
 import { Popover } from '../Popover';
 import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
-import { SiteNavMenu, useSiteNavMenuItems } from './components/SiteNavMenu';
-import { ThemeToggles } from './components/SiteNavMenu/components/ThemeToggles';
+import { SiteDesktopNavMenu } from './components/SiteDesktopNavMenu';
+import { SiteMobileNavMenu } from './components/SiteMobileNavMenu';
 
 type PageWrapperPropsDef = PropsWithChildren<{
   suspenseFallback?: ReactNode;
@@ -32,8 +30,6 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
     wideOnMobile,
   } = props;
 
-  const { accountNavItems, primaryNavItems } = useSiteNavMenuItems();
-
   const user = useUserContext();
 
   const isImpersonating = user?.impersonatedBy;
@@ -48,20 +44,9 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
         )}
         <div className="py-1 md:py-0 grid grid-cols-[1fr_auto] gap-2 w-full justify-between text-white">
           <div className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_auto_1fr] items-center gap-2">
-            <ClientOnly>
-              <MobileNavMenu
-                BottomContent={({ closeMenu }) => {
-                  return (
-                    <ListMobileMenuItems
-                      closeMenu={closeMenu}
-                      items={accountNavItems}
-                    />
-                  );
-                }}
-                items={primaryNavItems}
-                TopContent={ThemeToggles}
-              />
-            </ClientOnly>
+            <Suspense>
+              <SiteMobileNavMenu />
+            </Suspense>
 
             <Link className="hidden md:block text-inherit" to="/">
               <ListAltIcon className="text-4xl text-inherit" fontSize="large" />
@@ -119,7 +104,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
             return (
               <SimpleErrorBoundary onReset={reset}>
                 <Suspense>
-                  <SiteNavMenu />
+                  <SiteDesktopNavMenu />
                 </Suspense>
               </SimpleErrorBoundary>
             );
