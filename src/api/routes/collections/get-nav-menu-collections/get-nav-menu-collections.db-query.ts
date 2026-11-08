@@ -2,11 +2,11 @@ import { and, asc, eq, sql } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 
 import type { GetNavMenuCollectionsRequestArgsDef } from './get-nav-menu-collections.types';
 
-import { collectionsTable } from '../../../db-tables-schema';
+import { collectionsTable } from '../../../db/db-tables-schema';
 
 export const getNavMenuCollectionsDbQuery = async ({
   context,

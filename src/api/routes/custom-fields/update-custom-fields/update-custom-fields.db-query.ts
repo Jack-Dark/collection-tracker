@@ -2,9 +2,9 @@ import { and, eq } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
-import { customFieldsTable } from '#/api/db-tables-schema';
-import { customFieldTypeLabelsMap } from '#/pages/CollectionsListPage/components/CollectionsListTable/components/column-cells/CollectionsListCustomFieldsCell';
+import { db } from '#/api/db/db';
+import { customFieldsTable } from '#/api/db/db-tables-schema';
+import { customFieldTypeLabelsMap } from '#/pages/CollectionsListPage/components/CollectionsListTable/components/column-cells/CollectionsListCustomFieldsCell/CollectionsListCustomFieldsCell.constants';
 
 import type { UpdateCustomFieldsRequestArgsDef } from './update-custom-fields.types';
 

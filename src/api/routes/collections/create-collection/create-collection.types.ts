@@ -1,6 +1,6 @@
 import type z from 'zod';
 
-import type { QueryResponseDef } from '#/api/db-tables-schema.types';
+import type { QueryResponseDef } from '#/api/db/db-tables-schema.types';
 
 import type { createCollectionDbQuery } from './create-collection.db-query';
 import type {

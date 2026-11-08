@@ -1,6 +1,6 @@
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 
 import type { GetUsersRequestArgsDef } from './get-users.types';
 

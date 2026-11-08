@@ -1,7 +1,7 @@
 import CheckIcon from '@mui/icons-material/Check';
 import { Suspense } from 'react';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
 import type {
   CustomFieldValueBooleanDef,
   CustomFieldValueNumberDef,

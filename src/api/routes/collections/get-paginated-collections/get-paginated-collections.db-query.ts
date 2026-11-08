@@ -1,15 +1,15 @@
 import { and, eq, ilike } from 'drizzle-orm';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
 import type { CollectionRecordDef } from '../collection.types';
 import type { GetPaginatedCollectionsRequestArgsDef } from './get-paginated-collections.types';
 
-import { collectionsTable } from '../../../db-tables-schema';
+import { collectionsTable } from '../../../db/db-tables-schema';
 
 export const getPaginatedCollectionsDbQuery = async ({
   context,

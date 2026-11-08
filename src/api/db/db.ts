@@ -4,7 +4,7 @@ import ws from 'ws';
 
 import { configs } from '#/configs.ts';
 
-import { relations } from './db/relations.ts';
+import { relations } from './relations.ts';
 
 neonConfig.webSocketConstructor = ws;
 

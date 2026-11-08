@@ -1,6 +1,6 @@
 import type { InferSelectModel } from 'drizzle-orm';
 
-import type { collectionsTable } from '../../db-tables-schema';
+import type { collectionsTable } from '../../db/db-tables-schema';
 
 export type CollectionRecordDef = InferSelectModel<typeof collectionsTable>;
 

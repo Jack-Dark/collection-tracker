@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { useLayoutEffect } from 'react';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
 import type { CustomFieldValueNumberDef } from '#/api/routes/custom-field-values/custom-field-values.types';
 
 import { useCreateCustomFieldValues } from '#/api/routes/custom-field-values/create-custom-field-value/create-custom-field-value.react-query';

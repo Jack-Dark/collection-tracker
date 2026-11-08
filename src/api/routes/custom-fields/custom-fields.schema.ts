@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
 
 import type { OrderedCustomFieldForCollectionDef } from '../collections/get-paginated-collections/get-paginated-collections.types';
 

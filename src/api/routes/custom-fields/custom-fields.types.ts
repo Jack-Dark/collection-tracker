@@ -1,6 +1,6 @@
 import type { InferSelectModel } from 'drizzle-orm';
 
-import type { customFieldsTable } from '#/api/db-tables-schema';
+import type { customFieldsTable } from '#/api/db/db-tables-schema';
 
 import type z from '../../../../node_modules/zod/v4/classic/external.d.cts';
 import type {

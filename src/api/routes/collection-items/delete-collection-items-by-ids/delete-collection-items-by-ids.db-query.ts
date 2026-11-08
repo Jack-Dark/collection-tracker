@@ -2,8 +2,8 @@ import { and, eq, inArray } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
-import { collectionItemsTable } from '#/api/db-tables-schema';
+import { db } from '#/api/db/db';
+import { collectionItemsTable } from '#/api/db/db-tables-schema';
 import { deleteCloudinaryAssetsByPublicIds } from '#/lib/cloudinary';
 
 import type { DeleteCollectionItemsByIdsSchemaDef } from './delete-collection-items-by-ids.type';

@@ -1,7 +1,7 @@
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import type z from 'zod';
 
-import type { collectionItemsTable } from '../../db-tables-schema';
+import type { collectionItemsTable } from '../../db/db-tables-schema';
 import type { imagesSchema } from './base-collection-item.schema';
 
 export type CollectionItemRecordDef = InferSelectModel<

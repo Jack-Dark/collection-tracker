@@ -3,7 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, lastLoginMethod } from 'better-auth/plugins';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import { sendAccountDeletedEmailServerFn } from '#/api/routes/emails/send-account-deleted-email/send-account-deleted-email.serverFn';
 import { sendDeleteAccountVerificationEmailServerFn } from '#/api/routes/emails/send-delete-account-verification-email/send-delete-account-verification-email.serverFn';
 import { sendResetPasswordEmailServerFn } from '#/api/routes/emails/send-reset-password-email/send-reset-password-email.serverFn';
@@ -13,7 +13,7 @@ import { createNewUserExampleRecordsDbQuery } from '#/api/routes/users/sign-up/s
 import { configs } from '#/configs';
 import { deleteCloudinaryAssetsByPublicIds } from '#/lib/cloudinary';
 
-import * as schema from '../api/db-tables-schema';
+import * as schema from '../api/db/db-tables-schema';
 
 export const resetPasswordTokenExpiresInMinutes = 20;
 const resetPasswordTokenExpiresInSeconds =

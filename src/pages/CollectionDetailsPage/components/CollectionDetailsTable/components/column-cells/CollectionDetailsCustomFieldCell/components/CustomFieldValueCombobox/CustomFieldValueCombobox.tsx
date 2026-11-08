@@ -5,7 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useLayoutEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
 import type { CustomFieldValueStringDef } from '#/api/routes/custom-field-values/custom-field-values.types';
 
 import { useCreateCustomFieldValues } from '#/api/routes/custom-field-values/create-custom-field-value/create-custom-field-value.react-query';

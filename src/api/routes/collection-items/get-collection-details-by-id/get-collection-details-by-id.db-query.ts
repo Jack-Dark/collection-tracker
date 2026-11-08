@@ -17,13 +17,13 @@ import {
 
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
   customFieldsTable,
   customFieldValuesTable,
-} from '#/api/db-tables-schema';
+} from '#/api/db/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 import { articlesToIgnore } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-ignore-sort-articles';

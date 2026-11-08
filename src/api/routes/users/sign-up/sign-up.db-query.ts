@@ -1,6 +1,6 @@
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
@@ -8,7 +8,7 @@ import {
   collectionsToCustomFieldsTable,
   customFieldsTable,
   customFieldValuesTable,
-} from '#/api/db-tables-schema';
+} from '#/api/db/db-tables-schema';
 
 export const createNewUserExampleRecordsDbQuery = async ({
   context,
