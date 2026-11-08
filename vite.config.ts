@@ -36,14 +36,19 @@ const config = defineConfig(({ mode }) => {
       include: ['@mui/icons-material'],
     },
     plugins: [
-      devtools(),
-      isDevMode &&
-        checker({
-          eslint: {
-            lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+      // ! devtools should be first
+      devtools({
+        editor: {
+          name: 'VSCode',
+          open: async (path, lineNumber, columnNumber) => {
+            const { exec } = await import('node:child_process');
+            exec(
+              // or windsurf/cursor/webstorm
+              `code -g "${path.replaceAll('$', '\\$')}${lineNumber ? `:${lineNumber}` : ''}${columnNumber ? `:${columnNumber}` : ''}"`,
+            );
           },
-          typescript: true,
-        }),
+        },
+      }),
       tailwindcss(),
       tanstackStart({
         prerender: {
@@ -58,6 +63,19 @@ const config = defineConfig(({ mode }) => {
       // ! react's vite plugin must come after start's vite plugin
       viteReact(),
       netlify(),
+      isDevMode &&
+        checker({
+          eslint: {
+            lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+          },
+          overlay: {
+            initialIsOpen: 'error',
+            position: 'tl',
+          },
+          typescript: {
+            tsconfigPath: './tsconfig.json',
+          },
+        }),
     ].filter(Boolean),
     preview: {
       port: 8080,

@@ -165,6 +165,14 @@ export const RootDocument = ({
     <html {...{ [themeAttr]: theme }} lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+
+        {/* Required to render vite checker overlay: https://vite-plugin-checker.netlify.app/recipes/backend-integration */}
+        {process.env.NODE_ENV === 'development' && (
+          <script
+            src="http://localhost:3000/@vite-plugin-checker-runtime-entry"
+            type="module"
+          />
+        )}
       </head>
 
       <body className="bg-linear-to-br from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
