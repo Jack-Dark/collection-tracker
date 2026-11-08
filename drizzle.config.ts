@@ -8,5 +8,5 @@ export default defineConfig({
   },
   dialect: 'postgresql',
   out: './migrations',
-  schema: './src/api/db-tables-schema.ts',
+  schema: './src/api/db/db-tables-schema.ts',
 });
