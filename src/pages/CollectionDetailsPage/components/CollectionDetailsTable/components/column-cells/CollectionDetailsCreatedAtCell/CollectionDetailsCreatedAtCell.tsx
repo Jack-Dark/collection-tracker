@@ -1,11 +1,8 @@
 import ClearIcon from '@mui/icons-material/Clear';
-import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
-import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { Button } from '#/components/Button';
-import { HotkeyPopover } from '#/components/HotkeyPopover';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 import { useFormattedDate } from '../../../../../../../hooks/use-formatted-date';
@@ -31,22 +28,6 @@ export const CollectionDetailsCreatedAtCell = ({
 
   const showNewRecordButtons = isEditingRow && getHasNewRecord();
 
-  const removeBtnRef = useRef<HTMLButtonElement>(null);
-
-  const appHotkeys = useAppHotkeys();
-
-  useHotkeys([
-    {
-      callback: () => {
-        removeBtnRef.current?.click();
-      },
-      hotkey: appHotkeys['app.remove-last'],
-      options: {
-        enabled: showNewRecordButtons && isLastNewRecordIndex,
-      },
-    },
-  ]);
-
   return (
     <form.ArrayField name="collectionItems">
       {(collectionItemsField) => {
@@ -62,18 +43,15 @@ export const CollectionDetailsCreatedAtCell = ({
 
                 return showNewRecordButtons ? (
                   <>
-                    <HotkeyPopover hotkey="removeLast">
-                      <Button
-                        Icon={ClearIcon}
-                        onClick={() => {
-                          collectionItemsField.removeValue(rowIndex);
-                          removeFromEditingRowIds(String(value.id));
-                        }}
-                        ref={removeBtnRef}
-                        text="Remove"
-                        variant="mono"
-                      />
-                    </HotkeyPopover>
+                    <Button
+                      Icon={ClearIcon}
+                      onClick={() => {
+                        collectionItemsField.removeValue(rowIndex);
+                        removeFromEditingRowIds(String(value.id));
+                      }}
+                      text="Remove"
+                      variant="mono"
+                    />
 
                     {isLastNewRecordIndex && (
                       <AddNewCollectionItemButton

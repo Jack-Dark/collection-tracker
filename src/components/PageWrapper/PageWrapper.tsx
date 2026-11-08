@@ -44,9 +44,17 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
         )}
         <div className="py-1 md:py-0 grid grid-cols-[1fr_auto] gap-2 w-full justify-between text-white">
           <div className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_auto_1fr] items-center gap-2">
-            <Suspense>
-              <SiteMobileNavMenu />
-            </Suspense>
+            <QueryErrorResetBoundary>
+              {({ reset }) => {
+                return (
+                  <SimpleErrorBoundary onReset={reset}>
+                    <Suspense>
+                      <SiteMobileNavMenu />
+                    </Suspense>
+                  </SimpleErrorBoundary>
+                );
+              }}
+            </QueryErrorResetBoundary>
 
             <Link className="hidden md:block text-inherit" to="/">
               <ListAltIcon className="text-4xl text-inherit" fontSize="large" />

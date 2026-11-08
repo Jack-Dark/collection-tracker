@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 
-import { formatForDisplay } from '@tanstack/react-hotkeys';
+import { useFormatForDisplay } from '@tanstack/react-hotkeys';
 
 import { Popover } from '#/components/Popover';
 import { hotkeys } from '#/constants/app-hotkeys';
@@ -17,7 +17,8 @@ export const HotkeyPopover = ({
     'Description' | 'Trigger'
   >
 >) => {
-  const formattedSaveHotkey = formatForDisplay(hotkeys[hotkey]);
+  const formatHotkey = useFormatForDisplay();
+  const formattedSaveHotkey = formatHotkey(hotkeys[hotkey]);
 
   return (
     <Popover
