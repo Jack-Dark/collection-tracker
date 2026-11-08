@@ -1,8 +1,8 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
-import { auth } from '#/auth/auth-server';
 import { errorHandlingMiddleware } from '#/api/middleware/error-handling-middleware';
+import { auth } from '#/auth/auth-server';
 
 export const impersonateUserStopServerFn = createServerFn({
   method: 'POST',
