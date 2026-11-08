@@ -21,7 +21,10 @@ const config = defineConfig(({ mode }) => {
   const isDevMode = mode !== 'production';
 
   return {
-    build: { sourcemap: isDevMode },
+    build: {
+      minify: false,
+      sourcemap: isDevMode,
+    },
     css: { devSourcemap: isDevMode },
     define: {
       // 'process.env.NODE_ENV': JSON.stringify(mode),
