@@ -2,8 +2,8 @@ import { and, eq } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
-import { collectionsToCustomFieldsTable } from '#/api/db-tables-schema';
+import { db } from '#/api/db/db';
+import { collectionsToCustomFieldsTable } from '#/api/db/db-tables-schema';
 
 import type { GetNumCollectionsWithCustomFieldRequestArgsDef } from './get-num-collections-with-custom-field.types';
 

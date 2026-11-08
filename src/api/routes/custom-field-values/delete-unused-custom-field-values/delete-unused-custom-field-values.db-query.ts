@@ -2,11 +2,11 @@ import { and, eq, notExists, sql } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import {
   collectionItemsToCustomFieldValuesTable,
   customFieldValuesTable,
-} from '#/api/db-tables-schema';
+} from '#/api/db/db-tables-schema';
 
 import type { DeleteUnusedCustomFieldValuesRequestArgsDef } from './delete-unused-custom-field-values.types';
 

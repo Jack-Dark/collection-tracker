@@ -9,7 +9,7 @@ import type {
   customFieldsTable,
   usersTable,
 } from './db-tables-schema';
-import type { relations } from './db/relations';
+import type { relations } from './relations';
 
 export type UserRecordDef = InferSelectModel<typeof usersTable>;
 

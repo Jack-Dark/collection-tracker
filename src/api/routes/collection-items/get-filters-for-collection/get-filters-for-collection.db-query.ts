@@ -1,15 +1,15 @@
 import { eq, and } from 'drizzle-orm';
 import _ from 'lodash';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import {
   collectionItemsToCustomFieldValuesTable,
   customFieldsTable,
   customFieldValuesTable,
-} from '#/api/db-tables-schema';
+} from '#/api/db/db-tables-schema';
 
 import type { GetFiltersForCollectionRequestArgsDef } from './get-filters-for-collection.types';
 

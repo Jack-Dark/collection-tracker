@@ -1,6 +1,6 @@
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 
 import type { GetCustomFieldValuesByCustomFieldIdRequestArgsDef } from './get-custom-field-values-by-collection-id.types';
 

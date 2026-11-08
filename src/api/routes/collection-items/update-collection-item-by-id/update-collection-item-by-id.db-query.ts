@@ -1,15 +1,15 @@
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
-import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db-tables-schema.types';
+import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 import type { CloudinaryTagsItem } from '#/lib/cloudinary';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
-} from '#/api/db-tables-schema';
+} from '#/api/db/db-tables-schema';
 import {
   buildConflictUpdateSetColumns,
   getDifferenceBetweenArrays,

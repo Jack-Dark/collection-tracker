@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import z from 'zod';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
 import type { CustomFieldDataForCollectionDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
 import type { CustomFieldFormSchemaDef } from '#/api/routes/custom-fields/custom-fields.types';
 import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
@@ -38,11 +38,7 @@ import { EmptyCellValue } from '#/components/Table/components/EmptyCellValue';
 import { pluralize } from '#/helpers/pluralize';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-export const customFieldTypeLabelsMap = {
-  boolean: 'Checkbox',
-  number: 'Number',
-  string: 'Text',
-} as const;
+import { customFieldTypeLabelsMap } from './CollectionsListCustomFieldsCell.constants';
 
 const fieldDataTypeItems = [
   {
@@ -166,11 +162,11 @@ export const CollectionsListCustomFieldsEditableCell = (props: {
               ariaLabel="Custom Field"
               caseSensitiveCreation
               createNewItem={(trimmedQuery) => {
-                const newRecord: CustomFieldDataForCollectionDef = {
+                const newRecord = {
                   id: uuidv4() as unknown as number,
                   name: trimmedQuery,
                   type: null as unknown as CustomFieldTypeDef,
-                };
+                } satisfies CustomFieldDataForCollectionDef;
 
                 const index = field.value.length;
 

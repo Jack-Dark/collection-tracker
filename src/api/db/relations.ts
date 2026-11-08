@@ -1,6 +1,6 @@
 import { defineRelations } from 'drizzle-orm';
 
-import * as schema from '../db-tables-schema';
+import * as schema from './db-tables-schema';
 
 // ? keys prefixed with `a_` are aliases
 export const relations = defineRelations(

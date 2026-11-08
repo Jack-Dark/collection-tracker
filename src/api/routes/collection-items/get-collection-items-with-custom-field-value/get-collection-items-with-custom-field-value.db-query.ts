@@ -2,12 +2,12 @@ import { and, eq } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
   collectionsTable,
-} from '#/api/db-tables-schema';
+} from '#/api/db/db-tables-schema';
 
 import type { GetCollectionItemsWithCustomFieldValueRequestArgsDef } from './get-collection-items-with-custom-field-value.types';
 

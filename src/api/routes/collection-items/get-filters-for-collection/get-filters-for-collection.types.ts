@@ -1,4 +1,4 @@
-import type { QueryResponseDef } from '#/api/db-tables-schema.types';
+import type { QueryResponseDef } from '#/api/db/db-tables-schema.types';
 
 import type z from '../../../../../node_modules/zod/v4/classic/external.d.cts';
 import type { getFiltersForCollectionDbQuery } from './get-filters-for-collection.db-query';

@@ -1,6 +1,6 @@
 import { defineRelations } from 'drizzle-orm';
 
-import * as schema from '../db-tables-schema';
+import * as schema from '../db/db-tables-schema';
 
 export const relations = defineRelations(
   {
