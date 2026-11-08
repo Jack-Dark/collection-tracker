@@ -42,13 +42,13 @@ export const MobileNavMenu = (props: {
     };
 
     if (open) {
-      window.addEventListener('resize', handleResize);
+      window?.addEventListener('resize', handleResize);
     } else {
-      window.removeEventListener('resize', handleResize);
+      window?.removeEventListener('resize', handleResize);
     }
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window?.removeEventListener('resize', handleResize);
     };
   }, [open]);
 
