@@ -71,15 +71,6 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
           </div>
 
           <div className="flex gap-2 md:gap-4">
-            <button
-              onClick={() => {
-                throw new Error('Sentry Test Error');
-              }}
-              type="button"
-            >
-              Break the world
-            </button>
-
             <Popover
               aria-label="Buy me a coffee"
               Description="Buy me a coffee!"
