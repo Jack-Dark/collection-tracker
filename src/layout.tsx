@@ -7,24 +7,24 @@ import { FullPageLoadingSpinner } from './components/FullPageLoadingSpinner';
 import { Notifications } from './components/Notifications';
 import { useNotifications } from './components/Notifications/useNotifications';
 import { SimpleErrorBoundary } from './components/SimpleErrorBoundary';
-import { useUserContext } from './hooks/use-user-context';
+import { useUserSessionContext } from './context/user';
 
 export const verifyEmailMessage = `You must verify your email address before you can add to your collections. It may be in your spam folder.`;
 
 export const Layout: RouteComponent = () => {
-  const user = useUserContext();
+  const { userSession } = useUserSessionContext();
 
   const { clearAllNotifications, notifyWarning } = useNotifications();
 
   useLayoutEffect(() => {
-    if (user?.id && !user?.emailVerified) {
+    if (userSession?.id && !userSession?.emailVerified) {
       notifyWarning(`Welcome! ${verifyEmailMessage}`, {
         keepOpen: true,
       });
     }
 
     return clearAllNotifications;
-  }, [!!user?.emailVerified]);
+  }, [!!userSession?.emailVerified]);
 
   return (
     <SimpleErrorBoundary>

@@ -1,13 +1,16 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
+import { useUserSessionContext } from '#/context/user';
 import { SignUpPage } from '#/pages/SignUpPage';
 
 import { createMetaTags } from '../__root';
 
 export const Route = createFileRoute('/_unprotected/sign-up')({
   component: SignUpPage,
-  loader: ({ context }) => {
-    if (context.user?.id)
+  loader: () => {
+    const { userSession } = useUserSessionContext();
+
+    if (userSession?.id)
       throw redirect({
         to: '/collections',
       });
