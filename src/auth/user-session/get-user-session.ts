@@ -1,5 +1,8 @@
+import * as Sentry from '@sentry/tanstackstart-react';
 import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
+
+import { configs } from '#/configs';
 
 import type { ServerUserSession, ClientUserSession } from './session.types';
 
@@ -25,6 +28,12 @@ export const getUserSession = createIsomorphicFn()
     console.log('🚀 ~ SERVER SESSION HEADERS:', JSON.stringify(headers));
     const response = await auth.api.getSession({ headers });
     console.log('🚀 ~ SERVER SESSION RESPONSE:', JSON.stringify(response));
+
+    if (configs.environment !== 'development') {
+      Sentry.logger.info(
+        `🚀 ~ SERVER SESSION RESPONSE: ${JSON.stringify(response)}`,
+      );
+    }
 
     return formatSessionToUserContext(response);
   })

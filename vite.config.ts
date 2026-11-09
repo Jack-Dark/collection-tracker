@@ -1,5 +1,6 @@
 /// <reference types="vitest/config" />
 import netlify from '@netlify/vite-plugin-tanstack-start';
+import { sentryTanstackStart } from '@sentry/tanstackstart-react/vite';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { devtools } from '@tanstack/devtools-vite';
@@ -8,7 +9,7 @@ import viteReact from '@vitejs/plugin-react';
 import { playwright } from '@vitest/browser-playwright';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import checker from 'vite-plugin-checker';
 
 const dirname =
@@ -19,6 +20,7 @@ const dirname =
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const config = defineConfig(({ mode }) => {
   const isDevMode = mode !== 'production';
+  const env = loadEnv(mode, process.cwd(), '');
 
   return {
     build: {
@@ -48,6 +50,11 @@ const config = defineConfig(({ mode }) => {
             );
           },
         },
+      }),
+      sentryTanstackStart({
+        authToken: env.SENTRY_AUTH_TOKEN,
+        org: 'collection-tracker',
+        project: 'collection-tracker',
       }),
       tailwindcss(),
       tanstackStart({
