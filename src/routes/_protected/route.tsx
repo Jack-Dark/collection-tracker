@@ -1,11 +1,10 @@
 import { createFileRoute, isRedirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
-import { requireUserSession } from '#/auth/user-session';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/_protected')({
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({ context, location }) => {
     const redirectToSignIn = () => {
       return Route.redirect({
         search: { redirect: location.href },
@@ -14,9 +13,7 @@ export const Route = createFileRoute('/_protected')({
     };
 
     try {
-      const user = await requireUserSession();
-
-      if (!user.id) {
+      if (!context.user?.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw redirectToSignIn();
       }

@@ -1,7 +1,6 @@
 /// <reference types="vite/client" />
 
 import type { QueryClient } from '@tanstack/react-query';
-import type { ErrorComponentProps } from '@tanstack/react-router';
 import type { MetaHTMLAttributes, ReactNode } from 'react';
 
 import createCache from '@emotion/cache';
@@ -25,56 +24,32 @@ import { StrictMode } from 'react';
 
 import { getNavMenuCollectionsQueryOptions } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { getUserSession } from '#/auth/user-session/get-user-session';
-import { Button } from '#/components/Button';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
-import { PageWrapper } from '#/components/PageWrapper';
-import { RouteCatchBoundary } from '#/components/RouteCatchBoundary';
 import { ThemeProvider, useTheme } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
-import { githubUrl } from '#/constants/githubUrl';
-import { UserSessionProvider } from '#/context/user';
+import { AuthProvider } from '#/context/auth';
 import { handleThemeCookie, themeAttr } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
 
-export const RouteNotFoundComponent = () => {
-  return (
-    <PageWrapper>
-      <div className="grid gap-10">
-        <h1>Page Not Found</h1>
-        <p>
-          Ack! You caught us with our pants down! If you think this is bug, you
-          can help us out by reporting it.
-        </p>
-        <a href={githubUrl.issues} target="_blank">
-          <Button text="Report Bug" />
-        </a>
-      </div>
-    </PageWrapper>
-  );
-};
-
-export const RouteErrorComponent = (props: ErrorComponentProps) => {
-  return <RouteCatchBoundary {...props} />;
-};
-
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
+  beforeLoad: async () => {
+    const user = await getUserSession();
+
+    return { user };
+  },
   component: RootComponent,
   loader: async ({ context }) => {
     const { themeCookie } = handleThemeCookie();
 
     const queryOptions = getNavMenuCollectionsQueryOptions();
 
-    const [user] = await Promise.all([
-      getUserSession(),
-      context.queryClient.query(queryOptions),
-    ]);
+    await context.queryClient.query(queryOptions);
 
     return {
       theme: themeCookie,
-      user,
     };
   },
   head: () => {
@@ -151,10 +126,10 @@ const getPlatform = createIsomorphicFn()
 const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
   const queryClient = useQueryClient();
   const emotionCache = createCache({ key: 'css' });
-  const { theme, user } = Route.useLoaderData();
+  const { theme } = Route.useLoaderData();
 
   return (
-    <UserSessionProvider initialUserSession={user}>
+    <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <CacheProvider value={emotionCache}>
           <ThemeProvider initialTheme={theme}>
@@ -167,13 +142,11 @@ const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
           </ThemeProvider>
         </CacheProvider>
       </QueryClientProvider>
-    </UserSessionProvider>
+    </AuthProvider>
   );
 };
 
-export const RootDocument = ({
-  children,
-}: Readonly<{ children: ReactNode }>) => {
+const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
   const { theme } = useTheme();
 
   return (

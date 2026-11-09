@@ -2,11 +2,10 @@ import { createFileRoute, isRedirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
 import { getIsAdmin } from '#/auth/helpers/get-is-admin';
-import { requireAdminUserSession } from '#/auth/user-session/require-admin-user-session';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/admin')({
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({ context, location }) => {
     const redirectToSignIn = () => {
       return Route.redirect({
         search: { redirect: location.href },
@@ -15,14 +14,12 @@ export const Route = createFileRoute('/admin')({
     };
 
     try {
-      const userSession = await requireAdminUserSession();
-
-      if (!userSession.id) {
+      if (!context.user?.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw redirectToSignIn();
       }
 
-      if (!getIsAdmin(userSession?.role)) {
+      if (!getIsAdmin(context.user?.role)) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw Route.redirect({
           to: '/collections',

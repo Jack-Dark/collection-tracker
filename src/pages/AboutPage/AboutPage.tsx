@@ -18,7 +18,11 @@ export const AboutPage = () => {
             libraries and tools that were used on the repo.
           </p>
 
-          <a className="flex" href={githubUrl.readme} target="_blank">
+          <a
+            className="flex justify-self-start"
+            href={githubUrl.readme}
+            target="_blank"
+          >
             <Button size="sm" text="View the README" />
           </a>
         </div>

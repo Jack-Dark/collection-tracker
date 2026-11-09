@@ -17,7 +17,7 @@ import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { Popover } from '#/components/Popover';
 import { hotkeys } from '#/constants/app-hotkeys';
-import { useUserSessionContext } from '#/context/user';
+import { useUserContext } from '#/hooks/use-user-context';
 import { verifyEmailMessage } from '#/layout';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
@@ -33,7 +33,7 @@ export const CollectionsListAboveTableActions = (props: {
 }) => {
   const { form, onCancel, resetRowSelection, selectedRowIds } = props;
 
-  const { userSession } = useUserSessionContext();
+  const user = useUserContext();
 
   const { addToEditingRowIds, isEditing } = useEditingCollectionsRowIds();
 
@@ -147,7 +147,7 @@ export const CollectionsListAboveTableActions = (props: {
               ) : (
                 <Popover
                   Description={
-                    userSession?.emailVerified
+                    user?.emailVerified
                       ? `Hotkey: ${formattedNewHotkey}`
                       : verifyEmailMessage
                   }
@@ -156,7 +156,7 @@ export const CollectionsListAboveTableActions = (props: {
                     return (
                       <AddNewCollectionButton
                         className="btn-sm md:btn-md"
-                        disabled={!userSession?.emailVerified}
+                        disabled={!user?.emailVerified}
                         form={form}
                         insertAtIndex={0}
                         ref={addNewBtnRef}
