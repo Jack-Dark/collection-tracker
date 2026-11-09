@@ -6,6 +6,7 @@ import {
   useAppHotkeys,
   useFormatForDisplay,
 } from '@tanstack/react-hotkeys';
+import { useParams } from '@tanstack/react-router';
 import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
@@ -20,7 +21,6 @@ import { hotkeys } from '#/constants/app-hotkeys';
 import { pluralize } from '#/helpers/pluralize';
 import { useUserContext } from '#/hooks/use-user-context';
 import { verifyEmailMessage } from '#/layout';
-import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../../../../hooks/use-editing-collection-items-row-ids';
 import { AddNewCollectionItemButton } from './components/AddNewCollectionItemButton';
@@ -38,7 +38,7 @@ export const CollectionDetailsAboveTableActions = ({
   resetRowSelection: () => void;
   selectedRowIds: string[];
 }) => {
-  const { id } = CollectionRoute.useParams();
+  const { id } = useParams({ from: '/_protected/collections/$id' });
   const collectionId = Number(id);
 
   const user = useUserContext();

@@ -1,7 +1,7 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
 
 import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
@@ -13,11 +13,12 @@ import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
-import { Route as ResetPasswordRoute } from '#/routes/_unprotected/reset-password';
 
 export const ResetPasswordPage: RouteComponent = () => {
   const navigate = useNavigate();
-  const { email, error, token } = ResetPasswordRoute.useSearch();
+  const { email, error, token } = useSearch({
+    from: '/_unprotected/reset-password',
+  });
 
   const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 

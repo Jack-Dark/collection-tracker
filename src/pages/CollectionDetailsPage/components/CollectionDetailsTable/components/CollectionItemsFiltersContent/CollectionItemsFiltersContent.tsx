@@ -2,6 +2,7 @@ import type { PropsWithChildren } from 'react';
 
 import { Slider } from '@base-ui/react';
 import InfoIcon from '@mui/icons-material/Info';
+import { useSearch } from '@tanstack/react-router';
 import { createStore } from '@tanstack/react-store';
 import { useLayoutEffect, useMemo } from 'react';
 
@@ -15,7 +16,6 @@ import { FieldWrapper } from '#/components/Fields/FieldWrapper';
 import { SelectField } from '#/components/Fields/SelectField';
 import { LoadingSpinner } from '#/components/FullPageLoadingSpinner/components/LoadingSpinner';
 import { Popover } from '#/components/Popover';
-import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
 import type {
   CollectionItemsFiltersFormDef,
@@ -88,7 +88,9 @@ export const CollectionDetailsFiltersContent = (
 ) => {
   const { collectionId, form } = props;
 
-  const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
+  const { filters: searchQueryFilters } = useSearch({
+    from: '/_protected/collections/$id',
+  });
 
   const {
     data: filterOptions,

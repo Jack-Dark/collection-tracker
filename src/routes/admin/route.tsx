@@ -1,4 +1,4 @@
-import { createFileRoute, isRedirect } from '@tanstack/react-router';
+import { createFileRoute, isRedirect, redirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
 import { getIsAdmin } from '#/auth/helpers/get-is-admin';
@@ -7,7 +7,7 @@ import { Layout } from '#/layout';
 export const Route = createFileRoute('/admin')({
   beforeLoad: async ({ context, location }) => {
     const redirectToSignIn = () => {
-      return Route.redirect({
+      return redirect({
         search: { redirect: location.href },
         to: '/sign-in',
       });
@@ -21,7 +21,7 @@ export const Route = createFileRoute('/admin')({
 
       if (!getIsAdmin(context.user?.role)) {
         console.error(ReasonPhrases.UNAUTHORIZED);
-        throw Route.redirect({
+        throw redirect({
           to: '/collections',
         });
       }

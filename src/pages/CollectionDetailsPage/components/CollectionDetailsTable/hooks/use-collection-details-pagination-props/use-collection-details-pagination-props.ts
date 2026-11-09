@@ -1,6 +1,6 @@
-import type { PaginationMetadata } from '#/api/pagination/pagination.types';
+import { useSearch } from '@tanstack/react-router';
 
-import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
+import type { PaginationMetadata } from '#/api/pagination/pagination.types';
 
 import { useOnUpdateCollectionItemsQueries } from '../../../../hooks/use-on-update-collection-items-queries';
 
@@ -9,7 +9,7 @@ export const useCollectionDetailsPaginationProps = (props: {
 }) => {
   const { pagination } = props;
 
-  const searchQueries = CollectionRoute.useSearch();
+  const searchQueries = useSearch({ from: '/_protected/collections/$id' });
 
   const { onUpdateCollectionItemsQueries } =
     useOnUpdateCollectionItemsQueries();
