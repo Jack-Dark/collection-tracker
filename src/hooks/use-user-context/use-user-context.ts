@@ -1,7 +1,7 @@
-import { Route as RootRoute } from '#/routes/__root';
+import { useAuth } from '#/context/auth';
 
 export const useUserContext = () => {
-  const { user } = RootRoute.useRouteContext();
+  const { userSession } = useAuth();
 
-  return user;
+  return userSession;
 };

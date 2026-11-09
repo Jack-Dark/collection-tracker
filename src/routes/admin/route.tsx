@@ -14,7 +14,7 @@ export const Route = createFileRoute('/admin')({
     };
 
     try {
-      if (!context.user.id) {
+      if (!context.user?.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw redirectToSignIn();
       }

@@ -1,13 +1,13 @@
 import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
-import type { ServerSession, ClientSession } from './session.types';
+import type { ServerUserSession, ClientUserSession } from './session.types';
 
 import { authClient } from '../auth-client';
 import { auth } from '../auth-server';
 
 const formatSessionToUserContext = (
-  sessionResponse: ServerSession | ClientSession | null,
+  sessionResponse: ServerUserSession | ClientUserSession | null,
 ) => {
   return {
     email: sessionResponse?.user.email || '',
