@@ -4,7 +4,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useImpersonateUserStop } from '#/api/routes/users/impersonate-user-stop/impersonate-user-stop.react-query';
 import { getIsAdmin } from '#/auth/helpers/get-is-admin';
 import { DesktopNavMenu } from '#/components/NavMenu/components/DesktopNavMenu';
-import { useUserSessionContext } from '#/context/user';
+import { useUserContext } from '#/hooks/use-user-context';
 
 import type { RouterPath } from '../../../../types';
 import type { NavMenuItem } from '../../../NavMenu/NavMenu.types';
@@ -44,9 +44,9 @@ export const useSiteNavMenuItems = () => {
 
   const { onImpersonateUserStop } = useImpersonateUserStop();
 
-  const { userSession } = useUserSessionContext();
+  const user = useUserContext();
 
-  const isLoggedOut = !userSession?.id;
+  const isLoggedOut = !user?.id;
 
   const primaryNavItems: NavMenuItem[] = [
     isLoggedOut
@@ -99,12 +99,12 @@ export const useSiteNavMenuItems = () => {
           Icon: AccountCircleIcon,
           items: [
             {
-              hidden: !getIsAdmin(userSession?.role),
+              hidden: !getIsAdmin(user?.role),
               href: '/admin/users' satisfies RouterPath,
               Icon: AdminPanelSettingsIcon,
               label: 'Admin: Users',
             },
-            userSession?.impersonatedBy
+            user?.impersonatedBy
               ? {
                   href: '/sign-in' satisfies RouterPath,
                   label: 'Stop Impersonating',

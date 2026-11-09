@@ -17,7 +17,7 @@ import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
 import { Popover } from '#/components/Popover';
-import { useUserSessionContext } from '#/context/user';
+import { useUserContext } from '#/hooks/use-user-context';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
 
 import { DeleteAccountButton } from './components/DeleteAccountButton';
@@ -26,7 +26,7 @@ import { UpdatePasswordDialog } from './components/UpdatePasswordDialog';
 export const AccountPage = () => {
   const router = useRouter();
 
-  const { userSession } = useUserSessionContext();
+  const user = useUserContext();
 
   const isEmailSession = getIsLastUsedLoginMethod(lastUsedLoginMethods.email);
   const isGoogleSession = getIsLastUsedLoginMethod(lastUsedLoginMethods.google);
@@ -51,8 +51,8 @@ export const AccountPage = () => {
 
   const validationFormOptions = useValidationFormOptions({
     defaultValues: {
-      email: userSession?.email || '',
-      name: userSession?.name || '',
+      email: user?.email || '',
+      name: user?.name || '',
     },
     schema: updateUserFormSchema,
   });
@@ -66,7 +66,7 @@ export const AccountPage = () => {
     ...validationFormOptions,
     formId: 'update-user',
     onSubmit: async ({ value }) => {
-      const isUpdatingEmail = value.email !== userSession?.email;
+      const isUpdatingEmail = value.email !== user?.email;
       if (isUpdatingEmail) {
         await onUpdateEmail({
           newEmail: value.email,
@@ -86,7 +86,7 @@ export const AccountPage = () => {
       <div className="grid gap-10">
         <h1>Account</h1>
 
-        {userSession?.id && (
+        {user?.id && (
           <>
             <div className="flex">
               <div className="grid grid-cols-[1fr_max-content] gap-4 items-center">
@@ -158,11 +158,11 @@ export const AccountPage = () => {
                                 <p>
                                   {
                                     // ? Intentionally using user context instead of field value as user must verify the change via email before changes will take effect
-                                    userSession.email
+                                    user.email
                                   }
                                 </p>
 
-                                {userSession.emailVerified && (
+                                {user.emailVerified && (
                                   <Popover
                                     Description="Email Verified"
                                     Trigger={() => {
@@ -215,12 +215,12 @@ export const AccountPage = () => {
                             variant="secondary"
                           />
 
-                          {!userSession.emailVerified && (
+                          {!user.emailVerified && (
                             <Button
                               className="justify-self-start"
                               onClick={async () => {
                                 await onRequestVerificationEmail({
-                                  email: userSession.email,
+                                  email: user.email,
                                 });
                               }}
                               size="sm"
@@ -249,7 +249,7 @@ export const AccountPage = () => {
             {isGoogleSession && (
               <div className="p-1 pr-2 justify-self-start flex items-center gap-2 justify-center border border-theme-divider-2 rounded-full">
                 <GoogleIcon />
-                <p>{userSession.email}</p>
+                <p>{user.email}</p>
               </div>
             )}
 

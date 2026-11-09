@@ -32,7 +32,6 @@ import { RouteCatchBoundary } from '#/components/RouteCatchBoundary';
 import { ThemeProvider, useTheme } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
 import { githubUrl } from '#/constants/githubUrl';
-import { UserSessionProvider } from '#/context/user';
 import { handleThemeCookie, themeAttr } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
@@ -61,20 +60,21 @@ export const RouteErrorComponent = (props: ErrorComponentProps) => {
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
+  beforeLoad: async () => {
+    const user = await getUserSession();
+
+    return { user };
+  },
   component: RootComponent,
   loader: async ({ context }) => {
     const { themeCookie } = handleThemeCookie();
 
     const queryOptions = getNavMenuCollectionsQueryOptions();
 
-    const [user] = await Promise.all([
-      getUserSession(),
-      context.queryClient.query(queryOptions),
-    ]);
+    await context.queryClient.query(queryOptions);
 
     return {
       theme: themeCookie,
-      user,
     };
   },
   head: () => {
@@ -151,23 +151,21 @@ const getPlatform = createIsomorphicFn()
 const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
   const queryClient = useQueryClient();
   const emotionCache = createCache({ key: 'css' });
-  const { theme, user } = Route.useLoaderData();
+  const { theme } = Route.useLoaderData();
 
   return (
-    <UserSessionProvider initialUserSession={user}>
-      <QueryClientProvider client={queryClient}>
-        <CacheProvider value={emotionCache}>
-          <ThemeProvider initialTheme={theme}>
-            <HotkeysProvider
-              appHotkeys={appHotkeys}
-              defaultOptions={{ platform: getPlatform() }}
-            >
-              <DialogProvider>{children}</DialogProvider>
-            </HotkeysProvider>
-          </ThemeProvider>
-        </CacheProvider>
-      </QueryClientProvider>
-    </UserSessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <CacheProvider value={emotionCache}>
+        <ThemeProvider initialTheme={theme}>
+          <HotkeysProvider
+            appHotkeys={appHotkeys}
+            defaultOptions={{ platform: getPlatform() }}
+          >
+            <DialogProvider>{children}</DialogProvider>
+          </HotkeysProvider>
+        </ThemeProvider>
+      </CacheProvider>
+    </QueryClientProvider>
   );
 };
 
