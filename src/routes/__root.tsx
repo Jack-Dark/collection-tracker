@@ -27,7 +27,6 @@ import { getUserSession } from '#/auth/user-session/get-user-session';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { ThemeProvider, useTheme } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
-import { AuthProvider } from '#/context/auth';
 import { handleThemeCookie, themeAttr } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
@@ -129,20 +128,18 @@ const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
   const { theme } = Route.useLoaderData();
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <CacheProvider value={emotionCache}>
-          <ThemeProvider initialTheme={theme}>
-            <HotkeysProvider
-              appHotkeys={appHotkeys}
-              defaultOptions={{ platform: getPlatform() }}
-            >
-              <DialogProvider>{children}</DialogProvider>
-            </HotkeysProvider>
-          </ThemeProvider>
-        </CacheProvider>
-      </QueryClientProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <CacheProvider value={emotionCache}>
+        <ThemeProvider initialTheme={theme}>
+          <HotkeysProvider
+            appHotkeys={appHotkeys}
+            defaultOptions={{ platform: getPlatform() }}
+          >
+            <DialogProvider>{children}</DialogProvider>
+          </HotkeysProvider>
+        </ThemeProvider>
+      </CacheProvider>
+    </QueryClientProvider>
   );
 };
 
