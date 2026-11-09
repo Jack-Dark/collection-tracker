@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import z from 'zod';
 
+import { useUserSessionContext } from '#/context/user';
 import { SignInPage } from '#/pages/SignInPage';
 
 import { createMetaTags } from '../__root';
@@ -15,8 +16,10 @@ export const Route = createFileRoute('/_unprotected/sign-in')({
   loaderDeps: ({ search }) => {
     return search;
   },
-  loader: ({ context, deps: searchQueries }) => {
-    if (context.user?.id && !searchQueries?.resetPassword)
+  loader: ({ deps: searchQueries }) => {
+    const { userSession } = useUserSessionContext();
+
+    if (userSession?.id && !searchQueries?.resetPassword)
       throw redirect({
         to: '/collections',
       });

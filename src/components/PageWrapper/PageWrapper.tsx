@@ -9,7 +9,7 @@ import { Suspense } from 'react';
 import { twJoin } from 'tailwind-merge';
 
 import { githubUrl } from '#/constants/githubUrl';
-import { useUserContext } from '#/hooks/use-user-context';
+import { useUserSessionContext } from '#/context/user';
 
 import { Popover } from '../Popover';
 import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
@@ -30,16 +30,16 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
     wideOnMobile,
   } = props;
 
-  const user = useUserContext();
+  const { userSession } = useUserSessionContext();
 
-  const isImpersonating = user?.impersonatedBy;
+  const isImpersonating = userSession?.impersonatedBy;
 
   return (
     <div className="p-1 md:p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-2 md:gap-4">
       <header className="grid gap-2 md:gap-4">
         {isImpersonating && (
           <div className="px-2 py-1 bg-amber-400 text-black text-center">
-            Impersonating {user.email}
+            Impersonating {userSession.email}
           </div>
         )}
         <div className="py-1 md:py-0 grid grid-cols-[1fr_auto] gap-2 w-full justify-between text-white">
@@ -62,7 +62,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
 
             <Link
               className="block text-inherit overflow-hidden"
-              to={user?.id ? '/collections' : '/'}
+              to={userSession?.id ? '/collections' : '/'}
             >
               <h1 className="text-inherit text-2xl md:text-3xl block text-ellipsis whitespace-nowrap overflow-hidden w-full">
                 {title}
