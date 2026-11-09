@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
 
 import type { RouterPath } from '#/types';
@@ -12,14 +12,13 @@ import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { InputField } from '#/components/Fields/InputField';
 import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
-import { Route as SignInRoute } from '#/routes/_unprotected/sign-in';
 
 import { LoginWithGoogleButton } from './components/LoginWithGoogleButton';
 import { ResetPasswordDialog } from './components/PasswordResetDialog';
 
 export const SignInForm = () => {
-  const navigate = useNavigate();
-  const searchQueries = SignInRoute.useSearch();
+  const navigate = useNavigate({ from: '/sign-in' });
+  const searchQueries = useSearch({ from: '/_unprotected/sign-in' });
 
   const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 

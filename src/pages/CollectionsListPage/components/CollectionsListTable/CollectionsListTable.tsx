@@ -1,3 +1,4 @@
+import { useSearch } from '@tanstack/react-router';
 import { useSelector } from '@tanstack/react-store';
 import { useEffect, useMemo } from 'react';
 
@@ -7,7 +8,6 @@ import {
   useInvalidateGetPaginatedCollections,
 } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { Table } from '#/components/Table';
-import { Route as CollectionsRoute } from '#/routes/_protected/collections';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '../../CollectionsListPage.types';
 
@@ -23,7 +23,7 @@ export const CollectionsListTable = ({
 }: {
   form: CreateOrUpdateCollectionFormTypeDef;
 }) => {
-  const searchQueries = CollectionsRoute.useSearch();
+  const searchQueries = useSearch({ from: '/_protected/collections/' });
 
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();

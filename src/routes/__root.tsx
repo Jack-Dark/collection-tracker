@@ -16,6 +16,7 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
+  useLoaderData,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { createIsomorphicFn } from '@tanstack/react-start';
@@ -125,7 +126,7 @@ const getPlatform = createIsomorphicFn()
 const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
   const queryClient = useQueryClient();
   const emotionCache = createCache({ key: 'css' });
-  const { theme } = Route.useLoaderData();
+  const { theme } = useLoaderData({ from: '__root__' });
 
   return (
     <QueryClientProvider client={queryClient}>

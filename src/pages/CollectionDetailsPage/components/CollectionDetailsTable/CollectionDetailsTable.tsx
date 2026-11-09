@@ -1,10 +1,10 @@
 import { useForm, useSelector } from '@tanstack/react-form';
+import { useParams, useSearch } from '@tanstack/react-router';
 import { useEffect, useMemo } from 'react';
 
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
 import { Table } from '#/components/Table';
-import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import {
   useCollectionDetailsForm,
@@ -26,9 +26,9 @@ import { useCollectionDetailsSettingsProps } from './hooks/use-collection-detail
 import { useCollectionDetailsSortProps } from './hooks/use-collection-details-sort-props';
 
 export const CollectionDetailsTable = () => {
-  const { id } = CollectionRoute.useParams();
+  const { id } = useParams({ from: '/_protected/collections/$id' });
   const collectionId = Number(id);
-  const search = CollectionRoute.useSearch();
+  const search = useSearch({ from: '/_protected/collections/$id' });
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();

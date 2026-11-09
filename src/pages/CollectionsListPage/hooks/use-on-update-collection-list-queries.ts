@@ -1,10 +1,10 @@
 import type { NavigateOptions } from '@tanstack/router-core';
 
-import { Route as CollectionsListsPageRoute } from '#/routes/_protected/collections';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 
 export const useOnUpdateCollectionsListQueries = () => {
-  const navigate = CollectionsListsPageRoute.useNavigate();
-  const searchQueries = CollectionsListsPageRoute.useSearch();
+  const navigate = useNavigate({ from: '/collections/' });
+  const searchQueries = useSearch({ from: '/_protected/collections/' });
 
   const onUpdateCollectionsListQueries = async (
     updatedQueries: Partial<typeof searchQueries>,

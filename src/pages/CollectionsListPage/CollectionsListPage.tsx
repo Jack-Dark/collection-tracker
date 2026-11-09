@@ -2,7 +2,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
-import { useBlocker } from '@tanstack/react-router';
+import { useBlocker, useSearch } from '@tanstack/react-router';
 import { useEffect, useLayoutEffect } from 'react';
 
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
@@ -19,14 +19,13 @@ import { useUpdateCollectionById } from '#/api/routes/collections/update-collect
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
-import { Route as CollectionsRoute } from '#/routes/_protected/collections';
 
 import { createOrUpdateCollectionFormOptions } from './CollectionsListPage.form';
 import { CollectionsListTable } from './components/CollectionsListTable/CollectionsListTable';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
 export const CollectionsListPage: RouteComponent = () => {
-  const searchQueries = CollectionsRoute.useSearch();
+  const searchQueries = useSearch({ from: '/_protected/collections/' });
 
   const { data, isSuccess } = useGetPaginatedCollections({
     placeholderData: {
