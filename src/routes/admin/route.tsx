@@ -2,7 +2,7 @@ import { createFileRoute, isRedirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
 import { getIsAdmin } from '#/auth/helpers/get-is-admin';
-import { useUserSessionContext } from '#/context/user';
+import { requireAdminUserSession } from '#/auth/user-session/require-admin-user-session';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/admin')({
@@ -14,9 +14,9 @@ export const Route = createFileRoute('/admin')({
       });
     };
 
-    const { userSession } = useUserSessionContext();
-
     try {
+      const userSession = await requireAdminUserSession();
+
       if (!userSession.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw redirectToSignIn();
