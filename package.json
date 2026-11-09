@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "npm run db-migrate && vite build",
+       "dev": "NODE_OPTIONS='--import ./instrument.server.mjs' vite dev",
+    "build": "npm run db-migrate && vite build && cp instrument.server.mjs .output/server",
     "preview": "vite preview",
     "db-generate": "drizzle-kit generate",
     "db-migrate": "drizzle-kit push",
@@ -24,6 +24,7 @@
     "@mui/icons-material": "^9.5.0",
     "@mui/material": "^9.5.0",
     "@neondatabase/serverless": "^1.2.0",
+    "@sentry/tanstackstart-react": "^11.11.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-devtools": "^0.10.13",
     "@tanstack/react-form": "^2.0.0-alpha.3",
