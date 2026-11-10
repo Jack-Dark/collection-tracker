@@ -41,6 +41,7 @@ export const Route = createRootRouteWithContext<{
 }>()({
   beforeLoad: async () => {
     const user = await getUserSession();
+    console.error('🚀 ~ user context:', user);
 
     return { user };
   },
