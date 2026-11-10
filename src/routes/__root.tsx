@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 import type { QueryClient } from '@tanstack/react-query';
-import type { MetaHTMLAttributes, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
@@ -32,6 +32,7 @@ import { ThemeProvider, useTheme } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
 import { handleThemeCookie, themeAttr } from '#/lib/theme';
 
+import { createMetaTags } from '../create-meta-tags';
 import appCss from '../styles.css?url';
 
 export const Route = createRootRouteWithContext<{
@@ -170,42 +171,4 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
       </body>
     </html>
   );
-};
-
-/**
- * @example
- * export const Route = createFileRoute('/your-route-path')({
- *   component: YourRouteComponent,
- *   head: () => {
- *     return {
- *       meta: createMetaTags({
- *         title: 'Sign In',
- *         description: 'Sign in to your Collection Tracker account.',
- *       }),
- *     };
- *   },
- * });
- */
-export const createMetaTags = (
-  props: {
-    description?: string;
-    title: string;
-  },
-  additionalTags: MetaHTMLAttributes<HTMLMetaElement>[] = [],
-) => {
-  const {
-    title,
-    description = 'Your helpful tracker for all your collections!',
-  } = props;
-
-  return [
-    {
-      title,
-    },
-    {
-      name: 'description',
-      content: description,
-    },
-    ...additionalTags,
-  ] satisfies MetaHTMLAttributes<HTMLMetaElement>[];
 };

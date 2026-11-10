@@ -3,7 +3,7 @@ import z from 'zod';
 
 import { ResetPasswordPage } from '#/pages/ResetPasswordPage';
 
-import { createMetaTags } from '../__root';
+import { createMetaTags } from '../../create-meta-tags';
 
 const resetPasswordSearchSchema = z.object({
   email: z.email().optional(),

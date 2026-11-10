@@ -3,7 +3,7 @@ import z from 'zod';
 
 import { SignInPage } from '#/pages/SignInPage';
 
-import { createMetaTags } from '../__root';
+import { createMetaTags } from '../../create-meta-tags';
 
 export const Route = createFileRoute('/_unprotected/sign-in')({
   validateSearch: z.object({
