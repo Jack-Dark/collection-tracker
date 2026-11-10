@@ -16,10 +16,13 @@ export const Route = createFileRoute('/_unprotected/sign-in')({
     return search;
   },
   loader: ({ context, deps: searchQueries }) => {
-    if (context.user?.id && !searchQueries?.resetPassword)
+    if (context.user?.id && !searchQueries?.resetPassword) {
+      console.error('Already logged in - user:', context.user);
+
       throw redirect({
         to: '/collections',
       });
+    }
   },
   head: () => {
     return {

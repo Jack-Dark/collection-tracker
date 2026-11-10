@@ -1,14 +1,15 @@
 import { createMiddleware } from '@tanstack/react-start';
 
+import { requireAdminUserSession } from '#/auth/user-session/require-admin-user-session';
+
 import type { AuthContextDef } from '../../auth/auth.types';
 
 import { authAdminSchema } from '../../auth/auth.schema';
-import { requireUserSession } from '../../auth/user-session';
 
 /** Use this middleware to authenticate protected admin API routes. */
 export const requireAdminUserContextMiddleware = createMiddleware().server(
   async ({ next }) => {
-    const user = await requireUserSession();
+    const user = await requireAdminUserSession();
 
     const { data, error, success } = authAdminSchema.safeParse(user);
 

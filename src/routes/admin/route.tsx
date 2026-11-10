@@ -15,12 +15,16 @@ export const Route = createFileRoute('/admin')({
 
     try {
       if (!context.user?.id) {
-        console.error(ReasonPhrases.UNAUTHORIZED);
+        console.error(ReasonPhrases.UNAUTHORIZED, '- ID:', context.user?.id);
         throw redirectToSignIn();
       }
 
       if (!getIsAdmin(context.user?.role)) {
-        console.error(ReasonPhrases.UNAUTHORIZED);
+        console.error(
+          ReasonPhrases.UNAUTHORIZED,
+          '- role:',
+          context.user?.role,
+        );
         throw redirect({
           to: '/collections',
         });
