@@ -10,7 +10,6 @@ export const reactQueryKeys = {
   getNumCollectionsWithCustomField: 'get-num-collections-with-custom-field',
   getPaginatedCollections: 'get-paginated-collections',
   getPaginatedUsers: 'get-paginated-users',
-  getUserSession: 'get-user-session',
 } as const;
 
 const createMutationKeys = <TSuffix extends string>(suffix: TSuffix) => {
