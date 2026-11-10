@@ -10,14 +10,16 @@ import { auth } from '../auth-server';
 const formatSessionToUserContext = (
   sessionResponse: ServerUserSession | ClientUserSession | null,
 ) => {
-  return {
-    email: sessionResponse?.user.email || '',
-    emailVerified: sessionResponse?.user.emailVerified || false,
-    id: sessionResponse?.user.id || '',
-    impersonatedBy: sessionResponse?.session?.impersonatedBy,
-    name: sessionResponse?.user.name || '',
-    role: sessionResponse?.user?.role,
-  };
+  return sessionResponse
+    ? {
+        email: sessionResponse.user.email || '',
+        emailVerified: sessionResponse.user.emailVerified || false,
+        id: sessionResponse.user.id || '',
+        impersonatedBy: sessionResponse.session?.impersonatedBy,
+        name: sessionResponse.user.name || '',
+        role: sessionResponse.user?.role,
+      }
+    : null;
 };
 
 export const getUserSession = createIsomorphicFn()
