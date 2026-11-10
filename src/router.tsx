@@ -22,7 +22,7 @@ export function getRouter() {
   });
 
   const router = createRouter({
-    context: { queryClient, user: null },
+    context: { queryClient },
     defaultErrorComponent: RouteErrorComponent,
     defaultNotFoundComponent: RouteNotFoundComponent,
     defaultPreload: 'intent',

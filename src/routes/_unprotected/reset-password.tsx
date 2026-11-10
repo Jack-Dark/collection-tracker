@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import z from 'zod';
 
+import { getUserSessionQueryOptions } from '#/auth/user-session/get-user-session';
 import { ResetPasswordPage } from '#/pages/ResetPasswordPage';
 
 import { createMetaTags } from '../../create-meta-tags';
@@ -14,8 +15,12 @@ const resetPasswordSearchSchema = z.object({
 export const Route = createFileRoute('/_unprotected/reset-password')({
   validateSearch: resetPasswordSearchSchema,
   component: ResetPasswordPage,
-  loader: ({ context }) => {
-    if (context.user?.id)
+  loader: async ({ context }) => {
+    const useUserSessionQueryOptions = getUserSessionQueryOptions();
+
+    const user = await context.queryClient.query(useUserSessionQueryOptions);
+
+    if (user?.id)
       throw redirect({
         to: '/collections',
       });
