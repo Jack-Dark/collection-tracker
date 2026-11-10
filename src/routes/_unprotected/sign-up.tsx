@@ -1,16 +1,22 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
+import { getUserSessionQueryOptions } from '#/auth/user-session/get-user-session';
 import { SignUpPage } from '#/pages/SignUpPage';
 
 import { createMetaTags } from '../../create-meta-tags';
 
 export const Route = createFileRoute('/_unprotected/sign-up')({
   component: SignUpPage,
-  loader: ({ context }) => {
-    if (context.user?.id)
+  loader: async ({ context }) => {
+    const useUserSessionQueryOptions = getUserSessionQueryOptions();
+
+    const user = await context.queryClient.query(useUserSessionQueryOptions);
+
+    if (user?.id) {
       throw redirect({
         to: '/collections',
       });
+    }
   },
   head: () => {
     return {

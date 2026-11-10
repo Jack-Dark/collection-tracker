@@ -1,7 +1,10 @@
-import { useLoaderData } from '@tanstack/react-router';
+import { useGetUserSession } from '#/auth/user-session/get-user-session';
 
 export const useUserContext = () => {
-  const { user } = useLoaderData({ from: '__root__' });
+  const { data } = useGetUserSession({
+    placeholderData: {},
+    requestArgs: {},
+  });
 
-  return user;
+  return data;
 };
