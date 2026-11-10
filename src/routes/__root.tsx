@@ -54,7 +54,6 @@ export const Route = createRootRouteWithContext<{
 
     return {
       theme: themeCookie,
-      user: context.user,
     };
   },
   head: () => {
