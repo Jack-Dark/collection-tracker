@@ -2,7 +2,6 @@ import { createFileRoute, isRedirect, redirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
 import { getIsAdmin } from '#/auth/helpers/get-is-admin';
-import { getUserSessionQueryOptions } from '#/auth/user-session/get-user-session';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/admin')({
@@ -15,16 +14,12 @@ export const Route = createFileRoute('/admin')({
     };
 
     try {
-      const useUserSessionQueryOptions = getUserSessionQueryOptions();
-
-      const user = await context.queryClient.query(useUserSessionQueryOptions);
-
-      if (!user?.id) {
+      if (!context.user?.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw redirectToSignIn();
       }
 
-      if (!getIsAdmin(user?.role)) {
+      if (!getIsAdmin(context.user?.role)) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw redirect({
           to: '/collections',

@@ -1,10 +1,7 @@
-import { useGetUserSession } from '#/auth/user-session/get-user-session';
+import { useRouteContext } from '@tanstack/react-router';
 
 export const useUserContext = () => {
-  const { data } = useGetUserSession({
-    placeholderData: {},
-    requestArgs: {},
-  });
+  const { user } = useRouteContext({ from: '__root__' });
 
-  return data;
+  return user;
 };

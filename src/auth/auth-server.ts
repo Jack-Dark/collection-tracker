@@ -20,6 +20,15 @@ const resetPasswordTokenExpiresInSeconds =
   resetPasswordTokenExpiresInMinutes * 60;
 
 export const auth = betterAuth({
+  advanced: {
+    ipAddress: {
+      ipAddressHeaders: [
+        'x-nf-client-connection-ip',
+        'x-client-ip',
+        'x-forwarded-for',
+      ],
+    },
+  },
   baseURL: configs.siteUrl,
   database: drizzleAdapter(db, {
     provider: 'pg',

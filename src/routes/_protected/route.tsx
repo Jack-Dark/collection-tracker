@@ -1,7 +1,6 @@
 import { createFileRoute, isRedirect, redirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
-import { getUserSessionQueryOptions } from '#/auth/user-session/get-user-session';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/_protected')({
@@ -14,10 +13,7 @@ export const Route = createFileRoute('/_protected')({
     };
 
     try {
-      const useSessionQueryOptions = getUserSessionQueryOptions();
-      const user = await context.queryClient.query(useSessionQueryOptions);
-
-      if (!user?.id) {
+      if (!context.user?.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw redirectToSignIn();
       }

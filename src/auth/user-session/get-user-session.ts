@@ -1,21 +1,8 @@
-import type { QueryOptions } from '@tanstack/react-query';
-
 import * as Sentry from '@sentry/tanstackstart-react';
 import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
-import type { GenericFetchProps } from '#/api/react-query-hooks/use-generic-fetch-query/use-generic-fetch-query.types';
-
-import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
-import { useGenericSuspenseQuery } from '#/api/react-query-hooks/use-generic-fetch-query';
-import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
-import { getUseInvalidateQuery } from '#/api/react-query-hooks/use-generic-fetch-query/hooks/get-use-invalidate-query-cache';
-
-import type {
-  ServerUserSession,
-  ClientUserSession,
-  UserSession,
-} from './session.types';
+import type { ServerUserSession, ClientUserSession } from './session.types';
 
 import { authClient } from '../auth-client';
 import { auth } from '../auth-server';
@@ -50,33 +37,3 @@ export const getUserSession = createIsomorphicFn()
 
     return formatSessionToUserContext(response);
   });
-
-type GetUserSessionArgs = {};
-
-const getUserSessionQueryDetails = () => {
-  return {
-    gcTime: 0,
-    queryFn: getUserSession,
-    queryKey: [reactQueryKeys.getUserSession],
-  } as const satisfies Partial<QueryOptions>;
-};
-
-export const getUserSessionQueryOptions = () => {
-  return getGenericFetchQueryOptions({
-    ...getUserSessionQueryDetails(),
-    requestArgs: {},
-  });
-};
-
-export const useGetUserSession = <TTransformedData = UserSession>(
-  props: GenericFetchProps<GetUserSessionArgs, UserSession, TTransformedData>,
-) => {
-  return useGenericSuspenseQuery({
-    fallbackErrorMessage: 'Unable to retrieve user session.',
-    ...getUserSessionQueryDetails(),
-    ...props,
-  });
-};
-
-export const useInvalidateGetUserSession =
-  getUseInvalidateQuery<GetUserSessionArgs>(reactQueryKeys.getUserSession);

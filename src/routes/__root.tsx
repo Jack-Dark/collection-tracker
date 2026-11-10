@@ -24,7 +24,7 @@ import { getRequestHeader } from '@tanstack/react-start/server';
 import { StrictMode } from 'react';
 
 import { getNavMenuCollectionsQueryOptions } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
-import { getUserSessionQueryOptions } from '#/auth/user-session/get-user-session';
+import { getUserSession } from '#/auth/user-session/get-user-session';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { ThemeProvider, useTheme } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
@@ -36,15 +36,18 @@ import appCss from '../styles.css?url';
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
+  beforeLoad: async () => {
+    const user = await getUserSession();
+
+    return { user };
+  },
   component: RootComponent,
   loader: async ({ context }) => {
     const { themeCookie } = handleThemeCookie();
 
-    const useUserSessionQueryOptions = getUserSessionQueryOptions();
-    const navQueryOptions = getNavMenuCollectionsQueryOptions();
+    const queryOptions = getNavMenuCollectionsQueryOptions();
 
-    await context.queryClient.query(useUserSessionQueryOptions);
-    await context.queryClient.query(navQueryOptions);
+    await context.queryClient.query(queryOptions);
 
     return {
       theme: themeCookie,
