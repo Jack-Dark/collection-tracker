@@ -4,7 +4,7 @@ import { ReasonPhrases } from 'http-status-codes';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/_protected')({
-  beforeLoad: async ({ context, location }) => {
+  beforeLoad: ({ context, location }) => {
     const redirectToSignIn = () => {
       return redirect({
         search: { redirect: location.href },
@@ -17,6 +17,8 @@ export const Route = createFileRoute('/_protected')({
         console.error(ReasonPhrases.UNAUTHORIZED);
         throw redirectToSignIn();
       }
+
+      return { user: context.user };
     } catch (error) {
       // ? Re-throw redirects (they're intentional, not errors)
       if (isRedirect(error)) {
