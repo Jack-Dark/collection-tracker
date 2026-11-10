@@ -5,7 +5,7 @@ import { getIsAdmin } from '#/auth/helpers/get-is-admin';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/admin')({
-  beforeLoad: async ({ context, location }) => {
+  beforeLoad: ({ context, location }) => {
     const redirectToSignIn = () => {
       return redirect({
         search: { redirect: location.href },
@@ -25,6 +25,8 @@ export const Route = createFileRoute('/admin')({
           to: '/collections',
         });
       }
+
+      return { user: context.user };
     } catch (error) {
       // ? Re-throw redirects (they're intentional, not errors)
       if (isRedirect(error)) {

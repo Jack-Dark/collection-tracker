@@ -23,6 +23,8 @@ import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeader } from '@tanstack/react-start/server';
 import { StrictMode } from 'react';
 
+import type { UserSession } from '#/auth/user-session/session.types';
+
 import { getNavMenuCollectionsQueryOptions } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { getUserSession } from '#/auth/user-session/get-user-session';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
@@ -34,6 +36,7 @@ import appCss from '../styles.css?url';
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
+  user: UserSession | null;
 }>()({
   beforeLoad: async () => {
     const user = await getUserSession();
