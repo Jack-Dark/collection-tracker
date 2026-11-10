@@ -23,10 +23,26 @@ const formatSessionToUserContext = (
 export const getUserSession = createIsomorphicFn()
   .server(async () => {
     const headers = getRequestHeaders();
-    console.log('🚀 ~ SERVER SESSION HEADERS:', JSON.stringify(headers));
+
+    const cookies = headers
+      .get('cookie')
+      ?.split('; ')
+      .reduce((acc, cookie) => {
+        const [key, value] = cookie.split('=');
+
+        return { ...acc, [key]: value };
+      }, {});
+
     const response = await auth.api.getSession({ headers });
+
+    console.log('🚀 ~ SERVER SESSION RAW COOKIES:', headers.get('cookie'));
+    console.log(
+      '🚀 ~ SERVER SESSION FORMATTED COOKIES:',
+      JSON.stringify(cookies),
+    );
     console.log('🚀 ~ SERVER SESSION RESPONSE:', JSON.stringify(response));
 
+    Sentry.logger.info('🚀 ~ SERVER SESSION HEADER COOKIES:', cookies);
     Sentry.logger.info('🚀 ~ SERVER SESSION RESPONSE:', response ?? {});
 
     return formatSessionToUserContext(response);
