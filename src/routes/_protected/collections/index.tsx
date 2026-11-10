@@ -2,8 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { getPaginatedCollectionsQueryOptions } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { collectionsListSearchQueriesSchema } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.schema';
+import { createMetaTags } from '#/create-meta-tags';
 import { CollectionsListPage } from '#/pages/CollectionsListPage';
-import { createMetaTags } from '#/routes/__root';
 
 export const Route = createFileRoute('/_protected/collections/')({
   component: CollectionsListPage,
