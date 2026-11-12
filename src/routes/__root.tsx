@@ -29,6 +29,7 @@ import { getNavMenuCollectionsQueryOptions } from '#/api/routes/collections/get-
 import { getUserSession } from '#/auth/user-session/get-user-session';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { ThemeProvider, useTheme } from '#/components/ThemeProvider';
+import { configs } from '#/configs';
 import { appHotkeys } from '#/constants/app-hotkeys';
 import { handleThemeCookie, themeAttr } from '#/lib/theme';
 
@@ -41,7 +42,7 @@ export const Route = createRootRouteWithContext<{
 }>()({
   beforeLoad: async () => {
     const user = await getUserSession();
-    console.error('🚀 ~ user context:', user);
+    console.error(`🚀 ~ ${configs.environment} - root user context:`, user);
 
     return { user };
   },

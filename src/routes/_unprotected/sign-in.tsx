@@ -12,11 +12,8 @@ export const Route = createFileRoute('/_unprotected/sign-in')({
     redirect: z.string().optional(),
   }),
   component: SignInPage,
-  loaderDeps: ({ search }) => {
-    return search;
-  },
-  loader: ({ context, deps: searchQueries }) => {
-    if (context.user?.id && !searchQueries?.resetPassword) {
+  beforeLoad: ({ search, context }) => {
+    if (context.user?.id && !search?.resetPassword) {
       console.error('Already logged in - user:', context.user);
 
       throw redirect({
