@@ -1,7 +1,6 @@
 import { createFileRoute, isRedirect, redirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
-import { configs } from '#/configs';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/_protected')({
@@ -17,7 +16,7 @@ export const Route = createFileRoute('/_protected')({
       if (!context.user?.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);
         console.error(
-          `${configs.environment} - Protected route. User not logged in - user:`,
+          `${import.meta.env.MODE} - Protected route. User not logged in - user:`,
           context.user,
         );
         throw redirectToSignIn();

@@ -2,8 +2,6 @@ import * as Sentry from '@sentry/tanstackstart-react';
 import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
-import { configs } from '#/configs';
-
 import type { ServerUserSession, ClientUserSession } from './session.types';
 
 import { authClient } from '../auth-client';
@@ -47,11 +45,11 @@ export const getUserSession = createIsomorphicFn()
     console.log('🚀 ~ SERVER SESSION RESPONSE:', JSON.stringify(response));
 
     Sentry.logger.info(
-      '🚀 ~ ' + configs.environment + 'SERVER SESSION HEADER COOKIES:',
+      '🚀 ~ ' + import.meta.env.MODE + 'SERVER SESSION HEADER COOKIES:',
       cookies,
     );
     Sentry.logger.info(
-      '🚀 ~ ' + configs.environment + 'SERVER SESSION RESPONSE:',
+      '🚀 ~ ' + import.meta.env.MODE + 'SERVER SESSION RESPONSE:',
       response ?? {},
     );
 
