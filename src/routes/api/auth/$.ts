@@ -2,7 +2,6 @@ import * as Sentry from '@sentry/tanstackstart-react';
 import { createFileRoute } from '@tanstack/react-router';
 
 import { auth } from '#/auth/auth-server';
-import { configs } from '#/configs';
 
 export const Route = createFileRoute('/api/auth/$')({
   server: {
@@ -19,7 +18,7 @@ export const Route = createFileRoute('/api/auth/$')({
 
         console.log('🚀 ~ AUTH API GET - COOKIES:', cookies);
         Sentry.logger.info(
-          '🚀 ~ ' + configs.environment + 'AUTH API GET - COOKIES:',
+          '🚀 ~ ' + import.meta.env.MODE + 'AUTH API GET - COOKIES:',
           cookies,
         );
 
@@ -40,7 +39,7 @@ export const Route = createFileRoute('/api/auth/$')({
           request.headers.get('cookie'),
         );
         Sentry.logger.info(
-          '🚀 ~ ' + configs.environment + 'AUTH API GET - COOKIES:',
+          '🚀 ~ ' + import.meta.env.MODE + 'AUTH API GET - COOKIES:',
           cookie,
         );
 

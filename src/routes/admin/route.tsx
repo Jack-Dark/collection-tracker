@@ -2,7 +2,6 @@ import { createFileRoute, isRedirect, redirect } from '@tanstack/react-router';
 import { ReasonPhrases } from 'http-status-codes';
 
 import { getIsAdmin } from '#/auth/helpers/get-is-admin';
-import { configs } from '#/configs';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/admin')({
@@ -17,7 +16,7 @@ export const Route = createFileRoute('/admin')({
     try {
       if (!context.user?.id) {
         console.error(
-          configs.environment,
+          import.meta.env.MODE,
           ReasonPhrases.UNAUTHORIZED,
           '- ID:',
           context.user?.id,
@@ -27,7 +26,7 @@ export const Route = createFileRoute('/admin')({
 
       if (!getIsAdmin(context.user?.role)) {
         console.error(
-          configs.environment,
+          import.meta.env.MODE,
           ReasonPhrases.UNAUTHORIZED,
           '- role:',
           context.user?.role,
