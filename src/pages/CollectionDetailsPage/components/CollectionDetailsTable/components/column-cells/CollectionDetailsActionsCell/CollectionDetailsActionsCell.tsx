@@ -1,8 +1,9 @@
+import { useParams } from '@tanstack/react-router';
+
 import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
-import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import type { CollectionDetailsActionsCellPropsDef } from './CollectionDetailsActionsCell.types';
 
@@ -14,7 +15,7 @@ export const CollectionDetailsActionsCell = (
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
-  const { id } = CollectionRoute.useParams();
+  const { id } = useParams({ from: '/_protected/collections/$id' });
   const collectionId = Number(id);
 
   const { isPending: isDeletePending, onDeleteCollectionItemsByIds } =

@@ -1,14 +1,11 @@
 import ClearIcon from '@mui/icons-material/Clear';
-import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
-import formatDate, { masks } from 'dateformat';
-import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { Button } from '#/components/Button';
-import { HotkeyPopover } from '#/components/HotkeyPopover';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
+import { useFormattedDate } from '../../../../../../../hooks/use-formatted-date';
 import { AddNewCollectionItemButton } from '../../CollectionDetailsAboveTableActions/components/AddNewCollectionItemButton';
 
 export const CollectionDetailsCreatedAtCell = ({
@@ -31,22 +28,6 @@ export const CollectionDetailsCreatedAtCell = ({
 
   const showNewRecordButtons = isEditingRow && getHasNewRecord();
 
-  const removeBtnRef = useRef<HTMLButtonElement>(null);
-
-  const appHotkeys = useAppHotkeys();
-
-  useHotkeys([
-    {
-      callback: () => {
-        removeBtnRef.current?.click();
-      },
-      hotkey: appHotkeys['app.remove-last'],
-      options: {
-        enabled: showNewRecordButtons && isLastNewRecordIndex,
-      },
-    },
-  ]);
-
   return (
     <form.ArrayField name="collectionItems">
       {(collectionItemsField) => {
@@ -54,24 +35,23 @@ export const CollectionDetailsCreatedAtCell = ({
           <div className="grid gap-2 justify-start">
             <form.Field name={`collectionItems[${rowIndex}]`}>
               {({ value }) => {
+                const formattedDate = useFormattedDate(value?.createdAt);
+
                 if (!value) {
                   return null;
                 }
 
                 return showNewRecordButtons ? (
                   <>
-                    <HotkeyPopover hotkey="removeLast">
-                      <Button
-                        Icon={ClearIcon}
-                        onClick={() => {
-                          collectionItemsField.removeValue(rowIndex);
-                          removeFromEditingRowIds(String(value.id));
-                        }}
-                        ref={removeBtnRef}
-                        text="Remove"
-                        variant="mono"
-                      />
-                    </HotkeyPopover>
+                    <Button
+                      Icon={ClearIcon}
+                      onClick={() => {
+                        collectionItemsField.removeValue(rowIndex);
+                        removeFromEditingRowIds(String(value.id));
+                      }}
+                      text="Remove"
+                      variant="mono"
+                    />
 
                     {isLastNewRecordIndex && (
                       <AddNewCollectionItemButton
@@ -83,7 +63,7 @@ export const CollectionDetailsCreatedAtCell = ({
                     )}
                   </>
                 ) : (
-                  <p>{formatDate(value.createdAt, masks.paddedShortDate)}</p>
+                  <p>{formattedDate}</p>
                 );
               }}
             </form.Field>

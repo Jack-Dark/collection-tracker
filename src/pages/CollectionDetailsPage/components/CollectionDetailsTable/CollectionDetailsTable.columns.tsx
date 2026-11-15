@@ -6,6 +6,7 @@ import type { TableFeaturesDef } from '#/components/Table';
 import type { CreateOrUpdateCollectionItemFormRowDataDef } from '../../CollectionDetailsPage.types';
 import type { GetCollectionItemsTableColumnsPropsDef } from './CollectionDetailsTable.types';
 
+import { BulkUpdateColumnHeader } from './components/BulkUpdateColumnHeader';
 import { CollectionDetailsActionsCell } from './components/column-cells/CollectionDetailsActionsCell';
 import { CollectionDetailsCreatedAtCell } from './components/column-cells/CollectionDetailsCreatedAtCell';
 import { CollectionDetailsCustomFieldCell } from './components/column-cells/CollectionDetailsCustomFieldCell';
@@ -67,8 +68,12 @@ export const getCollectionItemsTableColumns = (
             />
           );
         },
-        header: customField.name,
-        id: String(customField.id),
+        header: () => {
+          return (
+            <BulkUpdateColumnHeader customField={customField} form={form} />
+          );
+        },
+        id: `custom-field-id-${customField.id}`,
         minSize:
           customField.type === 'boolean'
             ? 100

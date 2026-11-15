@@ -1,14 +1,13 @@
 /// <reference types="vite/client" />
 
 import type { QueryClient } from '@tanstack/react-query';
-import type { ErrorComponentProps } from '@tanstack/react-router';
-import type { MetaHTMLAttributes, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
-import { HotkeysProvider } from '@tanstack/react-hotkeys';
+import { detectPlatform, HotkeysProvider } from '@tanstack/react-hotkeys';
 import { HotkeysDevtoolsPanel } from '@tanstack/react-hotkeys-devtools';
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
@@ -17,71 +16,46 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
+  useLoaderData,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
+import { createIsomorphicFn } from '@tanstack/react-start';
+import { getRequestHeader } from '@tanstack/react-start/server';
 import { StrictMode } from 'react';
 
-import { getSession } from '#/auth/auth-middleware';
-import { Button } from '#/components/Button';
+import type { UserSession } from '#/auth/user-session/session.types';
+
+import { getNavMenuCollectionsQueryOptions } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
+import { getUserSession } from '#/auth/user-session/get-user-session';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
-import { PageWrapper } from '#/components/PageWrapper';
-import { RouteCatchBoundary } from '#/components/RouteCatchBoundary';
 import { ThemeProvider, useTheme } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
-import { githubUrl } from '#/constants/githubUrl';
 import { handleThemeCookie, themeAttr } from '#/lib/theme';
 
+import { createMetaTags } from '../create-meta-tags';
 import appCss from '../styles.css?url';
-
-export const RouteNotFoundComponent = () => {
-  return (
-    <RootDocument>
-      <PageWrapper>
-        <div className="grid gap-10">
-          <h1>Page Not Found</h1>
-          <p>
-            Ack! You caught us with our pants down! If you think this is bug,
-            you can help us out by reporting it.
-          </p>
-          <a href={githubUrl.issues} target="_blank">
-            <Button text="Report Bug" />
-          </a>
-        </div>
-      </PageWrapper>
-    </RootDocument>
-  );
-};
-
-export const RouteErrorComponent = (props: ErrorComponentProps) => {
-  return (
-    <RootDocument>
-      <RouteCatchBoundary {...props} />
-    </RootDocument>
-  );
-};
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
+  user: UserSession | null;
 }>()({
   beforeLoad: async () => {
-    const response = await getSession();
+    const user = await getUserSession();
+    console.error(`🚀 ~ ${import.meta.env.MODE} - root user context:`, user);
 
-    return {
-      user: {
-        email: response?.user.email || '',
-        emailVerified: response?.user.emailVerified || false,
-        id: response?.user.id || '',
-        name: response?.user.name || '',
-        role: response?.user.role,
-        impersonatedBy: response?.session.impersonatedBy,
-      },
-    };
+    return { user };
   },
   component: RootComponent,
-  loader: async () => {
+  loader: async ({ context }) => {
     const { themeCookie } = handleThemeCookie();
 
-    return { theme: themeCookie };
+    const queryOptions = getNavMenuCollectionsQueryOptions();
+
+    await context.queryClient.query(queryOptions);
+
+    return {
+      theme: themeCookie,
+    };
   },
   head: () => {
     return {
@@ -146,16 +120,27 @@ function RootComponent() {
   );
 }
 
+const getPlatform = createIsomorphicFn()
+  .server(() => {
+    return detectPlatform(getRequestHeader('user-agent'));
+  })
+  .client(() => {
+    return detectPlatform();
+  });
+
 const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
   const queryClient = useQueryClient();
   const emotionCache = createCache({ key: 'css' });
-  const { theme } = Route.useLoaderData();
+  const { theme } = useLoaderData({ from: '__root__' });
 
   return (
     <QueryClientProvider client={queryClient}>
       <CacheProvider value={emotionCache}>
         <ThemeProvider initialTheme={theme}>
-          <HotkeysProvider appHotkeys={appHotkeys}>
+          <HotkeysProvider
+            appHotkeys={appHotkeys}
+            defaultOptions={{ platform: getPlatform() }}
+          >
             <DialogProvider>{children}</DialogProvider>
           </HotkeysProvider>
         </ThemeProvider>
@@ -164,15 +149,21 @@ const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
   );
 };
 
-export const RootDocument = ({
-  children,
-}: Readonly<{ children: ReactNode }>) => {
+const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
   const { theme } = useTheme();
 
   return (
     <html {...{ [themeAttr]: theme }} lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+
+        {/* Required to render vite checker overlay: https://vite-plugin-checker.netlify.app/recipes/backend-integration */}
+        {process.env.NODE_ENV === 'development' && (
+          <script
+            src="http://localhost:3000/@vite-plugin-checker-runtime-entry"
+            type="module"
+          />
+        )}
       </head>
 
       <body className="bg-linear-to-br from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
@@ -181,42 +172,4 @@ export const RootDocument = ({
       </body>
     </html>
   );
-};
-
-/**
- * @example
- * export const Route = createFileRoute('/your-route-path')({
- *   component: YourRouteComponent,
- *   head: () => {
- *     return {
- *       meta: createMetaTags({
- *         title: 'Sign In',
- *         description: 'Sign in to your Collection Tracker account.',
- *       }),
- *     };
- *   },
- * });
- */
-export const createMetaTags = (
-  props: {
-    description?: string;
-    title: string;
-  },
-  additionalTags: MetaHTMLAttributes<HTMLMetaElement>[] = [],
-) => {
-  const {
-    title,
-    description = 'Your helpful tracker for all your collections!',
-  } = props;
-
-  return [
-    {
-      title,
-    },
-    {
-      name: 'description',
-      content: description,
-    },
-    ...additionalTags,
-  ] satisfies MetaHTMLAttributes<HTMLMetaElement>[];
 };

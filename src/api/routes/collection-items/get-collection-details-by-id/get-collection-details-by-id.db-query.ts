@@ -15,20 +15,23 @@ import {
   notExists,
 } from 'drizzle-orm';
 
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
   customFieldsTable,
   customFieldValuesTable,
-} from '#/api/db-tables-schema';
+} from '#/api/db/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 import { articlesToIgnore } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-ignore-sort-articles';
 
-import type { CustomFieldValuesByFieldId } from '../../custom-field-values/custom-field-values.types';
+import type {
+  CustomFieldValueDef,
+  CustomFieldValuesByFieldId,
+} from '../../custom-field-values/custom-field-values.types';
 import type { CollectionItemsTableColumn } from '../collection-item.types';
 import type { GetCollectionDetailsByIdRequestArgsDef } from './get-collection-details-by-id.types';
 
@@ -122,18 +125,23 @@ export const getCollectionDetailsByIdDbQuery = async ({
           ];
         }
       } else if (filter.type === 'number') {
-        const { range } = filter;
-        const { max, min } = range;
+        const { rangeMax, rangeMin } = filter;
 
-        return [
-          ...acc,
-          getWhereCustomFieldValuesMatch({
-            asExists: true,
-            customFieldId,
-            tx,
-            where: between(customFieldValuesTable.valueNumber, min, max),
-          }),
-        ];
+        if (rangeMin !== undefined && rangeMax !== undefined) {
+          return [
+            ...acc,
+            getWhereCustomFieldValuesMatch({
+              asExists: true,
+              customFieldId,
+              tx,
+              where: between(
+                customFieldValuesTable.valueNumber,
+                rangeMin,
+                rangeMax,
+              ),
+            }),
+          ];
+        }
       } else if (filter.type === 'boolean') {
         const { value } = filter;
         if (value === true) {
@@ -276,7 +284,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
                 return {
                   ...acc,
-                  [customFieldId]: rest,
+                  [customFieldId]: rest as CustomFieldValueDef,
                 };
               }
 
@@ -326,7 +334,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
             return {
               ...acc,
-              [customFieldId]: rest,
+              [customFieldId]: rest as CustomFieldValueDef,
             };
           }
 

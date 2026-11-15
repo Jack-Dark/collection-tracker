@@ -1,15 +1,15 @@
 import { eq, and } from 'drizzle-orm';
 import _ from 'lodash';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
+import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import {
   collectionItemsToCustomFieldValuesTable,
   customFieldsTable,
   customFieldValuesTable,
-} from '#/api/db-tables-schema';
+} from '#/api/db/db-tables-schema';
 
 import type { GetFiltersForCollectionRequestArgsDef } from './get-filters-for-collection.types';
 
@@ -107,18 +107,18 @@ export const getFiltersForCollectionDbQuery = async ({
               label: string;
               value: string;
             }[];
-            range?: undefined;
+            rangeMax?: undefined;
+            rangeMin?: undefined;
           })
         | (CustomFieldData<'number'> & {
             items?: undefined;
-            range: {
-              max: number;
-              min: number;
-            };
+            rangeMax: number;
+            rangeMin: number;
           })
         | (CustomFieldData<'boolean'> & {
             items?: undefined;
-            range?: undefined;
+            rangeMax?: undefined;
+            rangeMin?: undefined;
           })
       )[]
     >((acc, customField, index) => {
@@ -177,10 +177,8 @@ export const getFiltersForCollectionDbQuery = async ({
               ...acc,
               {
                 ...customField,
-                range: {
-                  max,
-                  min,
-                },
+                rangeMax: max,
+                rangeMin: min,
                 type: customField.type,
               },
             ];

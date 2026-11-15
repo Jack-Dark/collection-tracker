@@ -1,6 +1,6 @@
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
@@ -8,7 +8,7 @@ import {
   collectionsToCustomFieldsTable,
   customFieldsTable,
   customFieldValuesTable,
-} from '#/api/db-tables-schema';
+} from '#/api/db/db-tables-schema';
 
 export const createNewUserExampleRecordsDbQuery = async ({
   context,
@@ -49,26 +49,23 @@ export const createNewUserExampleRecordsDbQuery = async ({
       ])
       .returning({ id: customFieldsTable.id });
 
-    await tx
-      .insert(collectionsToCustomFieldsTable)
-      .values([
-        {
-          userId,
-          collectionId,
-          customFieldId: customFieldTextId,
-        },
-        {
-          userId,
-          collectionId,
-          customFieldId: customFieldNumberId,
-        },
-        {
-          userId,
-          collectionId,
-          customFieldId: customFieldBooleanId,
-        },
-      ])
-      .returning({ id: collectionsToCustomFieldsTable.id });
+    await tx.insert(collectionsToCustomFieldsTable).values([
+      {
+        userId,
+        collectionId,
+        customFieldId: customFieldTextId,
+      },
+      {
+        userId,
+        collectionId,
+        customFieldId: customFieldNumberId,
+      },
+      {
+        userId,
+        collectionId,
+        customFieldId: customFieldBooleanId,
+      },
+    ]);
 
     const [{ id: collectionItemId }] = await tx
       .insert(collectionItemsTable)
@@ -101,17 +98,14 @@ export const createNewUserExampleRecordsDbQuery = async ({
       ])
       .returning({ id: customFieldValuesTable.id });
 
-    await tx
-      .insert(collectionItemsToCustomFieldValuesTable)
-      .values(
-        customFieldValueIds.map(({ id }) => {
-          return {
-            userId,
-            collectionItemId,
-            customFieldValueId: id,
-          };
-        }),
-      )
-      .returning({ id: collectionItemsToCustomFieldValuesTable.id });
+    await tx.insert(collectionItemsToCustomFieldValuesTable).values(
+      customFieldValueIds.map(({ id }) => {
+        return {
+          userId,
+          collectionItemId,
+          customFieldValueId: id,
+        };
+      }),
+    );
   });
 };

@@ -2,8 +2,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import NotesIcon from '@mui/icons-material/Notes';
 import SearchIcon from '@mui/icons-material/Search';
 import {
-  formatForDisplay,
   useAppHotkeys,
+  useFormatForDisplay,
   useHotkeys,
 } from '@tanstack/react-hotkeys';
 import { useLayoutEffect, useRef, useState } from 'react';
@@ -49,7 +49,9 @@ export const Search = (props: SearchPropsDef) => {
     },
   ]);
 
-  const formattedSearchHotkey = formatForDisplay(hotkeys.search);
+  const formatHotkey = useFormatForDisplay();
+
+  const formattedSearchHotkey = formatHotkey(hotkeys.search);
 
   return (
     <div className="relative">

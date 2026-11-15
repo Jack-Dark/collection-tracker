@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { AccountPage } from '#/pages/AccountPage';
 
-import { createMetaTags } from '../__root';
+import { createMetaTags } from '../../create-meta-tags';
 
 export const Route = createFileRoute('/_protected/account')({
   component: AccountPage,

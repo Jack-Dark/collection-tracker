@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 
-import { errorHandlingMiddleware } from '#/auth/auth-middleware';
+import { errorHandlingMiddleware } from '#/api/middleware/error-handling-middleware';
 
 import { resend, resendEmailFrom } from '../resend.configs';
 import { sendVerificationEmailSchema } from './send-verification-email.schema';

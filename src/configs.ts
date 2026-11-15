@@ -15,5 +15,6 @@ export const configs = {
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET!,
   googleWebClientId: process.env.GOOGLE_WEB_CLIENT_ID!,
   resendApiKey: process.env.RESEND_API_KEY!,
+  sentryAuthToken: process.env.SENTRY_AUTH_TOKEN!,
   siteUrl: process.env.SITE_URL!,
 } as const;

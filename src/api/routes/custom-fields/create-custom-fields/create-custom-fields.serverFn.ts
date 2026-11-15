@@ -1,9 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 
-import {
-  authApiRouteMiddleware,
-  errorHandlingMiddleware,
-} from '#/auth/auth-middleware';
+import { errorHandlingMiddleware } from '#/api/middleware/error-handling-middleware';
+import { requireUserContextMiddleware } from '#/api/middleware/require-user-context-middleware';
 
 import { createCustomFieldsDbQuery } from './create-custom-fields.db-query';
 import { createCustomFieldsSchema } from './create-custom-fields.schema';
@@ -11,6 +9,6 @@ import { createCustomFieldsSchema } from './create-custom-fields.schema';
 export const createCustomFieldsServerFn = createServerFn({
   method: 'POST',
 })
-  .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
+  .middleware([errorHandlingMiddleware, requireUserContextMiddleware])
   .validator(createCustomFieldsSchema)
   .handler(createCustomFieldsDbQuery);

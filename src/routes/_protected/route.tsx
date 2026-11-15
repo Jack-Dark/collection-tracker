@@ -1,25 +1,26 @@
-import { createFileRoute, isRedirect } from '@tanstack/react-router';
+import { createFileRoute, isRedirect, redirect } from '@tanstack/react-router';
+import { ReasonPhrases } from 'http-status-codes';
 
-import { ensureSession } from '#/auth/auth-middleware';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/_protected')({
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({ context, location }) => {
     const redirectToSignIn = () => {
-      return Route.redirect({
+      return redirect({
         search: { redirect: location.href },
         to: '/sign-in',
       });
     };
 
     try {
-      const session = await ensureSession();
-
-      if (!session) {
+      if (!context.user?.id) {
+        console.error(ReasonPhrases.UNAUTHORIZED);
+        console.error(
+          `${import.meta.env.MODE} - Protected route. User not logged in - user:`,
+          context.user,
+        );
         throw redirectToSignIn();
       }
-
-      return { user: session.user };
     } catch (error) {
       // ? Re-throw redirects (they're intentional, not errors)
       if (isRedirect(error)) {

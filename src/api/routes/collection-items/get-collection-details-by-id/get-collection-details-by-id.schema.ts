@@ -7,32 +7,22 @@ import { getRequiredPaginationQueriesSchema } from '../../../pagination/paginati
 export const collectionDetailsFilterValueSchema = z.union([
   z.object({
     items: z.array(z.string()),
-    range: z
-      .object({
-        max: z.undefined(),
-        min: z.undefined(),
-      })
-      .optional(),
+    rangeMax: z.undefined().optional(),
+    rangeMin: z.undefined().optional(),
     type: z.literal('string'),
     value: z.undefined().optional(),
   }),
   z.object({
     items: z.undefined().optional(),
-    range: z.object({
-      max: z.number(),
-      min: z.number(),
-    }),
+    rangeMax: z.union([z.number(), z.undefined()]),
+    rangeMin: z.union([z.number(), z.undefined()]),
     type: z.literal('number'),
     value: z.undefined().optional(),
   }),
   z.object({
     items: z.undefined().optional(),
-    range: z
-      .object({
-        max: z.undefined().optional(),
-        min: z.undefined().optional(),
-      })
-      .optional(),
+    rangeMax: z.undefined().optional(),
+    rangeMin: z.undefined().optional(),
     type: z.literal('boolean'),
     value: z.boolean().nullable(),
   }),
@@ -47,12 +37,8 @@ export const collectionDetailsSearchQueriesSchema =
   getRequiredPaginationQueriesSchema<CollectionItemsTableColumn>('name').and(
     z.object({
       filters: collectionDetailsFiltersSchema.optional().default({}),
-      ignoreSortArticles: z
-        .boolean()
-        .default(true),
-      searchNotes: z
-        .boolean()
-        .default(false),
+      ignoreSortArticles: z.boolean().default(true),
+      searchNotes: z.boolean().default(false),
     }),
   );
 

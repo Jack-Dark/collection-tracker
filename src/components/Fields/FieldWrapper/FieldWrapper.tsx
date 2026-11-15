@@ -63,7 +63,7 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
       {/* Groups individual items in a checkbox group or radio group with a label and description. Renders a <div> element. */}
       {/* <Field.Item /> */}
 
-      {errorMessage && (
+      {(Array.isArray(errorMessage) ? !!errorMessage.length : errorMessage) && (
         <p className="text-theme-t-alert text-xs">{errorMessage}</p>
       )}
     </Field.Root>

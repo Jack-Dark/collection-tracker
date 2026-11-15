@@ -1,9 +1,9 @@
 import { eq } from 'drizzle-orm';
 
-import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db-tables-schema.types';
+import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db/db-tables-schema.types';
 import type { CloudinaryTagsItem } from '#/lib/cloudinary';
 
-import { db } from '#/api/db';
+import { db } from '#/api/db/db';
 import { addCloudinaryTagsToPublicIds } from '#/lib/cloudinary';
 
 import type { CustomFieldValuesByFieldId } from '../../custom-field-values/custom-field-values.types';
@@ -13,7 +13,7 @@ import type { CreateCollectionItemsDbQueryArgsDef } from './create-collection-it
 import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
-} from '../../../db-tables-schema';
+} from '../../../db/db-tables-schema';
 
 export const createCollectionItemsDbQuery = async ({
   context,

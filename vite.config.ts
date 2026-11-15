@@ -1,5 +1,6 @@
 /// <reference types="vitest/config" />
 import netlify from '@netlify/vite-plugin-tanstack-start';
+import { sentryTanstackStart } from '@sentry/tanstackstart-react/vite';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { devtools } from '@tanstack/devtools-vite';
@@ -8,7 +9,7 @@ import viteReact from '@vitejs/plugin-react';
 import { playwright } from '@vitest/browser-playwright';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import checker from 'vite-plugin-checker';
 
 const dirname =
@@ -19,25 +20,42 @@ const dirname =
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const config = defineConfig(({ mode }) => {
   const isDevMode = mode !== 'production';
+  const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    build: { sourcemap: isDevMode },
+    build: {
+      minify: false,
+      sourcemap: isDevMode,
+    },
     css: { devSourcemap: isDevMode },
     define: {
-      'process.env.NODE_ENV': JSON.stringify(mode),
+      // 'process.env.NODE_ENV': JSON.stringify(mode),
+
+      // force dev mode in production to make tracking down hydration errors easier
+      'process.env.NODE_ENV': JSON.stringify('development'),
     },
     optimizeDeps: {
       include: ['@mui/icons-material'],
     },
     plugins: [
-      devtools(),
-      isDevMode &&
-        checker({
-          eslint: {
-            lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+      // ! devtools should be first
+      devtools({
+        editor: {
+          name: 'VSCode',
+          open: async (path, lineNumber, columnNumber) => {
+            const { exec } = await import('node:child_process');
+            exec(
+              // or windsurf/cursor/webstorm
+              `code -g "${path.replaceAll('$', '\\$')}${lineNumber ? `:${lineNumber}` : ''}${columnNumber ? `:${columnNumber}` : ''}"`,
+            );
           },
-          typescript: true,
-        }),
+        },
+      }),
+      sentryTanstackStart({
+        authToken: env.SENTRY_AUTH_TOKEN,
+        org: 'collection-tracker',
+        project: 'collection-tracker',
+      }),
       tailwindcss(),
       tanstackStart({
         prerender: {
@@ -52,6 +70,19 @@ const config = defineConfig(({ mode }) => {
       // ! react's vite plugin must come after start's vite plugin
       viteReact(),
       netlify(),
+      isDevMode &&
+        checker({
+          eslint: {
+            lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+          },
+          overlay: {
+            initialIsOpen: 'error',
+            position: 'tl',
+          },
+          typescript: {
+            tsconfigPath: './tsconfig.json',
+          },
+        }),
     ].filter(Boolean),
     preview: {
       port: 8080,

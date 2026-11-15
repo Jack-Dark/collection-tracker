@@ -2,12 +2,13 @@ import type { SQL } from 'drizzle-orm';
 
 import { and, eq } from 'drizzle-orm';
 
-import type { InsertCustomFieldValueRecordDef } from '#/api/db-tables-schema.types';
-import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { InsertCustomFieldValueRecordDef } from '#/api/db/db-tables-schema.types';
+import type { DbQueryArgsDef } from '#/auth/auth.types';
 
-import { db } from '#/api/db';
-import { customFieldValuesTable } from '#/api/db-tables-schema';
+import { db } from '#/api/db/db';
+import { customFieldValuesTable } from '#/api/db/db-tables-schema';
 
+import type { CustomFieldValueDef } from '../custom-field-values.types';
 import type { CreateCustomFieldValuesRequestArgsDef } from './create-custom-field-value.types';
 
 export const createCustomFieldValuesDbQuery = async ({
@@ -87,7 +88,7 @@ export const createCustomFieldValuesDbQuery = async ({
           );
 
         if (existingCustomFieldValueRecord) {
-          return existingCustomFieldValueRecord;
+          return existingCustomFieldValueRecord as CustomFieldValueDef;
         } else {
           const [newRecord] = await tx
             .insert(customFieldValuesTable)
@@ -100,7 +101,7 @@ export const createCustomFieldValuesDbQuery = async ({
               valueText: customFieldValuesTable.valueText,
             });
 
-          return newRecord;
+          return newRecord as CustomFieldValueDef;
         }
       }),
     );

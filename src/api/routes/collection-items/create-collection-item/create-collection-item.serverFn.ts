@@ -1,9 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 
-import {
-  authApiRouteMiddleware,
-  errorHandlingMiddleware,
-} from '#/auth/auth-middleware';
+import { errorHandlingMiddleware } from '#/api/middleware/error-handling-middleware';
+import { requireUserContextMiddleware } from '#/api/middleware/require-user-context-middleware';
 
 import { createCollectionItemsDbQuery } from './create-collection-item.db-query';
 import { createCollectionItemsServerFnSchema } from './create-collection-item.schema';
@@ -11,6 +9,6 @@ import { createCollectionItemsServerFnSchema } from './create-collection-item.sc
 export const createCollectionItemServerFn = createServerFn({
   method: 'POST',
 })
-  .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
+  .middleware([errorHandlingMiddleware, requireUserContextMiddleware])
   .validator(createCollectionItemsServerFnSchema)
   .handler(createCollectionItemsDbQuery);

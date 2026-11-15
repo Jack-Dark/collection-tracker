@@ -1,11 +1,10 @@
 import { formOptions } from '@tanstack/react-form';
+import { useParams } from '@tanstack/react-router';
 import { createStore } from '@tanstack/react-store';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CreateCollectionItemsFormDataSchemaDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { CustomFieldValuesByFieldId } from '#/api/routes/custom-field-values/custom-field-values.types';
-
-import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
 import type { CreateOrUpdateCollectionItemFormDataDef } from './CollectionDetailsPage.types';
 
@@ -14,7 +13,7 @@ import { useEnableAutoPopulateCustomFieldValues } from './components/CollectionD
 
 export const useCreateNewCollectionItem =
   (): (() => CreateCollectionItemsFormDataSchemaDef) => {
-    const { id } = CollectionDetailsRoute.useParams();
+    const { id } = useParams({ from: '/_protected/collections/$id' });
     const collectionId = Number(id);
 
     const { enableAutoPopulateCustomFieldValues } =

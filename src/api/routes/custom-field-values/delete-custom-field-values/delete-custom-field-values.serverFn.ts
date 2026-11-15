@@ -1,9 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 
-import {
-  authApiRouteMiddleware,
-  errorHandlingMiddleware,
-} from '#/auth/auth-middleware';
+import { errorHandlingMiddleware } from '#/api/middleware/error-handling-middleware';
+import { requireUserContextMiddleware } from '#/api/middleware/require-user-context-middleware';
 
 import { deleteCustomFieldValuesDbQuery } from './delete-custom-field-values.db-query';
 import { deleteCustomFieldValuesSchema } from './delete-custom-field-values.schema';
@@ -11,6 +9,6 @@ import { deleteCustomFieldValuesSchema } from './delete-custom-field-values.sche
 export const deleteCustomFieldValuesServerFn = createServerFn({
   method: 'POST',
 })
-  .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
+  .middleware([errorHandlingMiddleware, requireUserContextMiddleware])
   .validator(deleteCustomFieldValuesSchema)
   .handler(deleteCustomFieldValuesDbQuery);

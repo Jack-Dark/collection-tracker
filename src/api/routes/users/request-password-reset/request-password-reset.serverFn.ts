@@ -3,8 +3,8 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 
 import type { RouterPath } from '#/types';
 
-import { auth } from '#/auth/auth';
-import { errorHandlingMiddleware } from '#/auth/auth-middleware';
+import { errorHandlingMiddleware } from '#/api/middleware/error-handling-middleware';
+import { auth } from '#/auth/auth-server';
 
 import { requestPasswordResetSchema } from './request-password-reset.schema';
 

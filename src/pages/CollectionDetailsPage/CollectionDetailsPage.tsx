@@ -2,7 +2,12 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
-import { useBlocker } from '@tanstack/react-router';
+import {
+  useBlocker,
+  useLoaderData,
+  useParams,
+  useSearch,
+} from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
 
 import type { CreateCollectionItemsRequestArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
@@ -21,7 +26,6 @@ import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-valu
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
-import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
 import {
   createOrUpdateCollectionItemsFormOptions,
@@ -31,8 +35,9 @@ import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import { useEditingCollectionItemsRowIds } from './hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsPage: RouteComponent = () => {
-  const { collectionName, totalRecords } =
-    CollectionDetailsRoute.useLoaderData();
+  const { collectionName, totalRecords } = useLoaderData({
+    from: '/_protected/collections/$id',
+  });
 
   return (
     <PageWrapper title={`${collectionName} (${totalRecords})`} wideOnMobile>
@@ -42,7 +47,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
 };
 
 export const useCollectionDetailsForm = () => {
-  const { id } = CollectionDetailsRoute.useParams();
+  const { id } = useParams({ from: '/_protected/collections/$id' });
 
   const collectionId = Number(id);
 
@@ -159,8 +164,8 @@ export const useCollectionDetailsForm = () => {
 };
 
 export const useHandleGetCollectionDetailsById = () => {
-  const searchQueries = CollectionDetailsRoute.useSearch();
-  const routeParams = CollectionDetailsRoute.useParams();
+  const searchQueries = useSearch({ from: '/_protected/collections/$id' });
+  const routeParams = useParams({ from: '/_protected/collections/$id' });
   const collectionId = Number(routeParams.id);
 
   const context = useGetCollectionDetailsById({

@@ -1,1 +1,0 @@
-ALTER TABLE "custom_field_values" RENAME COLUMN "value" TO "data";

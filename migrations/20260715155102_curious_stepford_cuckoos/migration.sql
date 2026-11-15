@@ -1,1 +1,0 @@
-ALTER TABLE "collections" ADD COLUMN "images" json DEFAULT '[]'::json NOT NULL;

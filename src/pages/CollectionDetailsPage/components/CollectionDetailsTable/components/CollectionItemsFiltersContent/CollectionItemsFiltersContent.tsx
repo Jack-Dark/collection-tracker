@@ -2,6 +2,8 @@ import type { PropsWithChildren } from 'react';
 
 import { Slider } from '@base-ui/react';
 import InfoIcon from '@mui/icons-material/Info';
+import { useSearch } from '@tanstack/react-router';
+import { createStore } from '@tanstack/react-store';
 import { useLayoutEffect, useMemo } from 'react';
 
 import type { GetFiltersForCollectionResponseDef } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.types';
@@ -9,12 +11,11 @@ import type { DefaultSelectItemDef } from '#/components/Fields/SelectField/Selec
 
 import { useGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
 import { Button } from '#/components/Button';
-import { CheckboxGroupField } from '#/components/Fields/CheckboxGroup';
+import { ComboboxField } from '#/components/Fields/ComboboxField';
 import { FieldWrapper } from '#/components/Fields/FieldWrapper';
 import { SelectField } from '#/components/Fields/SelectField';
 import { LoadingSpinner } from '#/components/FullPageLoadingSpinner/components/LoadingSpinner';
 import { Popover } from '#/components/Popover';
-import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
 import type {
   CollectionItemsFiltersFormDef,
@@ -69,12 +70,27 @@ type CollectionDetailsFiltersContentPropsDef = {
   form: CollectionItemsFiltersFormDef;
 };
 
+const getAdjustedRange = (range: {
+  max: number | undefined;
+  min: number | undefined;
+}) => {
+  const minValue = Math.min(0, range.min ?? 0);
+  const maxValue = Math.max(10, range.max ?? 10);
+
+  return { max: maxValue, min: minValue };
+};
+
+export const collectionItemsFiltersDefaultValuesStore =
+  createStore<CollectionItemsFiltersFormSchemaDef>({ filters: {} });
+
 export const CollectionDetailsFiltersContent = (
   props: CollectionDetailsFiltersContentPropsDef,
 ) => {
   const { collectionId, form } = props;
 
-  const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
+  const { filters: searchQueryFilters } = useSearch({
+    from: '/_protected/collections/$id',
+  });
 
   const {
     data: filterOptions,
@@ -90,7 +106,7 @@ export const CollectionDetailsFiltersContent = (
       const filtersFormDefaultValues: CollectionItemsFiltersFormSchemaDef['filters'] =
         filterOptions.reduce<
           Record<number, CollectionItemsFiltersFormSchemaDef['filters'][number]>
-        >((acc, { id, range, type }) => {
+        >((acc, { id, rangeMax, rangeMin, type }) => {
           if (acc[id]) {
             return acc;
           } else {
@@ -101,18 +117,22 @@ export const CollectionDetailsFiltersContent = (
                 ...acc,
                 [id]: {
                   items: emptyItems,
-                  range: undefined,
+                  rangeMax: undefined,
+                  rangeMin: undefined,
                   type,
                   value: undefined,
                 } satisfies CollectionItemsFiltersFormSchemaDef['filters'][number],
               };
             }
             if (type === 'number') {
+              const range = getAdjustedRange({ max: rangeMax, min: rangeMin });
+
               return {
                 ...acc,
                 [id]: {
                   items: undefined,
-                  range,
+                  rangeMax: range.max,
+                  rangeMin: range.min,
                   type,
                   value: undefined,
                 } satisfies CollectionItemsFiltersFormSchemaDef['filters'][number],
@@ -123,7 +143,8 @@ export const CollectionDetailsFiltersContent = (
                 ...acc,
                 [id]: {
                   items: undefined,
-                  range: undefined,
+                  rangeMax: undefined,
+                  rangeMin: undefined,
                   type,
                   value: null,
                 } satisfies CollectionItemsFiltersFormSchemaDef['filters'][number],
@@ -133,6 +154,12 @@ export const CollectionDetailsFiltersContent = (
 
           return acc;
         }, searchQueryFilters);
+
+      collectionItemsFiltersDefaultValuesStore.setState(() => {
+        return {
+          filters: filtersFormDefaultValues,
+        };
+      });
 
       form.setFieldValue('filters', filtersFormDefaultValues);
     }
@@ -199,12 +226,12 @@ const CustomFieldBooleanFilter = (props: {
   const booleanSelectItems = useMemo(() => {
     return [
       {
-        label: `Select status...`,
+        label: `Select...`,
         placeholder: true,
         value: null,
       },
-      { label: 'True', value: true },
-      { label: 'False', value: false },
+      { label: 'Yes', value: true },
+      { label: 'No', value: false },
     ] satisfies DefaultSelectItemDef[];
   }, []);
 
@@ -267,8 +294,12 @@ const CustomFieldNumberFilter = (props: {
           // ? deconstructed to solve type errors
           const { value } = field;
 
-          const isMinEqualToMax =
-            customField.range.min === customField.range.max;
+          const range = getAdjustedRange({
+            max: value.rangeMax,
+            min: value.rangeMin,
+          });
+
+          const isMinEqualToMax = customField.rangeMin === customField.rangeMax;
 
           return isMinEqualToMax ? null : (
             <FiltersBlock
@@ -276,8 +307,11 @@ const CustomFieldNumberFilter = (props: {
               label={customField.name}
               onReset={() => {
                 field.handleChange({
-                  ...value,
-                  range: customField.range,
+                  items: undefined,
+                  rangeMax: undefined,
+                  rangeMin: undefined,
+                  type: customField.type,
+                  value: undefined,
                 });
               }}
               popoverMsg={`If at the maximum range, items with undefined ${customField.name} will be returned.`}
@@ -288,21 +322,28 @@ const CustomFieldNumberFilter = (props: {
                 Label={customField.name}
                 name={field.name}
               >
+                <span className="text-sm">
+                  {(value.rangeMin ?? range.min) ===
+                  (value.rangeMax ?? range.max)
+                    ? value.rangeMin
+                    : `${value.rangeMin ?? range.min} - ${value.rangeMax ?? range.max}`}
+                </span>
                 <Slider.Root
-                  max={customField.range.max}
-                  min={customField.range.min}
+                  max={range?.max}
+                  min={range?.min}
                   onValueChange={([min, max]) => {
                     field.handleChange({
                       ...value,
                       items: undefined,
-                      range: {
-                        max,
-                        min,
-                      },
+                      rangeMax: max,
+                      rangeMin: min,
                       value: undefined,
                     });
                   }}
-                  value={[value.range.min, value.range.max]}
+                  value={[
+                    value.rangeMin ?? range.min,
+                    value.rangeMax ?? range.max,
+                  ]}
                 >
                   <Slider.Control className="py-2 cursor-pointer data-dragging:cursor-grabbing">
                     <Slider.Track className="bg-gray-500 h-1 w-full">
@@ -320,8 +361,11 @@ const CustomFieldNumberFilter = (props: {
                     </Slider.Track>
                   </Slider.Control>
                 </Slider.Root>
+                <div className="flex justify-between text-theme-t2">
+                  <span className="text-sm">{range?.min}</span>
+                  <span className="text-sm">{range?.max}</span>
+                </div>
               </FieldWrapper>
-              {value.range.min} - {value.range.max}
             </FiltersBlock>
           );
         }
@@ -354,14 +398,24 @@ const CustomFieldStringFilter = (props: {
                         field.clearValues();
                       }}
                     >
-                      <CheckboxGroupField
-                        columns={customField.items.length >= 10 ? 2 : 1}
+                      <ComboboxField
+                        idProperty="value"
                         items={customField.items}
+                        labelProperty="label"
+                        multiple
                         name={field.name}
                         onValueChange={(selectedItems) => {
-                          field.handleChange(selectedItems);
+                          const formattedValues = selectedItems.map(
+                            ({ value }) => {
+                              return value;
+                            },
+                          );
+                          field.handleChange(formattedValues);
                         }}
-                        value={field.value}
+                        placeholder="Select..."
+                        value={field.value.map((value) => {
+                          return { label: value, value };
+                        })}
                       />
                     </FiltersBlock>
                   );

@@ -1,34 +1,40 @@
-import { createFileRoute, isRedirect } from '@tanstack/react-router';
+import { createFileRoute, isRedirect, redirect } from '@tanstack/react-router';
+import { ReasonPhrases } from 'http-status-codes';
 
-import { ensureSession } from '#/auth/auth-middleware';
-import { getIsAdmin } from '#/auth/auth-middleware.helpers';
+import { getIsAdmin } from '#/auth/helpers/get-is-admin';
 import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/admin')({
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({ context, location }) => {
     const redirectToSignIn = () => {
-      return Route.redirect({
+      return redirect({
         search: { redirect: location.href },
         to: '/sign-in',
       });
     };
 
     try {
-      const session = await ensureSession();
-
-      if (!session) {
+      if (!context.user?.id) {
+        console.error(
+          import.meta.env.MODE,
+          ReasonPhrases.UNAUTHORIZED,
+          '- ID:',
+          context.user?.id,
+        );
         throw redirectToSignIn();
       }
 
-      if (!getIsAdmin(session.user?.role)) {
-        throw Route.redirect({
+      if (!getIsAdmin(context.user?.role)) {
+        console.error(
+          import.meta.env.MODE,
+          ReasonPhrases.UNAUTHORIZED,
+          '- role:',
+          context.user?.role,
+        );
+        throw redirect({
           to: '/collections',
         });
       }
-
-      return {
-        user: session.user,
-      };
     } catch (error) {
       // ? Re-throw redirects (they're intentional, not errors)
       if (isRedirect(error)) {
