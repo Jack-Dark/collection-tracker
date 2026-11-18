@@ -17,9 +17,9 @@ import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { Popover } from '#/components/Popover';
 import { hotkeys } from '#/constants/app-hotkeys';
-import { useUserContext } from '#/hooks/use-user-context';
 import { verifyEmailMessage } from '#/layout';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { useAuth } from '#/providers/AuthProvider';
 
 import { AddNewCollectionButton } from './components/AddNewCollectionButton';
 import { CollectionsListSubmitButton } from './components/CollectionsListSubmitButton';
@@ -33,7 +33,7 @@ export const CollectionsListAboveTableActions = (props: {
 }) => {
   const { form, onCancel, resetRowSelection, selectedRowIds } = props;
 
-  const user = useUserContext();
+  const { user } = useAuth();
 
   const { addToEditingRowIds, isEditing } = useEditingCollectionsRowIds();
 

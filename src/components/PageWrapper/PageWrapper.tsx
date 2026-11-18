@@ -9,7 +9,7 @@ import { Suspense } from 'react';
 import { twJoin } from 'tailwind-merge';
 
 import { githubUrl } from '#/constants/githubUrl';
-import { useUserContext } from '#/hooks/use-user-context';
+import { useAuth } from '#/providers/AuthProvider';
 
 import { Popover } from '../Popover';
 import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
@@ -30,7 +30,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
     wideOnMobile,
   } = props;
 
-  const user = useUserContext();
+  const { user } = useAuth();
 
   const isImpersonating = !!user?.impersonatedBy;
 

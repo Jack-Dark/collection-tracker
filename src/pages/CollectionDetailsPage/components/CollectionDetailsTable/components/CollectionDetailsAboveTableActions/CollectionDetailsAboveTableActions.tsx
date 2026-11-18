@@ -19,8 +19,8 @@ import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { Popover } from '#/components/Popover';
 import { hotkeys } from '#/constants/app-hotkeys';
 import { pluralize } from '#/helpers/pluralize';
-import { useUserContext } from '#/hooks/use-user-context';
 import { verifyEmailMessage } from '#/layout';
+import { useAuth } from '#/providers/AuthProvider';
 
 import { useEditingCollectionItemsRowIds } from '../../../../hooks/use-editing-collection-items-row-ids';
 import { AddNewCollectionItemButton } from './components/AddNewCollectionItemButton';
@@ -41,7 +41,7 @@ export const CollectionDetailsAboveTableActions = ({
   const { id } = useParams({ from: '/_protected/collections/$id' });
   const collectionId = Number(id);
 
-  const user = useUserContext();
+  const { user } = useAuth();
 
   const { addToEditingRowIds, isEditing } = useEditingCollectionItemsRowIds();
 

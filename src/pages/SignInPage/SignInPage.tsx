@@ -6,6 +6,7 @@ import { useLayoutEffect } from 'react';
 import { Button } from '#/components/Button';
 import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
+import { useAuth } from '#/providers/AuthProvider';
 
 import { SignInForm } from './components/SignInForm';
 
@@ -13,6 +14,8 @@ export const SignInPage: RouteComponent = () => {
   const searchQueries = useSearch({ from: '/_unprotected/sign-in' });
 
   const { notifyWarning } = useNotifications();
+
+  const { authLogout } = useAuth();
 
   useLayoutEffect(() => {
     if (searchQueries.accountDeleted) {
@@ -22,6 +25,12 @@ export const SignInPage: RouteComponent = () => {
       });
     }
   }, []);
+
+  useLayoutEffect(() => {
+    if (searchQueries.logout) {
+      authLogout();
+    }
+  }, [searchQueries.logout]);
 
   return (
     <PageWrapper>

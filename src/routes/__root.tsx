@@ -31,6 +31,7 @@ import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { ThemeProvider, useTheme } from '#/components/ThemeProvider';
 import { appHotkeys } from '#/constants/app-hotkeys';
 import { handleThemeCookie, themeAttr } from '#/lib/theme';
+import { AuthProvider } from '#/providers/AuthProvider';
 
 import { createMetaTags } from '../create-meta-tags';
 import appCss from '../styles.css?url';
@@ -54,6 +55,7 @@ export const Route = createRootRouteWithContext<{
     await context.queryClient.query(queryOptions);
 
     return {
+      user: context.user,
       theme: themeCookie,
     };
   },
@@ -131,19 +133,21 @@ const getPlatform = createIsomorphicFn()
 const AllProviders = ({ children }: Readonly<{ children: ReactNode }>) => {
   const queryClient = useQueryClient();
   const emotionCache = createCache({ key: 'css' });
-  const { theme } = useLoaderData({ from: '__root__' });
+  const { theme, user } = useLoaderData({ from: '__root__' });
 
   return (
     <QueryClientProvider client={queryClient}>
       <CacheProvider value={emotionCache}>
-        <ThemeProvider initialTheme={theme}>
-          <HotkeysProvider
-            appHotkeys={appHotkeys}
-            defaultOptions={{ platform: getPlatform() }}
-          >
-            <DialogProvider>{children}</DialogProvider>
-          </HotkeysProvider>
-        </ThemeProvider>
+        <AuthProvider initialAuth={{ user, isAuthenticated: !!user }}>
+          <ThemeProvider initialTheme={theme}>
+            <HotkeysProvider
+              appHotkeys={appHotkeys}
+              defaultOptions={{ platform: getPlatform() }}
+            >
+              <DialogProvider>{children}</DialogProvider>
+            </HotkeysProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </CacheProvider>
     </QueryClientProvider>
   );
