@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useImpersonateUserStop } from '#/api/routes/users/impersonate-user-stop/impersonate-user-stop.react-query';
 import { getIsAdmin } from '#/auth/helpers/get-is-admin';
 import { DesktopNavMenu } from '#/components/NavMenu/components/DesktopNavMenu';
-import { useUserContext } from '#/hooks/use-user-context';
+import { useAuth } from '#/providers/AuthProvider';
 
 import type { RouterPath } from '../../../../types';
 import type { NavMenuItem } from '../../../NavMenu/NavMenu.types';
@@ -43,7 +43,7 @@ export const useSiteNavMenuItems = () => {
 
   const { onImpersonateUserStop } = useImpersonateUserStop();
 
-  const user = useUserContext();
+  const { user } = useAuth();
 
   const isLoggedOut = !user?.id;
 

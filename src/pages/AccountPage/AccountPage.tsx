@@ -17,8 +17,8 @@ import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
 import { Popover } from '#/components/Popover';
-import { useUserContext } from '#/hooks/use-user-context';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
+import { useAuth } from '#/providers/AuthProvider';
 
 import { DeleteAccountButton } from './components/DeleteAccountButton';
 import { UpdatePasswordDialog } from './components/UpdatePasswordDialog';
@@ -26,7 +26,7 @@ import { UpdatePasswordDialog } from './components/UpdatePasswordDialog';
 export const AccountPage = () => {
   const router = useRouter();
 
-  const user = useUserContext();
+  const { user } = useAuth();
 
   const isEmailSession = getIsLastUsedLoginMethod(lastUsedLoginMethods.email);
   const isGoogleSession = getIsLastUsedLoginMethod(lastUsedLoginMethods.google);

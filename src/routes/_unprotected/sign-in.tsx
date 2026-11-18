@@ -10,6 +10,7 @@ export const Route = createFileRoute('/_unprotected/sign-in')({
     resetPassword: z.boolean().optional(),
     accountDeleted: z.boolean().optional(),
     redirect: z.string().optional(),
+    logout: z.boolean().optional(),
   }),
   component: SignInPage,
   beforeLoad: ({ search, context }) => {
