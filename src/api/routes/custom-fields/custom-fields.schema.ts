@@ -21,17 +21,13 @@ export const customFieldWithIdSchema = baseCustomFieldSchema.extend({
 
 const customFieldSortOrderSchema = z.number().min(0);
 
-export const createCustomFieldFormSchema = z.object({
-  customField: baseCustomFieldSchema.extend({
-    id: z.string().min(1),
-  }),
+export const createCustomFieldFormSchema = baseCustomFieldSchema.extend({
+  id: z.string().min(1),
   order: customFieldSortOrderSchema,
 }) satisfies z.ZodType<OrderedCustomFieldForCollectionDef<string | number>>;
 
-export const updateCustomFieldFormSchema = z.object({
-  customField: baseCustomFieldSchema.extend({
-    id: z.number().min(1),
-  }),
+export const updateCustomFieldFormSchema = baseCustomFieldSchema.extend({
+  id: z.number().min(1),
   order: customFieldSortOrderSchema,
 }) satisfies z.ZodType<OrderedCustomFieldForCollectionDef<number>>;
 

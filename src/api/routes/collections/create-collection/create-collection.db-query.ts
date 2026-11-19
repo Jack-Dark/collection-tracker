@@ -64,12 +64,12 @@ export const createCollectionDbQuery = async ({
       // ? Create brand new links between this collection and custom fields
       const newCollectionToCustomFieldRecords = customFields.reduce<
         InsertLinkCollectionsToCustomFieldsRecordDef[]
-      >((acc, { customField, order }) => {
+      >((acc, { id, order }) => {
         return [
           ...acc,
           {
             collectionId: newCollectionRecord.id,
-            customFieldId: customField.id,
+            customFieldId: id,
             order,
             userId,
           },

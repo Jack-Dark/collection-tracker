@@ -85,7 +85,7 @@ export const CollectionsListCustomFieldsCell = (props: {
             rowIndex={rowIndex}
           />
         ) : field.value.length ? (
-          field.value.map(({ customField }) => {
+          field.value.map((customField) => {
             return (
               <span
                 className="group/controls flex items-center gap-2 flex-wrap"
@@ -148,7 +148,7 @@ export const CollectionsListCustomFieldsEditableCell = (props: {
   return (
     <form.ArrayField name={`records[${rowIndex}].customFields`}>
       {(field) => {
-        const comboboxValue = field.value.map(({ customField }) => {
+        const comboboxValue = field.value.map((customField) => {
           return {
             ...customField,
             id: customField.id,
@@ -162,19 +162,16 @@ export const CollectionsListCustomFieldsEditableCell = (props: {
               ariaLabel="Custom Field"
               caseSensitiveCreation
               createNewItem={(trimmedQuery) => {
+                const index = field.value.length;
                 const newRecord = {
                   id: uuidv4() as unknown as number,
                   name: trimmedQuery,
+                  order: index,
                   type: null as unknown as CustomFieldTypeDef,
                 } satisfies CustomFieldDataForCollectionDef;
 
-                const index = field.value.length;
-
                 lastEditedCustomField.setIndex(index);
-                lastEditedCustomField.setData({
-                  customField: newRecord,
-                  order: index,
-                });
+                lastEditedCustomField.setData(newRecord);
 
                 return newRecord;
               }}
@@ -190,22 +187,19 @@ export const CollectionsListCustomFieldsEditableCell = (props: {
               name={field.name}
               onChipSort={(items) => {
                 const itemsWithOrder = items.map((item, index) => {
-                  return { customField: item, order: index };
+                  return { ...item, order: index };
                 });
                 field.handleChange(itemsWithOrder);
               }}
               onRemoveChip={(chip) => {
                 const matchingIndex = field.value.findIndex((data) => {
-                  return data.customField.id === chip.id;
+                  return data.id === chip.id;
                 });
                 field.removeValue(matchingIndex);
               }}
               onValueChange={(customFields) => {
                 const lastAddedIndex = customFields.findIndex((customField) => {
-                  return (
-                    customField.id ===
-                    lastEditedCustomField.data?.customField.id
-                  );
+                  return customField.id === lastEditedCustomField.data?.id;
                 });
 
                 if (lastAddedIndex >= 0) {
@@ -226,7 +220,7 @@ export const CollectionsListCustomFieldsEditableCell = (props: {
                   field.name,
                   customFields.map((customField, index) => {
                     return {
-                      customField,
+                      ...customField,
                       order: index,
                     };
                   }),
@@ -248,14 +242,14 @@ export const CollectionsListCustomFieldsEditableCell = (props: {
                           e.stopPropagation();
 
                           const indexToEdit = field.value.findIndex(
-                            ({ customField }) => {
+                            (customField) => {
                               return customField.id === item.id;
                             },
                           );
                           if (indexToEdit >= 0) {
                             lastEditedCustomField.setIndex(indexToEdit);
                             lastEditedCustomField.setData({
-                              customField: item,
+                              ...item,
                               order: indexToEdit,
                             });
 
@@ -294,14 +288,14 @@ export const CollectionsListCustomFieldsEditableCell = (props: {
                           lastEditedCustomField.setData(undefined);
                         } else {
                           const itemIndex = field.value.findIndex(
-                            ({ customField }) => {
+                            (customField) => {
                               return customField.id === item.id;
                             },
                           );
 
                           lastEditedCustomField.setIndex(itemIndex);
                           lastEditedCustomField.setData({
-                            customField: item,
+                            ...item,
                             order: itemIndex,
                           });
                           showConfirmDeleteCustomFieldDialog();
@@ -333,7 +327,7 @@ export const DeleteCustomFieldDialog = (props: {
 
   const lastEditedCustomField = useLastEditedCustomField();
 
-  const id = Number(lastEditedCustomField.data?.customField.id);
+  const id = Number(lastEditedCustomField.data?.id);
 
   const { data } = useGetNumCollectionsWithCustomField({
     placeholderData: {
@@ -359,7 +353,7 @@ export const DeleteCustomFieldDialog = (props: {
 
           const cleanedRecords = field.value.map((record) => {
             const filteredCustomFields = record.customFields.filter(
-              ({ customField }) => {
+              (customField) => {
                 return customField.id !== id;
               },
             );
@@ -379,13 +373,11 @@ export const DeleteCustomFieldDialog = (props: {
               </p>
 
               <h4 className="text-center">
-                {lastEditedCustomField.data?.customField.name}{' '}
+                {lastEditedCustomField.data?.name}{' '}
                 <span className="text-theme-t2 text-[.7em]">
                   (
-                  {lastEditedCustomField.data?.customField.type
-                    ? customFieldTypeLabelsMap[
-                        lastEditedCustomField.data.customField.type
-                      ]
+                  {lastEditedCustomField.data?.type
+                    ? customFieldTypeLabelsMap[lastEditedCustomField.data.type]
                     : '-'}
                   )
                 </span>
@@ -396,8 +388,8 @@ export const DeleteCustomFieldDialog = (props: {
                   <p className="text-center text-sm text-theme-t1">
                     This will remove the field from {numAffectedCollections}{' '}
                     {pluralize('collection', numAffectedCollections)} and "
-                    {lastEditedCustomField.data?.customField.name}" details from
-                    all items within.
+                    {lastEditedCustomField.data?.name}" details from all items
+                    within.
                   </p>
                 </div>
               )}
@@ -429,8 +421,7 @@ export const AddOrEditCustomFieldDialog = (props: {
 
   const invalidateGetCustomFields = useInvalidateGetCustomFields();
 
-  const isNewRecord =
-    typeof lastEditedCustomField.data?.customField.id === 'string';
+  const isNewRecord = typeof lastEditedCustomField.data?.id === 'string';
 
   const { data: customFieldsInDb = [] } = useGetCustomFields({
     placeholderData: [],
@@ -441,8 +432,8 @@ export const AddOrEditCustomFieldDialog = (props: {
     const customFieldsInDbWithSameName = customFieldsInDb.filter(
       ({ id, name }) => {
         return (
-          name === lastEditedCustomField.data?.customField.name &&
-          id !== lastEditedCustomField.data?.customField.id
+          name === lastEditedCustomField.data?.name &&
+          id !== lastEditedCustomField.data?.id
         );
       },
     );
@@ -466,10 +457,7 @@ export const AddOrEditCustomFieldDialog = (props: {
     );
 
     return typeItemsWithDisabledStates;
-  }, [
-    lastEditedCustomField.data?.customField.name,
-    lastEditedCustomField.data?.customField.type,
-  ]);
+  }, [lastEditedCustomField.data?.name, lastEditedCustomField.data?.type]);
 
   return (
     <form.ArrayField name={`records[${rowIndex}].customFields`}>
@@ -486,19 +474,13 @@ export const AddOrEditCustomFieldDialog = (props: {
                 ) {
                   onClose();
 
-                  if (
-                    typeof lastEditedCustomField.data?.customField.id ===
-                    'string'
-                  ) {
+                  if (typeof lastEditedCustomField.data?.id === 'string') {
                     removeValue(lastEditedCustomField.index);
                   } else {
                     // ? data is constructed this way to solve type conflict with ID
                     replaceValue(lastEditedCustomField.index, {
                       ...lastEditedCustomField.data,
-                      customField: {
-                        ...lastEditedCustomField.data.customField,
-                        id: lastEditedCustomField.data?.customField.id,
-                      },
+                      id: lastEditedCustomField.data?.id,
                     });
                   }
                 }
@@ -507,8 +489,8 @@ export const AddOrEditCustomFieldDialog = (props: {
               const onSave = async () => {
                 await onInterceptProcessingRequest(async () => {
                   if (lastEditedCustomField.index !== undefined) {
-                    const { customField, order } = customFieldField.value;
-                    const { id, name, type } = customField;
+                    const customField = customFieldField.value;
+                    const { id, name, order, type } = customField;
 
                     if (typeof id === 'string') {
                       const [newRecord] = await onCreateCustomFields({
@@ -516,12 +498,10 @@ export const AddOrEditCustomFieldDialog = (props: {
                       });
 
                       replaceValue(lastEditedCustomField.index, {
-                        customField: {
-                          id: newRecord.id,
-                          name: newRecord.name,
-                          type: newRecord.type,
-                        },
+                        id: newRecord.id,
+                        name: newRecord.name,
                         order,
+                        type: newRecord.type,
                       });
                     } else {
                       await onUpdateCustomFields({
@@ -565,7 +545,7 @@ export const AddOrEditCustomFieldDialog = (props: {
                 >
                   <div className="grid gap-4">
                     <form.Field
-                      name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].customField.name`}
+                      name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].name`}
                     >
                       {(nameField) => {
                         return (
@@ -584,7 +564,7 @@ export const AddOrEditCustomFieldDialog = (props: {
                     </form.Field>
 
                     <form.Field
-                      name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].customField.type`}
+                      name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].type`}
                     >
                       {(typeField) => {
                         const formattedValue:

@@ -16,18 +16,10 @@ export type GetPaginatedCollectionsResponseDef = QueryResponseDef<
 type BaseCustomFieldForCollectionDef =
   GetPaginatedCollectionsResponseDef['collections'][number]['customFields'][number];
 
-type CustomFieldData = NonNullable<
-  BaseCustomFieldForCollectionDef['customField']
->;
-
-export type OrderedCustomFieldForCollectionDef<TId = number> = Omit<
-  BaseCustomFieldForCollectionDef,
-  'customField'
-> & {
-  customField: CustomFieldDataForCollectionDef<TId>;
-};
+export type OrderedCustomFieldForCollectionDef<TId = number> =
+  CustomFieldDataForCollectionDef<TId>;
 
 export type CustomFieldDataForCollectionDef<TId = number> = Omit<
-  CustomFieldData,
+  BaseCustomFieldForCollectionDef,
   'id'
 > & { id: TId };

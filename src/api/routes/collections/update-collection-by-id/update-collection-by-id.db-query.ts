@@ -42,13 +42,13 @@ export const updateCollectionByIdDbQuery = async ({
         const collectionsToCustomFieldsRecords = Object.values(
           customFields,
         ).reduce<InsertLinkCollectionsToCustomFieldsRecordDef[]>(
-          (acc, { customField, order }) => {
-            if (customField) {
+          (acc, { id: customFieldId, order }) => {
+            if (customFieldId) {
               return [
                 ...acc,
                 {
                   collectionId: collection.id,
-                  customFieldId: customField.id,
+                  customFieldId,
                   order,
                   userId,
                 } satisfies InsertLinkCollectionsToCustomFieldsRecordDef,
