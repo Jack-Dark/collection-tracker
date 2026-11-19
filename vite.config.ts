@@ -58,10 +58,6 @@ const config = defineConfig(({ mode }) => {
       }),
       tailwindcss(),
       tanstackStart({
-        prerender: {
-          crawlLinks: true,
-          enabled: false,
-        },
         sitemap: {
           enabled: true,
           host: 'https://collectiontracker.app',
