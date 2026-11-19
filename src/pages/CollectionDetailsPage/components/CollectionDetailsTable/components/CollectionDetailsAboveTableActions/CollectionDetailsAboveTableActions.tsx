@@ -1,12 +1,14 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import InsightsIcon from '@mui/icons-material/Insights';
 import {
   useHotkeys,
   useAppHotkeys,
   useFormatForDisplay,
 } from '@tanstack/react-hotkeys';
-import { useParams } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
+import { useSelector } from '@tanstack/react-store';
 import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
@@ -101,6 +103,12 @@ export const CollectionDetailsAboveTableActions = ({
   const formatHotkey = useFormatForDisplay();
   const formattedNewHotkey = formatHotkey(hotkeys.new);
 
+  const showStatsButton = useSelector(form.atom, ({ values }) => {
+    return values.collectionItems.some(({ customFieldValues }) => {
+      return !!Object.values(customFieldValues).length;
+    });
+  });
+
   return (
     <div className="flex justify-between">
       <div className="flex gap-2">
@@ -132,6 +140,12 @@ export const CollectionDetailsAboveTableActions = ({
       </div>
 
       <div className="flex gap-2">
+        {showStatsButton && (
+          <Link params={{ id }} to="/collections/$id/stats">
+            <Button Icon={InsightsIcon} text="Stats" variant="mono" />
+          </Link>
+        )}
+
         {isEditing ? (
           <>
             <Button
