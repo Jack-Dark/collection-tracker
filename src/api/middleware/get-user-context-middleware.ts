@@ -23,8 +23,6 @@ export const getUserContextMiddleware = createMiddleware().server(
         });
       }
 
-      console.error(error.message);
-
       throw new Error(error.message);
     } else {
       return await next({

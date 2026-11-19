@@ -15,10 +15,6 @@ export const Route = createFileRoute('/_protected')({
     try {
       if (!context.user?.id) {
         console.error(ReasonPhrases.UNAUTHORIZED);
-        console.error(
-          `${import.meta.env.MODE} - Protected route. User not logged in - user:`,
-          context.user,
-        );
         throw redirectToSignIn();
       }
     } catch (error) {

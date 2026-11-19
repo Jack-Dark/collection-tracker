@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/tanstackstart-react';
 import { createIsomorphicFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
@@ -10,14 +9,14 @@ import { auth } from '../auth-server';
 const formatSessionToUserContext = (
   sessionResponse: ServerUserSession | ClientUserSession | null,
 ) => {
-  return sessionResponse
+  return sessionResponse?.user?.id
     ? {
-        email: sessionResponse.user.email || '',
-        emailVerified: sessionResponse.user.emailVerified || false,
-        id: sessionResponse.user.id || '',
-        impersonatedBy: sessionResponse.session?.impersonatedBy,
-        name: sessionResponse.user.name || '',
-        role: sessionResponse.user?.role,
+        email: sessionResponse.user.email,
+        emailVerified: sessionResponse.user.emailVerified,
+        id: sessionResponse.user.id,
+        impersonatedBy: sessionResponse.session.impersonatedBy,
+        name: sessionResponse.user.name,
+        role: sessionResponse.user.role,
       }
     : null;
 };
@@ -25,39 +24,12 @@ const formatSessionToUserContext = (
 export const getUserSession = createIsomorphicFn()
   .server(async () => {
     const headers = getRequestHeaders();
-
-    const cookies = headers
-      .get('cookie')
-      ?.split('; ')
-      .reduce((acc, cookie) => {
-        const [key, value] = cookie.split('=');
-
-        return { ...acc, [key]: value };
-      }, {});
-
     const response = await auth.api.getSession({ headers });
-
-    console.log('🚀 ~ SERVER SESSION RAW COOKIES:', headers.get('cookie'));
-    console.log(
-      '🚀 ~ SERVER SESSION FORMATTED COOKIES:',
-      JSON.stringify(cookies),
-    );
-    console.log('🚀 ~ SERVER SESSION RESPONSE:', JSON.stringify(response));
-
-    Sentry.logger.info(
-      '🚀 ~ ' + import.meta.env.MODE + 'SERVER SESSION HEADER COOKIES:',
-      cookies,
-    );
-    Sentry.logger.info(
-      '🚀 ~ ' + import.meta.env.MODE + 'SERVER SESSION RESPONSE:',
-      response ?? {},
-    );
 
     return formatSessionToUserContext(response);
   })
   .client(async () => {
     const { data: response } = await authClient.getSession();
-    console.log('🚀 ~ CLIENT SESSION:', JSON.stringify(response));
 
     return formatSessionToUserContext(response);
   });

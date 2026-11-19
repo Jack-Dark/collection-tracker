@@ -15,8 +15,6 @@ export const Route = createFileRoute('/_unprotected/sign-in')({
   component: SignInPage,
   beforeLoad: ({ search, context }) => {
     if (context.user?.id && !search?.resetPassword) {
-      console.error('Already logged in - user:', context.user);
-
       throw redirect({
         to: '/collections',
       });

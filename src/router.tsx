@@ -1,10 +1,6 @@
-import type { ErrorComponentProps } from '@tanstack/react-router';
-
-import * as Sentry from '@sentry/tanstackstart-react';
 import { QueryClient } from '@tanstack/react-query';
 import { createRouter } from '@tanstack/react-router';
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query';
-import { useEffect } from 'react';
 
 import { Button } from './components/Button';
 import { PageWrapper } from './components/PageWrapper';
@@ -23,7 +19,7 @@ export function getRouter() {
 
   const router = createRouter({
     context: { queryClient, user: null },
-    defaultErrorComponent: RouteErrorComponent,
+    defaultErrorComponent: RouteCatchBoundary,
     defaultNotFoundComponent: RouteNotFoundComponent,
     defaultPreload: 'intent',
     routeTree,
@@ -52,14 +48,4 @@ const RouteNotFoundComponent = () => {
       </div>
     </PageWrapper>
   );
-};
-
-const RouteErrorComponent = (props: ErrorComponentProps) => {
-  const { error } = props;
-
-  useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
-
-  return <RouteCatchBoundary {...props} />;
 };
