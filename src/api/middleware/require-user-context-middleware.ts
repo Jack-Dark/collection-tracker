@@ -22,8 +22,6 @@ export const requireUserContextMiddleware = createMiddleware().server(
       });
     }
 
-    console.error(error.message);
-
     throw new Error(error.message);
   },
 );

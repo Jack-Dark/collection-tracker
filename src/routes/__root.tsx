@@ -42,7 +42,6 @@ export const Route = createRootRouteWithContext<{
 }>()({
   beforeLoad: async () => {
     const user = await getUserSession();
-    console.error(`🚀 ~ ${import.meta.env.MODE} - root user context:`, user);
 
     return { user };
   },
