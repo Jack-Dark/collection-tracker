@@ -81,7 +81,9 @@ export const getCollectionStatsByIdDbQuery = async ({
       : {};
 
     const unformattedItems = await tx.query.collectionItems.findMany({
-      columns: {},
+      columns: {
+        isSpecialEdition: true,
+      },
       where: {
         AND: [
           {
@@ -118,7 +120,10 @@ export const getCollectionStatsByIdDbQuery = async ({
                 const { customFieldId, valueBoolean, valueNumber, valueText } =
                   customFieldValue;
                 const value = valueBoolean ?? valueNumber ?? valueText ?? '';
-                const stringValue = String(value);
+                const stringValue =
+                  typeof value === 'boolean'
+                    ? getBooleanLabel(value)
+                    : String(value);
 
                 const quantity =
                   customFieldValueAcc?.[customFieldId]?.items?.[stringValue]
@@ -150,26 +155,66 @@ export const getCollectionStatsByIdDbQuery = async ({
         {},
       );
 
-    const formattedCustomFields = Object.values(
-      customFieldsDataByIdsAndValue,
-    ).reduce<FormattedCustomFieldData[]>((acc, { items, ...rest }) => {
-      const isNumberType = rest.type === 'number';
-      const itemsArray = Object.values(items);
-      const sortedItems = _.sortBy(itemsArray, ({ label }) => {
-        return isNumberType ? Number(label) : label;
+    const formattedCustomFields = Object.values(customFieldsDataByIdsAndValue)
+      .reduce<FormattedCustomFieldData[]>((acc, { items, ...rest }) => {
+        const isNumberType = rest.type === 'number';
+        const itemsArray = Object.values(items);
+        const sortedItems = _.sortBy(itemsArray, ({ label }) => {
+          return isNumberType ? Number(label) : label;
+        });
+
+        return [
+          ...acc,
+          { ...rest, items: sortedItems },
+        ] satisfies FormattedCustomFieldData[];
+      }, [])
+      .map((data) => {
+        if (data.type === 'boolean') {
+          const trueLabel = getBooleanLabel(true);
+          const trueItem: CustomFieldValueItemDef = data.items.find((item) => {
+            return item.label === trueLabel;
+          }) || {
+            label: trueLabel,
+            value: 0,
+          };
+
+          const formattedBooleanItems = [
+            trueItem,
+            {
+              label: getBooleanLabel(false),
+              value: totalItems - trueItem.value,
+            },
+          ] satisfies CustomFieldValueItemDef[];
+
+          return { ...data, items: formattedBooleanItems };
+        } else {
+          return data;
+        }
       });
 
-      return [
-        ...acc,
-        { ...rest, items: sortedItems },
-      ] satisfies FormattedCustomFieldData[];
-    }, []);
-
     const sortedCustomFields = _.sortBy(formattedCustomFields, ['order']);
+
+    const isSpecialEditionByLabel = unformattedItems.reduce<
+      Record<string, CustomFieldValueItemDef>
+    >((acc, { isSpecialEdition }) => {
+      const label = getBooleanLabel(isSpecialEdition);
+
+      const quantity = acc[label]?.value || 0;
+
+      return {
+        ...acc,
+
+        [label]: {
+          label,
+          value: quantity + 1,
+        } satisfies CustomFieldValueItemDef,
+      };
+    }, {});
 
     return {
       name: formattedCollection?.name,
       customFields: sortedCustomFields,
+      isSpecialEdition: Object.values(isSpecialEditionByLabel),
       totalItems,
     };
   });
@@ -195,4 +240,8 @@ type FormattedCustomFieldData = {
   name: string;
   order: number;
   type: CustomFieldTypeDef;
+};
+
+export const getBooleanLabel = (boolean: boolean) => {
+  return boolean ? 'Yes' : 'No';
 };
