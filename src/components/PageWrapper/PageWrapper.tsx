@@ -35,7 +35,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
   const isImpersonating = !!user?.impersonatedBy;
 
   return (
-    <div className="p-1 md:p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-2 md:gap-4">
+    <div className="p-1 md:p-4 width-full h-dvh overflow-hidden grid grid-rows-[auto_1fr] gap-2 md:gap-4">
       <header className="grid gap-2 md:gap-4">
         {isImpersonating && (
           <div className="px-2 py-1 bg-amber-400 text-black text-center">
