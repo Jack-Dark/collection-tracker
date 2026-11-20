@@ -135,9 +135,9 @@ export const getCollectionStatsByIdDbQuery = async ({
                       },
                     },
                     id: customFieldId,
-                    name: customFieldsDataById[customFieldId].name,
-                    type: customFieldsDataById[customFieldId].type,
-                    order: customFieldsDataById[customFieldId].order,
+                    name: customFieldsDataById[customFieldId]?.name,
+                    type: customFieldsDataById[customFieldId]?.type,
+                    order: customFieldsDataById[customFieldId]?.order,
                   },
                 } satisfies CustomFieldDataByIdsAndValue;
               } else {
@@ -153,7 +153,11 @@ export const getCollectionStatsByIdDbQuery = async ({
     const formattedCustomFields = Object.values(
       customFieldsDataByIdsAndValue,
     ).reduce<FormattedCustomFieldData[]>((acc, { items, ...rest }) => {
-      const sortedItems = _.sortBy(Object.values(items), ['label']);
+      const isNumberType = rest.type === 'number';
+      const itemsArray = Object.values(items);
+      const sortedItems = _.sortBy(itemsArray, ({ label }) => {
+        return isNumberType ? Number(label) : label;
+      });
 
       return [
         ...acc,
