@@ -91,17 +91,18 @@
   --ts-chart-title: var(--color-theme-t1);
   --ts-chart-label: var(--color-theme-t2);
   --ts-chart-empty: var(--color-gray-200);
+  --ts-chart-stroke: var(--color-theme-surface-1);
 
   --ts-chart-1: var(--color-blue-500);
-  --ts-chart-2: var(--color-indigo-500);
-  --ts-chart-3: var(--color-violet-500);
-  --ts-chart-4: var(--color-fuchsia-500);
-  --ts-chart-5: var(--color-pink-500);
+  --ts-chart-2: var(--color-teal-500);
+  --ts-chart-3: var(--color-lime-500);
+  --ts-chart-4: var(--color-amber-500);
+  --ts-chart-5: var(--color-orange-500);
   --ts-chart-6: var(--color-rose-500);
-  --ts-chart-7: var(--color-orange-500);
-  --ts-chart-8: var(--color-amber-500);
-  --ts-chart-9: var(--color-lime-500);
-  --ts-chart-10: var(--color-teal-500);
+  --ts-chart-7: var(--color-pink-500);
+  --ts-chart-8: var(--color-fuchsia-500);
+  --ts-chart-9: var(--color-violet-500);
+  --ts-chart-10: var(--color-indigo-500);
 }
 
 [data-theme="dark"] {
@@ -137,17 +138,18 @@
   --ts-chart-title: var(--color-theme-t1);
   --ts-chart-label: var(--color-theme-t2);
   --ts-chart-empty: var(--color-gray-800);
+  --ts-chart-stroke: var(--color-theme-surface-1);
 
   --ts-chart-1: var(--color-blue-600);
-  --ts-chart-2: var(--color-indigo-600);
-  --ts-chart-3: var(--color-violet-600);
-  --ts-chart-4: var(--color-fuchsia-600);
-  --ts-chart-5: var(--color-pink-600);
+  --ts-chart-2: var(--color-teal-600);
+  --ts-chart-3: var(--color-lime-600);
+  --ts-chart-4: var(--color-amber-500);
+  --ts-chart-5: var(--color-orange-600);
   --ts-chart-6: var(--color-rose-700);
-  --ts-chart-7: var(--color-orange-600);
-  --ts-chart-8: var(--color-amber-500);
-  --ts-chart-9: var(--color-lime-600);
-  --ts-chart-10: var(--color-teal-600);
+  --ts-chart-7: var(--color-pink-600);
+  --ts-chart-8: var(--color-fuchsia-600);
+  --ts-chart-9: var(--color-violet-600);
+  --ts-chart-10: var(--color-indigo-600);
 }
 
 @layer base {

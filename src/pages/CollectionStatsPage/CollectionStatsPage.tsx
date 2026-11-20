@@ -39,7 +39,7 @@ export const CollectionStatsPage: RouteComponent = () => {
         </Link>
 
         <div className="flex justify-center size-full overflow-auto">
-          <div className="size-full grid items-baseline gap-15 grid-cols-1 md:grid-cols-2 max-w-400">
+          <div className="size-full grid items-baseline gap-15 grid-cols-1 lg:grid-cols-2 max-w-400">
             {data.customFields.map(({ id, items, name, type }) => {
               const ariaLabel = `${name} Chart`;
               const height = Math.max(100, items.length * 20);
@@ -57,13 +57,13 @@ export const CollectionStatsPage: RouteComponent = () => {
                 'var(--ts-chart-10)',
               ] as const;
 
-              const itemsWithColors = items.map((item, index) => {
+              const itemsWithTooltipsAndColors = items.map((item, index) => {
                 const colorsIndex = index % colorsList.length;
 
                 return {
                   ...item,
                   color: colorsList[colorsIndex],
-                  tooltipText: `${item.label}: ${item.value}`,
+                  tooltipText: `${item.label} (${item.value} items)`,
                 };
               });
 
@@ -148,7 +148,6 @@ export const CollectionStatsPage: RouteComponent = () => {
                         aspectRatio={1}
                         definition={defineChart({
                           color: {
-                            domain: ['value', 'label'],
                             range: gaugeColors,
                           },
                           marks: [
@@ -163,7 +162,6 @@ export const CollectionStatsPage: RouteComponent = () => {
                                   key: 'value',
                                 }),
                               ],
-                              radiusRatio: 0.8,
                               scales: {
                                 angle: null,
                                 radius: null,
@@ -191,16 +189,12 @@ export const CollectionStatsPage: RouteComponent = () => {
 
                 case 'number': {
                   return (
-                    <ChartWrapper
-                      // className="md:col-span-2"
-                      key={id}
-                      title={name}
-                    >
+                    <ChartWrapper key={id} title={name}>
                       <Chart
                         ariaLabel={ariaLabel}
                         definition={defineChart({
                           marks: [
-                            barX(itemsWithColors, {
+                            barX(itemsWithTooltipsAndColors, {
                               fill: ({ color }) => {
                                 return color;
                               },
@@ -239,7 +233,7 @@ export const CollectionStatsPage: RouteComponent = () => {
                 case 'string':
                   return (
                     <ChartWrapper
-                      className="md:col-span-2"
+                      className="lg:col-span-2"
                       key={id}
                       title={name}
                     >
@@ -247,7 +241,7 @@ export const CollectionStatsPage: RouteComponent = () => {
                         ariaLabel={ariaLabel}
                         definition={defineChart({
                           marks: [
-                            barX(itemsWithColors, {
+                            barX(itemsWithTooltipsAndColors, {
                               fill: ({ color }) => {
                                 return color;
                               },
@@ -300,7 +294,10 @@ const ChartWrapper = (
 
   return (
     <div
-      className={twMerge('gap-2 min-w-125 **:[svg]:focus:outline-0', className)}
+      className={twMerge(
+        'grid gap-4 min-w-125 **:[svg]:focus:outline-0',
+        className,
+      )}
     >
       <h3 className="text-center">{title}</h3>
       <div className="flex justify-center">{children}</div>
