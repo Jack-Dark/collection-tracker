@@ -104,28 +104,27 @@ export const formatCollection = <
 >(
   collection: TCollection,
 ) => {
-  const { customFields } = collection;
+  const { customFields, ...rest } = collection;
 
   const formattedCustomFields = customFields.reduce<
     {
-      customField: {
-        id: number;
-        name: string;
-        type: CustomFieldTypeDef;
-      };
+      id: number;
+      name: string;
       order: number;
+      type: CustomFieldTypeDef;
     }[]
   >((acc, data) => {
-    const { customField } = data;
+    const { customField, order } = data;
+
     if (customField) {
-      return [...acc, { order: data.order, customField }];
+      return [...acc, { order, ...customField }];
     } else {
       return acc;
     }
   }, []);
 
   return {
-    ...collection,
+    ...rest,
     customFields: formattedCustomFields,
-  } satisfies TCollection;
+  };
 };

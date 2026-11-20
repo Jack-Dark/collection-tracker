@@ -1,7 +1,7 @@
 import CheckIcon from '@mui/icons-material/Check';
 import { Suspense } from 'react';
 
-import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
+import type { OrderedCustomFieldForCollectionDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
 import type {
   CustomFieldValueBooleanDef,
   CustomFieldValueNumberDef,
@@ -18,11 +18,7 @@ import { CustomFieldValueCombobox } from './components/CustomFieldValueCombobox'
 import { CustomFieldValueNumberInput } from './components/CustomFieldValueNumberInput';
 
 type CollectionDetailsCustomFieldCellPropsDef = {
-  customField: {
-    id: number;
-    name: string;
-    type: CustomFieldTypeDef;
-  };
+  customField: OrderedCustomFieldForCollectionDef;
   form: CreateOrUpdateCollectionItemFormTypeDef;
   rowId: string;
   rowIndex: number;

@@ -56,7 +56,7 @@ export const getCollectionItemsTableColumns = (
       header: 'Images',
       size: 250,
     }),
-    ...sortedCustomFields.map(({ customField }) => {
+    ...sortedCustomFields.map((customField) => {
       return columnHelper.accessor('customFieldValues', {
         cell: ({ row }) => {
           return (

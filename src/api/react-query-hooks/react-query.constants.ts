@@ -2,6 +2,7 @@ export const reactQueryKeys = {
   getCollectionDetailsById: 'get-collection-details',
   getCollectionItemsWithCustomFieldValue:
     'get-collection-items-with-custom-field-value',
+  getCollectionStatsById: 'get-collection-stats',
   getCustomFields: 'get-custom-fields',
   getCustomFieldValuesByCustomFieldId:
     'get-custom-field-values-by-custom-field-id',
