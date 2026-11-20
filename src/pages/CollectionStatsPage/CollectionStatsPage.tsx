@@ -305,7 +305,7 @@ const ChartWrapper = (
         className,
       )}
     >
-      <h3 className="text-center">{title}</h3>
+      <h2 className="text-center">{title}</h2>
       <div className="flex justify-center">{children}</div>
     </div>
   );
