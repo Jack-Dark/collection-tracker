@@ -120,6 +120,11 @@ export const getCollectionStatsByIdDbQuery = async ({
                 const { customFieldId, valueBoolean, valueNumber, valueText } =
                   customFieldValue;
                 const value = valueBoolean ?? valueNumber ?? valueText ?? '';
+
+                if (value === false) {
+                  return customFieldValueAcc;
+                }
+
                 const stringValue =
                   typeof value === 'boolean'
                     ? getBooleanLabel(value)
@@ -170,6 +175,7 @@ export const getCollectionStatsByIdDbQuery = async ({
       }, [])
       .map((data) => {
         if (data.type === 'boolean') {
+          // ? create `false` item based on `true` quantity
           const trueLabel = getBooleanLabel(true);
           const trueItem: CustomFieldValueItemDef = data.items.find((item) => {
             return item.label === trueLabel;
@@ -199,14 +205,13 @@ export const getCollectionStatsByIdDbQuery = async ({
     >((acc, { isSpecialEdition }) => {
       const label = getBooleanLabel(isSpecialEdition);
 
-      const quantity = acc[label]?.value || 0;
+      const currentQuantity = acc[label]?.value || 0;
 
       return {
         ...acc,
-
         [label]: {
           label,
-          value: quantity + 1,
+          value: currentQuantity + 1,
         } satisfies CustomFieldValueItemDef,
       };
     }, {});
@@ -214,7 +219,11 @@ export const getCollectionStatsByIdDbQuery = async ({
     return {
       name: formattedCollection?.name,
       customFields: sortedCustomFields,
-      isSpecialEdition: Object.values(isSpecialEditionByLabel),
+      /** Indexes are in this order: `[trueItem, falseItem]` */
+      isSpecialEditionItems: [
+        isSpecialEditionByLabel[getBooleanLabel(true)],
+        isSpecialEditionByLabel[getBooleanLabel(false)],
+      ] satisfies [CustomFieldValueItemDef, CustomFieldValueItemDef],
       totalItems,
     };
   });
@@ -228,7 +237,6 @@ type CustomFieldDataByIdsAndValue = Record<
 >;
 
 type CustomFieldValueItemDef = {
-  /** Custom field value */
   label: string;
   /** Quantity */
   value: number;
@@ -236,6 +244,7 @@ type CustomFieldValueItemDef = {
 
 type FormattedCustomFieldData = {
   id: number;
+  /** If `type === 'boolean'`, the array contains 2 indexes in this order: `[trueItem, falseItem]` */
   items: CustomFieldValueItemDef[];
   name: string;
   order: number;
