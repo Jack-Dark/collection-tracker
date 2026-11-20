@@ -2,8 +2,8 @@ import type { RouteComponent } from '@tanstack/react-router';
 import type { PropsWithChildren } from 'react';
 
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import { barX, barY, defineChart } from '@tanstack/charts';
-import { polar, radialArc } from '@tanstack/charts/polar';
+import { barX, defineChart } from '@tanstack/charts';
+import { pie, polar, radialArc, radialText } from '@tanstack/charts/polar';
 import { Chart } from '@tanstack/charts/react/tooltip';
 import { scaleBand } from '@tanstack/charts/scales/band';
 import { scaleLinear } from '@tanstack/charts/scales/linear';
@@ -30,110 +30,171 @@ export const CollectionStatsPage: RouteComponent = () => {
     },
   });
 
-  // const ids: readonly GaugeDatum['id'][] = ['value', 'remainder']
-  const colors = ['#ef4444', '#e2e8f0'];
-
   return (
     <PageWrapper title={`${data.name} - Stats`}>
-      <div className="h-full overflow-auto grid gap-10">
+      <div className="h-full grid grid-rows-[auto_1fr] gap-4">
         <Link params={{ id }} to="/collections/$id">
           <Button Icon={NavigateBeforeIcon} text="Back" variant="mono" />
         </Link>
-        {data.customFields.map(({ id, items, name, type }) => {
-          const ariaLabel = `${name} Chart`;
 
-          switch (type) {
-            case 'boolean':
-              return (
-                <ChartWrapper title={name}>
-                  <Chart
-                    ariaLabel={ariaLabel}
-                    definition={defineChart({
-                      color: { domain: ['value', 'label'], range: colors },
-                      margin: 0,
-                      marks: [
-                        polar({
-                          inset: 0,
-                          marks: [
-                            radialArc(items, {
-                              // color: 'value',
-                              innerRadius: ({ radius }) => {
-                                return radius * 0.72;
-                              },
-                              key: 'value',
-                            }),
-                          ],
-                          radiusRatio: 0.8,
-                          scales: {
-                            angle: null,
-                            radius: null,
+        <div className="h-full overflow-auto grid gap-10">
+          {data.customFields.map(({ id, items, name, type }) => {
+            const ariaLabel = `${name} Chart`;
+            const height = Math.max(100, items.length * 20);
+
+            const colorsList = [
+              'var(--ts-chart-1)',
+              'var(--ts-chart-2)',
+              'var(--ts-chart-3)',
+              'var(--ts-chart-4)',
+              'var(--ts-chart-5)',
+              'var(--ts-chart-6)',
+              'var(--ts-chart-7)',
+              'var(--ts-chart-8)',
+              'var(--ts-chart-9)',
+              'var(--ts-chart-10)',
+            ] as const;
+
+            const itemsWithColors = items.map((item, index) => {
+              const colorsIndex = index % colorsList.length;
+
+              return {
+                ...item,
+                color: colorsList[colorsIndex],
+                tooltipText: `${item.label}: ${item.value}`,
+              };
+            });
+
+            switch (type) {
+              case 'boolean': {
+                const trueItemValue: number =
+                  items.find(({ label }) => {
+                    return label === String(true);
+                  })?.value || 0;
+
+                const trueItem = {
+                  label: 'Yes',
+                  value: trueItemValue,
+                } satisfies (typeof items)[number];
+
+                const booleanItems = [
+                  trueItem,
+                  {
+                    label: 'No',
+                    value: data.totalItems - trueItem.value,
+                  },
+                ].map((item) => {
+                  return {
+                    ...item,
+                    tooltipText: `${item.label}: ${item.value}`,
+                  };
+                }) satisfies typeof items;
+
+                const arcs = pie(booleanItems, {
+                  value: 'value',
+                });
+
+                const gaugeColors = [
+                  'var(--ts-chart-1)',
+                  'var(--ts-chart-empty)',
+                ] as const;
+
+                const radialCenterLabels = (
+                  props: {
+                    fontSize?: number;
+                    totalDy?: number;
+                  } = {},
+                ) => {
+                  const { fontSize = 36, totalDy = 0 } = props;
+
+                  return polar({
+                    marks: [
+                      radialText(
+                        [
+                          {
+                            angle: 0,
+                            radius: 0,
+                            text: `${new Intl.NumberFormat('en-US', {
+                              style: 'percent',
+                            }).format(trueItem.value / data.totalItems)}`,
+                            tooltipText: `${trueItem.value} of ${data.totalItems}`,
                           },
-                        }),
-                      ],
-                      scales: {
-                        x: null,
-                        y: null,
-                      },
-                      tooltip,
-                    })}
-                    key={id}
-                  />
-                </ChartWrapper>
-              );
+                        ],
+                        {
+                          angle: 'angle',
+                          dy: totalDy,
+                          fill: 'var(--ts-chart-title)',
+                          fontSize,
+                          fontWeight: 700,
+                          id: `radial-percent-label`,
+                          radius: 'radius',
+                          text: 'text',
+                        },
+                      ),
+                    ],
+                    scales: {
+                      angle: { scale: scaleLinear().domain([0, 1]) },
+                      radius: { scale: scaleLinear().domain([0, 1]) },
+                    },
+                  });
+                };
 
-            case 'number':
-              return (
-                <ChartWrapper title={name}>
-                  <Chart
-                    ariaLabel={ariaLabel}
-                    definition={defineChart(
-                      {
+                return (
+                  <ChartWrapper key={id} title={name}>
+                    <Chart
+                      ariaLabel={ariaLabel}
+                      definition={defineChart({
+                        color: {
+                          domain: ['value', 'label'],
+                          range: gaugeColors,
+                        },
                         marks: [
-                          barY(items, {
-                            x: ({ label, value }) => {
-                              return `${label} (${value})`;
+                          polar({
+                            inset: 0,
+                            marks: [
+                              radialArc(arcs, {
+                                color: 'value',
+                                innerRadius: ({ radius }) => {
+                                  return radius * 0.72;
+                                },
+                                key: 'value',
+                              }),
+                            ],
+                            radiusRatio: 0.8,
+                            scales: {
+                              angle: null,
+                              radius: null,
                             },
-                            y: 'value',
                           }),
+                          radialCenterLabels(),
                         ],
                         scales: {
-                          x: {
-                            scale: () => {
-                              return scaleBand().padding(0.16);
-                            },
-                          },
-                          y: {
-                            grid: true,
-                            nice: true,
-                            scale: scaleLinear,
-                          },
+                          x: null,
+                          y: null,
                         },
-                        tooltip,
-                      },
-                      // {
-                      //   keyboard: true,
-                      //   tooltip: {
-                      //     format: ({ datum }) => {
-                      //       return datum.value;
-                      //     },
-                      //     use: tooltip,
-                      //   },
-                      // },
-                    )}
-                    key={id}
-                  />
-                </ChartWrapper>
-              );
+                        tooltip: {
+                          format: ({ datum }) => {
+                            return datum.tooltipText;
+                          },
+                          use: tooltip,
+                        },
+                      })}
+                    />
+                  </ChartWrapper>
+                );
+              }
 
-            case 'string':
-              return (
-                <ChartWrapper title={name}>
-                  <Chart
-                    ariaLabel={ariaLabel}
-                    definition={defineChart(
-                      {
+              case 'number': {
+                return (
+                  <ChartWrapper key={id} title={name}>
+                    <Chart
+                      ariaLabel={ariaLabel}
+                      definition={defineChart({
                         marks: [
-                          barX(items, {
+                          barX(itemsWithColors, {
+                            fill: ({ color }) => {
+                              return color;
+                            },
                             x: 'value',
                             y: ({ label, value }) => {
                               return `${label} (${value})`;
@@ -147,32 +208,72 @@ export const CollectionStatsPage: RouteComponent = () => {
                             scale: scaleLinear,
                           },
                           y: {
+                            guides: true,
                             scale: () => {
                               return scaleBand().padding(0.16);
                             },
                           },
                         },
-                        tooltip,
-                      },
-                      // {
-                      //   keyboard: true,
-                      //   tooltip: {
-                      //     format: ({ datum }) => {
-                      //       return datum.value;
-                      //     },
-                      //     use: tooltip,
-                      //   },
-                      // },
-                    )}
-                    key={id}
-                  />
-                </ChartWrapper>
-              );
+                        tooltip: {
+                          format: ({ datum }) => {
+                            return datum.tooltipText;
+                          },
+                          use: tooltip,
+                        },
+                      })}
+                      height={height}
+                    />
+                  </ChartWrapper>
+                );
+              }
 
-            default:
-              return null;
-          }
-        })}
+              case 'string':
+                return (
+                  <ChartWrapper key={id} title={name}>
+                    <Chart
+                      ariaLabel={ariaLabel}
+                      definition={defineChart({
+                        marks: [
+                          barX(itemsWithColors, {
+                            fill: ({ color }) => {
+                              return color;
+                            },
+                            x: 'value',
+                            y: ({ label, value }) => {
+                              return `${label} (${value})`;
+                            },
+                          }),
+                        ],
+                        scales: {
+                          x: {
+                            grid: true,
+                            nice: true,
+                            scale: scaleLinear,
+                          },
+                          y: {
+                            guides: true,
+                            scale: () => {
+                              return scaleBand().padding(0.16);
+                            },
+                          },
+                        },
+                        tooltip: {
+                          format: ({ datum }) => {
+                            return datum.tooltipText;
+                          },
+                          use: tooltip,
+                        },
+                      })}
+                      height={height}
+                    />
+                  </ChartWrapper>
+                );
+
+              default:
+                return null;
+            }
+          })}
+        </div>
       </div>
     </PageWrapper>
   );
@@ -182,7 +283,7 @@ const ChartWrapper = (props: PropsWithChildren<{ title: string }>) => {
   const { children, title } = props;
 
   return (
-    <div className="grid gap-2">
+    <div className="grid gap-2 min-w-125 max-w-400 **:[svg]:focus:outline-0">
       <h3 className="text-center">{title}</h3>
       {children}
     </div>

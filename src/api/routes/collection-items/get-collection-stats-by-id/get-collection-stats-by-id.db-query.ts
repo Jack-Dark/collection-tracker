@@ -179,9 +179,9 @@ type CustomFieldDataByIdsAndValue = Record<
 >;
 
 type CustomFieldValueItemDef = {
-  /** custom field value */
+  /** Custom field value */
   label: string;
-  /** quantity */
+  /** Quantity */
   value: number;
 };
 

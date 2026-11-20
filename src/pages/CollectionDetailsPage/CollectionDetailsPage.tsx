@@ -20,6 +20,7 @@ import {
   useInvalidateGetCollectionDetailsById,
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useInvalidateGetCollectionItemsWithCustomFieldValue } from '#/api/routes/collection-items/get-collection-items-with-custom-field-value/get-collection-items-with-custom-field-value.react-query';
+import { useInvalidateGetCollectionStatsById } from '#/api/routes/collection-items/get-collection-stats-by-id/get-collection-stats-by-id.react-query';
 import { useInvalidateGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
 import { useUpdateCollectionItems } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
@@ -56,6 +57,9 @@ export const useCollectionDetailsForm = () => {
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
+
+  const invalidateGetCollectionStatsById =
+    useInvalidateGetCollectionStatsById();
 
   const invalidateGetCollectionItemsWithCustomFieldValue =
     useInvalidateGetCollectionItemsWithCustomFieldValue();
@@ -114,6 +118,7 @@ export const useCollectionDetailsForm = () => {
         await onDeleteUnusedCustomFieldValues({ collectionId });
         await Promise.all([
           await invalidateGetCollectionDetailsById({ id: collectionId }),
+          await invalidateGetCollectionStatsById({ id: collectionId }),
           await invalidateGetCollectionItemsWithCustomFieldValue(),
           await invalidateGetFiltersForCollection({ id: collectionId }),
         ]);
