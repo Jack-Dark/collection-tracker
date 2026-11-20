@@ -31,6 +31,12 @@ export const CollectionStatsPage: RouteComponent = () => {
     },
   });
 
+  const generateTooltipText = (
+    item: (typeof data.customFields)[number]['items'][number],
+  ): string => {
+    return `${item.label} (${item.value.toLocaleString()} items)`;
+  };
+
   return (
     <PageWrapper title={`${data.name} - Stats`}>
       <div className="h-full grid grid-rows-[auto_1fr] gap-4">
@@ -63,7 +69,7 @@ export const CollectionStatsPage: RouteComponent = () => {
                 return {
                   ...item,
                   color: colorsList[colorsIndex],
-                  tooltipText: `${item.label} (${item.value} items)`,
+                  tooltipText: generateTooltipText(item),
                 };
               });
 
@@ -88,7 +94,7 @@ export const CollectionStatsPage: RouteComponent = () => {
                   ].map((item) => {
                     return {
                       ...item,
-                      tooltipText: `${item.label}: ${item.value}`,
+                      tooltipText: generateTooltipText(item),
                     };
                   }) satisfies typeof items;
 
@@ -119,7 +125,7 @@ export const CollectionStatsPage: RouteComponent = () => {
                               text: `${new Intl.NumberFormat('en-US', {
                                 style: 'percent',
                               }).format(trueItem.value / data.totalItems)}`,
-                              tooltipText: `${trueItem.value} of ${data.totalItems}`,
+                              tooltipText: `${trueItem.value.toLocaleString()} out of ${data.totalItems.toLocaleString()}`,
                             },
                           ],
                           {
@@ -247,7 +253,7 @@ export const CollectionStatsPage: RouteComponent = () => {
                               },
                               x: 'value',
                               y: ({ label, value }) => {
-                                return `${label} (${value})`;
+                                return `${label} (${value.toLocaleString()})`;
                               },
                             }),
                           ],
