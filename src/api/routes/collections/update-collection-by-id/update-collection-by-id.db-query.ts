@@ -115,7 +115,10 @@ export const updateCollectionByIdDbQuery = async ({
       await tx
         .insert(collectionsToCustomFieldsTable)
         .values(collectionsToCustomFieldsRecords)
-        .onConflictDoNothing({
+        .onConflictDoUpdate({
+          set: buildConflictUpdateSetColumns(collectionsToCustomFieldsTable, {
+            order: true,
+          }),
           target: [
             collectionsToCustomFieldsTable.collectionId,
             collectionsToCustomFieldsTable.customFieldId,
