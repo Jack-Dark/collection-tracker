@@ -161,7 +161,7 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>) => {
         <HeadContent />
 
         {/* Required to render vite checker overlay: https://vite-plugin-checker.netlify.app/recipes/backend-integration */}
-        {process.env.NODE_ENV === 'development' && (
+        {import.meta.env.DEV && (
           <script
             src="http://localhost:3000/@vite-plugin-checker-runtime-entry"
             type="module"
