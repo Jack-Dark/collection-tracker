@@ -38,7 +38,7 @@ export const AddNewCollectionButton = (
         return (
           <Button
             {...buttonProps}
-            Icon={<AddIcon />}
+            icon={<AddIcon />}
             onClick={() => {
               const newCollectionItem = createNewCollection();
 

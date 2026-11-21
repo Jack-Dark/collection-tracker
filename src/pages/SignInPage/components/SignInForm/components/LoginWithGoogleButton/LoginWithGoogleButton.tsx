@@ -11,7 +11,7 @@ export const LoginWithGoogleButton = (props: { text?: string }) => {
   return (
     <Button
       className="justify-self-start"
-      Icon={<GoogleIcon />}
+      icon={<GoogleIcon />}
       onClick={async () => {
         await onSignInWithProvider({
           provider: 'google',

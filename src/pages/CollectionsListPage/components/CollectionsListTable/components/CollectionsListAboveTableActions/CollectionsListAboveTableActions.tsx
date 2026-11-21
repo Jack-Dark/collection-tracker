@@ -107,7 +107,7 @@ export const CollectionsListAboveTableActions = (props: {
                   <Button
                     className="btn-sm md:btn-md"
                     disabled={isEditing}
-                    Icon={<EditIcon />}
+                    icon={<EditIcon />}
                     onClick={() => {
                       addToEditingRowIds(...selectedRowIds);
                     }}
@@ -119,7 +119,7 @@ export const CollectionsListAboveTableActions = (props: {
                   <Button
                     className="btn-sm md:btn-md"
                     disabled={isEditing}
-                    Icon={<DeleteIcon />}
+                    icon={<DeleteIcon />}
                     onClick={showConfirmDeleteDialog}
                     variant="alert"
                   >
@@ -134,7 +134,7 @@ export const CollectionsListAboveTableActions = (props: {
                 <>
                   <Button
                     className="btn-sm md:btn-md"
-                    Icon={<ClearIcon />}
+                    icon={<ClearIcon />}
                     onClick={onCancel}
                     text="Cancel"
                     variant="mono"

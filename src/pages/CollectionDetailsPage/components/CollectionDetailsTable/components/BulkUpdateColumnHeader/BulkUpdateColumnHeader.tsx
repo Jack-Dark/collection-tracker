@@ -40,7 +40,7 @@ export const BulkUpdateColumnHeader = (
           Trigger={() => {
             return (
               <Button
-                Icon={
+                icon={
                   <DynamicFeedIcon
                     className="cursor-pointer"
                     fontSize="inherit"

@@ -42,7 +42,7 @@ export const AddNewCollectionItemButton = ({
         return (
           <HotkeyPopover hotkey="new">
             <Button
-              Icon={<AddIcon />}
+              icon={<AddIcon />}
               onClick={async () => {
                 const newCollectionItem = await createNewCollectionItem();
 

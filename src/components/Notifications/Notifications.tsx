@@ -66,7 +66,7 @@ export const Notifications = () => {
               <Button
                 aria-label="Close"
                 className="text-inherit"
-                Icon={<CloseIcon />}
+                icon={<CloseIcon />}
                 onClick={() => {
                   return clearNotification(notification.id);
                 }}

@@ -29,7 +29,7 @@ export const CollectionsListSubmitButton = (props: {
             <Button
               className="flex flex-nowrap gap-2 btn-sm md:btn-md"
               disabled={disabled}
-              Icon={<SaveIcon />}
+              icon={<SaveIcon />}
               onClick={(e) => {
                 e.preventDefault();
 

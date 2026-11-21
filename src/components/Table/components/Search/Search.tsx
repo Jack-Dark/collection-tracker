@@ -60,7 +60,7 @@ export const Search = (props: SearchPropsDef) => {
           <Button
             aria-label="Search"
             className="size-full text-inherit hover:text-theme-link-hover"
-            Icon={<ClearIcon />}
+            icon={<ClearIcon />}
             onClick={() => {
               inputRef.current?.focus();
 

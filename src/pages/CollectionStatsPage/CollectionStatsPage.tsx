@@ -32,7 +32,7 @@ export const CollectionStatsPage: RouteComponent = () => {
     <PageWrapper title={`${data.name} - Stats`}>
       <div className="h-full grid grid-rows-[auto_1fr] gap-4">
         <Link className="mr-auto" params={{ id }} to="/collections/$id">
-          <Button Icon={<NavigateBeforeIcon />} text="Back" variant="mono" />
+          <Button icon={<NavigateBeforeIcon />} text="Back" variant="mono" />
         </Link>
 
         <div className="flex justify-center size-full overflow-auto">

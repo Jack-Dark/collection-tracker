@@ -36,7 +36,7 @@ export const SortableThumbnail = (props: SortableThumbnailPropsDef) => {
           <Button
             aria-label="Delete"
             className="text-theme-t2 hover:text-theme-t-alert"
-            Icon={<DeleteIcon />}
+            icon={<DeleteIcon />}
             size="xs"
             variant="ghost"
           />

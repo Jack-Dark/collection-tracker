@@ -234,7 +234,7 @@ export const CollectionsListCustomFieldsEditableCell = (props: {
                       <Button
                         aria-label="Edit"
                         className="text-theme-t2 hover:text-theme-link-hover cursor-pointer ml-auto p-0.5"
-                        Icon={<EditIcon fontSize="inherit" />}
+                        icon={<EditIcon fontSize="inherit" />}
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -274,7 +274,7 @@ export const CollectionsListCustomFieldsEditableCell = (props: {
                     <Button
                       aria-label="Delete"
                       className="text-theme-t2 hover:text-theme-t-alert-hover cursor-pointer ml-auto px-2 py-1"
-                      Icon={<DeleteIcon fontSize="inherit" />}
+                      icon={<DeleteIcon fontSize="inherit" />}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();

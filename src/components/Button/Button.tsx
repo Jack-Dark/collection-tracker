@@ -71,18 +71,18 @@ export type ButtonPropsDef = Omit<MuiButtonProps, 'form'> & {
     | {
         'aria-label'?: string;
         children?: never;
-        Icon?: ReactNode;
+        icon?: ReactNode;
         text: string;
       }
     | PropsWithChildren<{
         'aria-label'?: string;
-        Icon?: ReactNode;
+        icon?: ReactNode;
         text?: never;
       }>
     | {
         'aria-label': string;
         children?: never;
-        Icon: ReactNode;
+        icon: ReactNode;
         text?: never;
       }
   );
@@ -96,7 +96,7 @@ export const Button = ({
   children,
   className = '',
   disabled = false,
-  Icon,
+  icon: Icon,
   iconPosition = iconPositions.left,
   processing = false,
   size = 'md',

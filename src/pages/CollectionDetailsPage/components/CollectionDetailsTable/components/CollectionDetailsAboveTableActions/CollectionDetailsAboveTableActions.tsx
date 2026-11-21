@@ -117,7 +117,7 @@ export const CollectionDetailsAboveTableActions = ({
             <Button
               className="btn-sm md:btn-md"
               disabled={isEditing}
-              Icon={<EditIcon />}
+              icon={<EditIcon />}
               onClick={() => {
                 addToEditingRowIds(...selectedRowIds);
               }}
@@ -129,7 +129,7 @@ export const CollectionDetailsAboveTableActions = ({
             <Button
               className="btn-sm md:btn-md"
               disabled={isEditing}
-              Icon={<DeleteIcon />}
+              icon={<DeleteIcon />}
               onClick={showConfirmDeleteDialog}
               variant="alert"
             >
@@ -144,7 +144,7 @@ export const CollectionDetailsAboveTableActions = ({
           <Link params={{ id }} to="/collections/$id/stats">
             <Button
               className="btn-sm md:btn-md"
-              Icon={<InsightsIcon />}
+              icon={<InsightsIcon />}
               text="Stats"
               variant="mono"
             />
@@ -155,7 +155,7 @@ export const CollectionDetailsAboveTableActions = ({
           <>
             <Button
               className="btn-sm md:btn-md"
-              Icon={<ClearIcon />}
+              icon={<ClearIcon />}
               onClick={async () => {
                 resetRowSelection();
 
