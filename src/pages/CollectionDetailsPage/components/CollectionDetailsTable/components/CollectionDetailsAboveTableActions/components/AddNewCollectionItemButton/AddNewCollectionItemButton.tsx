@@ -2,7 +2,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
 import { useRef } from 'react';
 
-import type { ButtonPropsDef } from '#/components/Button';
+import type { ButtonPropsDef } from '#/components/Button/Button.types';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { Button } from '#/components/Button';

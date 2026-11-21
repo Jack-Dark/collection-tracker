@@ -3,7 +3,8 @@ import type { Meta, StoryObj } from '@storybook/tanstack-react';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { fn } from 'storybook/test';
 
-import { Button, buttonVariants } from '#/components/Button';
+import { Button } from './Button';
+import { buttonVariants } from './Button.constants';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
