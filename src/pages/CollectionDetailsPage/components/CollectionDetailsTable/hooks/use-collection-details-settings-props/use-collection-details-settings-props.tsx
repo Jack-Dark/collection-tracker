@@ -62,7 +62,7 @@ export const useCollectionDetailsSettingsProps = () => {
       key: 'download-data',
       Label: (
         // TODO - FUTURE FEATURE: ADD DOWNLOAD DATA SUPPORT
-        <FormatLabelWithIcon Icon={DownloadIcon}>
+        <FormatLabelWithIcon Icon={<DownloadIcon />}>
           <p>Download collection into CSV</p>
           <p>(coming soon)</p>
         </FormatLabelWithIcon>
@@ -73,7 +73,7 @@ export const useCollectionDetailsSettingsProps = () => {
       key: 'upload-data',
       Label: (
         // TODO - FUTURE FEATURE: ADD UPLOAD DATA SUPPORT
-        <FormatLabelWithIcon Icon={UploadIcon}>
+        <FormatLabelWithIcon Icon={<UploadIcon />}>
           <p>Upload CSV into collection</p>
           <p>(coming soon)</p>
         </FormatLabelWithIcon>
@@ -92,20 +92,7 @@ export const FormatLabelWithStatusIcon = (
   const { active, children } = props;
 
   return (
-    <FormatLabelWithIcon
-      Icon={() => {
-        switch (active) {
-          case true:
-            return <CheckIcon />;
-
-          case false:
-            return <CloseIcon />;
-
-          default:
-            return null;
-        }
-      }}
-    >
+    <FormatLabelWithIcon Icon={active ? <CheckIcon /> : <CloseIcon />}>
       {children}
     </FormatLabelWithIcon>
   );

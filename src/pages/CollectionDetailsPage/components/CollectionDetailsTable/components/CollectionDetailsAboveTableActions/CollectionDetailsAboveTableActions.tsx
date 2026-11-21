@@ -117,7 +117,7 @@ export const CollectionDetailsAboveTableActions = ({
             <Button
               className="btn-sm md:btn-md"
               disabled={isEditing}
-              Icon={EditIcon}
+              Icon={<EditIcon />}
               onClick={() => {
                 addToEditingRowIds(...selectedRowIds);
               }}
@@ -129,7 +129,7 @@ export const CollectionDetailsAboveTableActions = ({
             <Button
               className="btn-sm md:btn-md"
               disabled={isEditing}
-              Icon={DeleteIcon}
+              Icon={<DeleteIcon />}
               onClick={showConfirmDeleteDialog}
               variant="alert"
             >
@@ -142,7 +142,12 @@ export const CollectionDetailsAboveTableActions = ({
       <div className="flex gap-2">
         {showStatsButton && (
           <Link params={{ id }} to="/collections/$id/stats">
-            <Button Icon={InsightsIcon} text="Stats" variant="mono" />
+            <Button
+              className="btn-sm md:btn-md"
+              Icon={<InsightsIcon />}
+              text="Stats"
+              variant="mono"
+            />
           </Link>
         )}
 
@@ -150,7 +155,7 @@ export const CollectionDetailsAboveTableActions = ({
           <>
             <Button
               className="btn-sm md:btn-md"
-              Icon={ClearIcon}
+              Icon={<ClearIcon />}
               onClick={async () => {
                 resetRowSelection();
 

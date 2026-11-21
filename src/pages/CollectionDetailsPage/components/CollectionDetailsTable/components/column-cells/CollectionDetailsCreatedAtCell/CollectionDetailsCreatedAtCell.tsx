@@ -44,7 +44,7 @@ export const CollectionDetailsCreatedAtCell = ({
                 return showNewRecordButtons ? (
                   <>
                     <Button
-                      Icon={ClearIcon}
+                      Icon={<ClearIcon />}
                       onClick={() => {
                         collectionItemsField.removeValue(rowIndex);
                         removeFromEditingRowIds(String(value.id));

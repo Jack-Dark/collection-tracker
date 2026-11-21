@@ -11,20 +11,7 @@ export const FormatLabelWithStatusIcon = (
   const { active, children } = props;
 
   return (
-    <FormatLabelWithIcon
-      Icon={() => {
-        switch (active) {
-          case true:
-            return <CheckIcon />;
-
-          case false:
-            return <CloseIcon />;
-
-          default:
-            return null;
-        }
-      }}
-    >
+    <FormatLabelWithIcon Icon={active ? <CheckIcon /> : <CloseIcon />}>
       {children}
     </FormatLabelWithIcon>
   );

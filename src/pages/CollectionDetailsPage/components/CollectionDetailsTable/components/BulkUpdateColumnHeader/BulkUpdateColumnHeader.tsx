@@ -40,14 +40,12 @@ export const BulkUpdateColumnHeader = (
           Trigger={() => {
             return (
               <Button
-                Icon={() => {
-                  return (
-                    <DynamicFeedIcon
-                      className="cursor-pointer"
-                      fontSize="inherit"
-                    />
-                  );
-                }}
+                Icon={
+                  <DynamicFeedIcon
+                    className="cursor-pointer"
+                    fontSize="inherit"
+                  />
+                }
                 onClick={showBulkUpdateDialog}
                 size="sm"
                 variant="secondary"

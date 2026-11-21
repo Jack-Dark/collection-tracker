@@ -1,5 +1,5 @@
 import type { ButtonProps as MuiButtonProps } from '@base-ui/react';
-import type { JSXElementConstructor, PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 
 import { Button as MuiButton } from '@base-ui/react';
 import { twMerge } from 'tailwind-merge';
@@ -20,6 +20,43 @@ export type ButtonVariantDef = (typeof buttonVariants)[number];
 
 type ButtonSizeDef = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'custom';
 
+// type ReactNodeOrConstructorDef<TProps = Record<any, any>> =
+//   ReactNode | JSXElementConstructor<TProps>;
+
+// const RenderNodeOrConstructor = <TProps extends Record<any, any>>({
+//   content,
+//   ...rest
+// }: {
+//   content: ReactNodeOrConstructorDef<TProps>;
+// } & TProps): ReactNode => {
+//   if (!content) {
+//     return null;
+//   }
+
+//   if (
+//     isValidElement(content) ||
+//     typeof content === 'string' ||
+//     typeof content === 'number' ||
+//     typeof content === 'boolean' ||
+//     Array.isArray(content)
+//   ) {
+//     return content;
+//   }
+
+//   const ContentComponent = content as JSXElementConstructor<TProps>;
+//   const contentProps = rest as unknown as TProps;
+
+//   if (import.meta.env.DEV) {
+//     const source = rest['data-tsd-source'];
+//     console.warn(
+//       '[DEV MODE] Consider replacing your JSXElementConstructor with a ReactNode.',
+//       source,
+//     );
+//   }
+
+//   return <ContentComponent {...contentProps} />;
+// };
+
 export type ButtonPropsDef = Omit<MuiButtonProps, 'form'> & {
   className?: string;
   disabled?: boolean;
@@ -34,18 +71,18 @@ export type ButtonPropsDef = Omit<MuiButtonProps, 'form'> & {
     | {
         'aria-label'?: string;
         children?: never;
-        Icon?: JSXElementConstructor<{ className?: string }>;
+        Icon?: ReactNode;
         text: string;
       }
     | PropsWithChildren<{
         'aria-label'?: string;
-        Icon?: JSXElementConstructor<{ className?: string }>;
+        Icon?: ReactNode;
         text?: never;
       }>
     | {
         'aria-label': string;
         children?: never;
-        Icon: JSXElementConstructor<{ className?: string }>;
+        Icon: ReactNode;
         text?: never;
       }
   );
@@ -85,7 +122,7 @@ export const Button = ({
         (processing ? (
           <LoadingSpinner className="size-5" variant="mono" />
         ) : (
-          Icon && <Icon className="icon" />
+          Icon
         ))}
 
       {children || text}
@@ -94,7 +131,7 @@ export const Button = ({
         (processing ? (
           <LoadingSpinner className="size-5" variant="mono" />
         ) : (
-          Icon && <Icon className="icon" />
+          Icon
         ))}
     </MuiButton>
   );

@@ -81,7 +81,7 @@ export const Variants: Story = {
 
 export const Sizes: Story = {
   args: {
-    Icon: SettingsIcon,
+    Icon: <SettingsIcon />,
   },
   decorators: [
     (_Story, { args: { children: _children, ...props } }) => {

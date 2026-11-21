@@ -39,7 +39,7 @@ export const CollectionsListCreatedAtCell = (props: {
                 return (
                   <>
                     <Button
-                      Icon={ClearIcon}
+                      Icon={<ClearIcon />}
                       onClick={() => {
                         recordsField.removeValue(index);
                         removeFromEditingRowIds(rowId);

@@ -1,7 +1,7 @@
 @utility btn-xs {
   @apply px-1 py-0.5 text-sm;
 
-  .icon {
+  svg {
     @apply !text-base
   }
 }
@@ -9,7 +9,7 @@
 @utility btn-sm {
   @apply px-3 py-1 text-sm;
 
-  .icon {
+  svg {
     @apply !text-lg
   }
 }
@@ -17,7 +17,7 @@
 @utility btn-md {
   @apply px-4 py-1.5 text-base;
 
-  .icon {
+  svg {
     @apply !text-xl
   }
 }
@@ -25,7 +25,7 @@
 @utility btn-lg {
   @apply px-5 py-2 text-lg;
 
-  .icon {
+  svg {
     @apply !text-2xl
   }
 }
@@ -33,7 +33,7 @@
 @utility btn-xl {
   @apply px-5 py-2.5 text-xl;
 
-  .icon {
+  svg {
     @apply !text-3xl
   }
 }
@@ -41,7 +41,7 @@
 @utility btn-2xl {
   @apply px-6 py-3 text-2xl;
 
-  .icon {
+  svg {
     @apply !text-4xl
   }
 }
