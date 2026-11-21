@@ -20,43 +20,6 @@ export type ButtonVariantDef = (typeof buttonVariants)[number];
 
 type ButtonSizeDef = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'custom';
 
-// type ReactNodeOrConstructorDef<TProps = Record<any, any>> =
-//   ReactNode | JSXElementConstructor<TProps>;
-
-// const RenderNodeOrConstructor = <TProps extends Record<any, any>>({
-//   content,
-//   ...rest
-// }: {
-//   content: ReactNodeOrConstructorDef<TProps>;
-// } & TProps): ReactNode => {
-//   if (!content) {
-//     return null;
-//   }
-
-//   if (
-//     isValidElement(content) ||
-//     typeof content === 'string' ||
-//     typeof content === 'number' ||
-//     typeof content === 'boolean' ||
-//     Array.isArray(content)
-//   ) {
-//     return content;
-//   }
-
-//   const ContentComponent = content as JSXElementConstructor<TProps>;
-//   const contentProps = rest as unknown as TProps;
-
-//   if (import.meta.env.DEV) {
-//     const source = rest['data-tsd-source'];
-//     console.warn(
-//       '[DEV MODE] Consider replacing your JSXElementConstructor with a ReactNode.',
-//       source,
-//     );
-//   }
-
-//   return <ContentComponent {...contentProps} />;
-// };
-
 export type ButtonPropsDef = Omit<MuiButtonProps, 'form'> & {
   className?: string;
   disabled?: boolean;
