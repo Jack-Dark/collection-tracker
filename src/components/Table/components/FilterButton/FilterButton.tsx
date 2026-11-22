@@ -26,7 +26,7 @@ export const FilterButton = (props: FiltersButtonPropsDef) => {
                 variant="mono"
               />
               <Button
-                Icon={SearchIcon}
+                icon={<SearchIcon />}
                 onClick={async () => {
                   await onSubmit();
                   hideFilters();
@@ -51,13 +51,7 @@ export const FilterButton = (props: FiltersButtonPropsDef) => {
     <Button
       aria-label={`Filters (${numApplied})`}
       className="btn-xs md:btn-md"
-      Icon={() => {
-        return (
-          <div>
-            {numApplied ? <FilterAltIcon /> : <FilterAltOutlinedIcon />}
-          </div>
-        );
-      }}
+      icon={numApplied ? <FilterAltIcon /> : <FilterAltOutlinedIcon />}
       onClick={showFilters}
       variant={numApplied ? 'secondary' : 'mono'}
     >

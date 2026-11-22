@@ -99,7 +99,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
           className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-full border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer text-left"
         >
           <Select.Value
-            className="pl-1.5 grid justify-start"
+            className="pl-1.5 grid items-center justify-start"
             placeholder={placeholder}
           >
             {(item: TItem | undefined) => {
@@ -117,8 +117,8 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
               );
             }}
           </Select.Value>
-          <Select.Icon>
-            <ExpandMoreIcon />
+          <Select.Icon className="text-base flex items-center">
+            <ExpandMoreIcon fontSize="inherit" />
           </Select.Icon>
         </Select.Trigger>
         <Select.Portal>

@@ -40,7 +40,7 @@ export const Dialog = (props: DialogPropsDef) => {
         className={`fixed inset-0 flex md:items-center md:justify-center overflow-hidden ${isFullScreen ? '' : 'md:p-6'}`}
       >
         <MuiDialog.Popup
-          className={`relative grid auto-rows-[max-content_1fr_max-content] w-full max-w-full h-full md:min-h-70 max-h-full ${isFullScreen ? '' : `md:w-full ${maxWidthClassName} md:h-auto md:max-h-[90dvh]`} flex-col bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 duration-100 ease-out rounded-3xl`}
+          className={`relative grid auto-rows-[max-content_1fr_max-content] w-full max-w-full h-full md:min-h-70 max-h-full ${isFullScreen ? '' : `md:w-full ${maxWidthClassName} md:h-auto md:max-h-[90dvh]`} flex-col bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 duration-100 ease-out md:rounded-3xl`}
           data-dialog=""
         >
           {(Header || !hideClose) && (

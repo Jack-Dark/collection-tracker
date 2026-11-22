@@ -102,39 +102,10 @@ export const CollectionsListAboveTableActions = (props: {
         return (
           <div className="flex justify-between">
             <div className="flex gap-2">
-              {!!selectedRowIds.length && (
-                <>
-                  <Button
-                    className="btn-sm md:btn-md"
-                    disabled={isEditing}
-                    Icon={EditIcon}
-                    onClick={() => {
-                      addToEditingRowIds(...selectedRowIds);
-                    }}
-                    variant="secondary"
-                  >
-                    <span className="sr-only md:not-sr-only">Edit</span>
-                  </Button>
-
-                  <Button
-                    className="btn-sm md:btn-md"
-                    disabled={isEditing}
-                    Icon={DeleteIcon}
-                    onClick={showConfirmDeleteDialog}
-                    variant="alert"
-                  >
-                    <span className="sr-only md:not-sr-only">Delete</span>
-                  </Button>
-                </>
-              )}
-            </div>
-
-            <div className="flex gap-2">
               {isEditing ? (
                 <>
                   <Button
-                    className="btn-sm md:btn-md"
-                    Icon={ClearIcon}
+                    icon={<ClearIcon />}
                     onClick={onCancel}
                     text="Cancel"
                     variant="mono"
@@ -145,6 +116,34 @@ export const CollectionsListAboveTableActions = (props: {
                   />
                 </>
               ) : (
+                !!selectedRowIds.length && (
+                  <>
+                    <Button
+                      disabled={isEditing}
+                      icon={<EditIcon />}
+                      onClick={() => {
+                        addToEditingRowIds(...selectedRowIds);
+                      }}
+                      variant="secondary"
+                    >
+                      <span className="sr-only md:not-sr-only">Edit</span>
+                    </Button>
+
+                    <Button
+                      disabled={isEditing}
+                      icon={<DeleteIcon />}
+                      onClick={showConfirmDeleteDialog}
+                      variant="alert"
+                    >
+                      <span className="sr-only md:not-sr-only">Delete</span>
+                    </Button>
+                  </>
+                )
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              {!isEditing && (
                 <Popover
                   Description={
                     user?.emailVerified
@@ -155,7 +154,6 @@ export const CollectionsListAboveTableActions = (props: {
                   Trigger={() => {
                     return (
                       <AddNewCollectionButton
-                        className="btn-sm md:btn-md"
                         disabled={!user?.emailVerified}
                         form={form}
                         insertAtIndex={0}

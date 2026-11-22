@@ -41,7 +41,7 @@ export const TableActions = <TData extends RowData>(
           RenderValue={({ item }) => {
             return (
               <div className="flex items-center gap-2">
-                <SwapVertIcon />
+                <SwapVertIcon fontSize="inherit" />
                 <span className="sr-only md:not-sr-only">
                   {String(item.label)}
                 </span>

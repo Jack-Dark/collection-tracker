@@ -173,9 +173,7 @@ export const CustomFieldValueCombobox = ({
               <Button
                 aria-label="Delete"
                 className="text-gray-600 hover:text-red-700 cursor-pointer ml-auto px-2 py-1"
-                Icon={() => {
-                  return <DeleteIcon fontSize="inherit" />;
-                }}
+                icon={<DeleteIcon fontSize="inherit" />}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();

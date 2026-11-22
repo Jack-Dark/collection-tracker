@@ -1,4 +1,4 @@
-import type { ButtonPropsDef } from '#/components/Button';
+import type { ButtonPropsDef } from '#/components/Button/Button.types';
 import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 
 import { useDeleteUser } from '#/api/routes/users/delete-user/delete-user.react-query';

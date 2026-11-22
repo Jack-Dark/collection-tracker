@@ -2,12 +2,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
-import {
-  useBlocker,
-  useLoaderData,
-  useParams,
-  useSearch,
-} from '@tanstack/react-router';
+import { getRouteApi, useBlocker, useParams } from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
 
 import type { CreateCollectionItemsRequestArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
@@ -36,12 +31,13 @@ import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import { useEditingCollectionItemsRowIds } from './hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsPage: RouteComponent = () => {
-  const { collectionName, totalRecords } = useLoaderData({
-    from: '/_protected/collections/$id',
-  });
+  const { data } = useHandleGetCollectionDetailsById();
 
   return (
-    <PageWrapper title={`${collectionName} (${totalRecords})`} wideOnMobile>
+    <PageWrapper
+      title={`${data.collection?.name || '-'} (${data.pagination.totalRecords ?? 0})`}
+      wideOnMobile
+    >
       <CollectionDetailsTable />
     </PageWrapper>
   );
@@ -169,14 +165,18 @@ export const useCollectionDetailsForm = () => {
 };
 
 export const useHandleGetCollectionDetailsById = () => {
-  const searchQueries = useSearch({ from: '/_protected/collections/$id' });
-  const routeParams = useParams({ from: '/_protected/collections/$id' });
+  const { useParams, useSearch } = getRouteApi('/_protected/collections/$id');
+
+  const searchQueries = useSearch();
+  const routeParams = useParams();
+
   const collectionId = Number(routeParams.id);
 
   const context = useGetCollectionDetailsById({
     placeholderData: {
       collection: {
         customFields: [],
+        name: '-',
       },
       items: [],
       lastAddedCustomFieldValues: {},

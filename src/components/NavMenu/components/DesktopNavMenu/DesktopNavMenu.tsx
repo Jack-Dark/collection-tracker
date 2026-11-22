@@ -41,9 +41,9 @@ export const DesktopNavMenu = (props: { items: NavMenuItem[] }) => {
                       <NavigationMenu.Trigger className="flex items-center justify-center rounded-full text-inherit font-medium text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline">
                         {children}
                         {items && (
-                          <div className="py-2 pr-2 ">
+                          <div className="py-2 pr-2">
                             <NavigationMenu.Icon className="inline-block transition-transform duration-200 ease-in-out data-[popup-open]:rotate-180">
-                              <ExpandMoreIcon />
+                              <ExpandMoreIcon fontSize="inherit" />
                             </NavigationMenu.Icon>
                           </div>
                         )}

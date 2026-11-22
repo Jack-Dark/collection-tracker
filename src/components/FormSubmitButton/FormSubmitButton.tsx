@@ -1,6 +1,6 @@
 import type { AnyReactFormApi } from '@tanstack/react-form';
 
-import type { ButtonPropsDef } from '../Button';
+import type { ButtonPropsDef } from '../Button/Button.types';
 
 import { Button } from '../Button';
 
