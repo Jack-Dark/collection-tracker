@@ -112,38 +112,6 @@ export const CollectionDetailsAboveTableActions = ({
   return (
     <div className="flex justify-between">
       <div className="flex gap-2">
-        {!!selectedRowIds.length && (
-          <>
-            <Button
-              disabled={isEditing}
-              icon={<EditIcon />}
-              onClick={() => {
-                addToEditingRowIds(...selectedRowIds);
-              }}
-              variant="secondary"
-            >
-              <span className="sr-only md:not-sr-only">Edit</span>
-            </Button>
-
-            <Button
-              disabled={isEditing}
-              icon={<DeleteIcon />}
-              onClick={showConfirmDeleteDialog}
-              variant="alert"
-            >
-              <span className="sr-only md:not-sr-only">Delete</span>
-            </Button>
-          </>
-        )}
-      </div>
-
-      <div className="flex gap-2">
-        {showStatsButton && (
-          <Link params={{ id }} to="/collections/$id/stats">
-            <Button icon={<InsightsIcon />} text="Stats" variant="mono" />
-          </Link>
-        )}
-
         {isEditing ? (
           <>
             <Button
@@ -162,6 +130,34 @@ export const CollectionDetailsAboveTableActions = ({
             />
           </>
         ) : (
+          !!selectedRowIds.length && (
+            <>
+              <Button
+                disabled={isEditing}
+                icon={<EditIcon />}
+                onClick={() => {
+                  addToEditingRowIds(...selectedRowIds);
+                }}
+                variant="secondary"
+              >
+                <span className="sr-only md:not-sr-only">Edit</span>
+              </Button>
+
+              <Button
+                disabled={isEditing}
+                icon={<DeleteIcon />}
+                onClick={showConfirmDeleteDialog}
+                variant="alert"
+              >
+                <span className="sr-only md:not-sr-only">Delete</span>
+              </Button>
+            </>
+          )
+        )}
+      </div>
+
+      <div className="flex gap-2">
+        {!isEditing && (
           <Popover
             Description={
               user?.emailVerified
@@ -184,6 +180,12 @@ export const CollectionDetailsAboveTableActions = ({
               );
             }}
           />
+        )}
+
+        {showStatsButton && (
+          <Link params={{ id }} to="/collections/$id/stats">
+            <Button icon={<InsightsIcon />} text="Stats" variant="mono" />
+          </Link>
         )}
       </div>
     </div>

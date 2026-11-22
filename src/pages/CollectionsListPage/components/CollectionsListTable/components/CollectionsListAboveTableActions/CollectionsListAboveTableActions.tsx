@@ -102,32 +102,6 @@ export const CollectionsListAboveTableActions = (props: {
         return (
           <div className="flex justify-between">
             <div className="flex gap-2">
-              {!!selectedRowIds.length && (
-                <>
-                  <Button
-                    disabled={isEditing}
-                    icon={<EditIcon />}
-                    onClick={() => {
-                      addToEditingRowIds(...selectedRowIds);
-                    }}
-                    variant="secondary"
-                  >
-                    <span className="sr-only md:not-sr-only">Edit</span>
-                  </Button>
-
-                  <Button
-                    disabled={isEditing}
-                    icon={<DeleteIcon />}
-                    onClick={showConfirmDeleteDialog}
-                    variant="alert"
-                  >
-                    <span className="sr-only md:not-sr-only">Delete</span>
-                  </Button>
-                </>
-              )}
-            </div>
-
-            <div className="flex gap-2">
               {isEditing ? (
                 <>
                   <Button
@@ -142,6 +116,34 @@ export const CollectionsListAboveTableActions = (props: {
                   />
                 </>
               ) : (
+                !!selectedRowIds.length && (
+                  <>
+                    <Button
+                      disabled={isEditing}
+                      icon={<EditIcon />}
+                      onClick={() => {
+                        addToEditingRowIds(...selectedRowIds);
+                      }}
+                      variant="secondary"
+                    >
+                      <span className="sr-only md:not-sr-only">Edit</span>
+                    </Button>
+
+                    <Button
+                      disabled={isEditing}
+                      icon={<DeleteIcon />}
+                      onClick={showConfirmDeleteDialog}
+                      variant="alert"
+                    >
+                      <span className="sr-only md:not-sr-only">Delete</span>
+                    </Button>
+                  </>
+                )
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              {!isEditing && (
                 <Popover
                   Description={
                     user?.emailVerified
