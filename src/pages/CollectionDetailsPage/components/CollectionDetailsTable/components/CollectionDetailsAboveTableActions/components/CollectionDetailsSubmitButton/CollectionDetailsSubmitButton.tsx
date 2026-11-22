@@ -30,7 +30,7 @@ export const CollectionDetailsSubmitButton = ({
         return (
           <HotkeyPopover disabled={disabled} hotkey="save" isTriggerButton>
             <Button
-              className="flex flex-nowrap gap-2 btn-sm md:btn-md"
+              className="flex flex-nowrap gap-2"
               disabled={disabled}
               icon={<SaveIcon />}
               onClick={async (e) => {

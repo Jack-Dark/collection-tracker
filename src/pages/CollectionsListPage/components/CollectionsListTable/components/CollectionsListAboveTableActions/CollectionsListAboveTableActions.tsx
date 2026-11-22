@@ -105,7 +105,6 @@ export const CollectionsListAboveTableActions = (props: {
               {!!selectedRowIds.length && (
                 <>
                   <Button
-                    className="btn-sm md:btn-md"
                     disabled={isEditing}
                     icon={<EditIcon />}
                     onClick={() => {
@@ -117,7 +116,6 @@ export const CollectionsListAboveTableActions = (props: {
                   </Button>
 
                   <Button
-                    className="btn-sm md:btn-md"
                     disabled={isEditing}
                     icon={<DeleteIcon />}
                     onClick={showConfirmDeleteDialog}
@@ -133,7 +131,6 @@ export const CollectionsListAboveTableActions = (props: {
               {isEditing ? (
                 <>
                   <Button
-                    className="btn-sm md:btn-md"
                     icon={<ClearIcon />}
                     onClick={onCancel}
                     text="Cancel"
@@ -155,7 +152,6 @@ export const CollectionsListAboveTableActions = (props: {
                   Trigger={() => {
                     return (
                       <AddNewCollectionButton
-                        className="btn-sm md:btn-md"
                         disabled={!user?.emailVerified}
                         form={form}
                         insertAtIndex={0}

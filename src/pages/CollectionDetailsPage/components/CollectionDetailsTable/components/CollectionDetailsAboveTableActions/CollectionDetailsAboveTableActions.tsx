@@ -115,7 +115,6 @@ export const CollectionDetailsAboveTableActions = ({
         {!!selectedRowIds.length && (
           <>
             <Button
-              className="btn-sm md:btn-md"
               disabled={isEditing}
               icon={<EditIcon />}
               onClick={() => {
@@ -127,7 +126,6 @@ export const CollectionDetailsAboveTableActions = ({
             </Button>
 
             <Button
-              className="btn-sm md:btn-md"
               disabled={isEditing}
               icon={<DeleteIcon />}
               onClick={showConfirmDeleteDialog}
@@ -142,19 +140,13 @@ export const CollectionDetailsAboveTableActions = ({
       <div className="flex gap-2">
         {showStatsButton && (
           <Link params={{ id }} to="/collections/$id/stats">
-            <Button
-              className="btn-sm md:btn-md"
-              icon={<InsightsIcon />}
-              text="Stats"
-              variant="mono"
-            />
+            <Button icon={<InsightsIcon />} text="Stats" variant="mono" />
           </Link>
         )}
 
         {isEditing ? (
           <>
             <Button
-              className="btn-sm md:btn-md"
               icon={<ClearIcon />}
               onClick={async () => {
                 resetRowSelection();
@@ -180,7 +172,6 @@ export const CollectionDetailsAboveTableActions = ({
             Trigger={() => {
               return (
                 <AddNewCollectionItemButton
-                  className="btn-sm md:btn-md"
                   disabled={!user?.emailVerified}
                   form={form}
                   insertAtIndex={0}

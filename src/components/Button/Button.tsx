@@ -14,7 +14,7 @@ export const Button = ({
   icon: Icon,
   iconPosition = iconPositions.left,
   processing = false,
-  size = 'md',
+  size,
   text = '',
   type = 'button',
   variant = 'primary',
@@ -26,7 +26,7 @@ export const Button = ({
       {...rest}
       className={twMerge(
         'btn',
-        getBtnSizeClass(size),
+        size ? getBtnSizeClass(size) : 'btn-sm md:btn-md',
         getBtnVariantClass(variant),
         'flex items-center justify-center gap-2',
         className,
