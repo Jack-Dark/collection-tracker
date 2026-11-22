@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import type { CollectionItemsTableColumn } from '../collection-item.types';
+import type { CollectionItemsTableColumn } from '../../collection-items/collection-item.types';
 
 import { getRequiredPaginationQueriesSchema } from '../../../pagination/pagination.schema';
 

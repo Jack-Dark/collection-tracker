@@ -9,7 +9,7 @@ import { collectionItemsTable } from '#/api/db/db-tables-schema';
 
 import type { GetCollectionStatsByIdRequestArgsDef } from './get-collection-stats-by-id.types';
 
-import { formatCollection } from '../../collections/get-paginated-collections/get-paginated-collections.db-query';
+import { formatCollection } from '../get-paginated-collections/get-paginated-collections.db-query';
 
 export const getCollectionStatsByIdDbQuery = async ({
   context,

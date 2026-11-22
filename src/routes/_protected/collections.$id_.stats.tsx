@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { getCollectionStatsByIdQueryOptions } from '#/api/routes/collection-items/get-collection-stats-by-id/get-collection-stats-by-id.react-query';
+import { getCollectionStatsByIdQueryOptions } from '#/api/routes/collections/get-collection-stats-by-id/get-collection-stats-by-id.react-query';
 import { createMetaTags } from '#/create-meta-tags';
 import { CollectionStatsPage } from '#/pages/CollectionStatsPage';
 

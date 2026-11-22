@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { getCollectionDetailsByIdQueryOptions } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
-import { collectionDetailsSearchQueriesSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
+import { getCollectionDetailsByIdQueryOptions } from '#/api/routes/collections/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { collectionDetailsSearchQueriesSchema } from '#/api/routes/collections/get-collection-details-by-id/get-collection-details-by-id.schema';
 import { createMetaTags } from '#/create-meta-tags';
 import { CollectionDetailsPage } from '#/pages/CollectionDetailsPage';
 

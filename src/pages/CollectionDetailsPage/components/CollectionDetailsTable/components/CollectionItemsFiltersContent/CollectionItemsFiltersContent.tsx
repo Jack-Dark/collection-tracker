@@ -6,10 +6,10 @@ import { useSearch } from '@tanstack/react-router';
 import { createStore } from '@tanstack/react-store';
 import { useLayoutEffect, useMemo } from 'react';
 
-import type { GetFiltersForCollectionResponseDef } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.types';
+import type { GetFiltersForCollectionResponseDef } from '#/api/routes/collections/get-filters-for-collection/get-filters-for-collection.types';
 import type { DefaultSelectItemDef } from '#/components/Fields/SelectField/SelectField.types';
 
-import { useGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
+import { useGetFiltersForCollection } from '#/api/routes/collections/get-filters-for-collection/get-filters-for-collection.react-query';
 import { Button } from '#/components/Button';
 import { ComboboxField } from '#/components/Fields/ComboboxField';
 import { FieldWrapper } from '#/components/Fields/FieldWrapper';

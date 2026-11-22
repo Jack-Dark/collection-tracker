@@ -28,14 +28,14 @@ import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 import { articlesToIgnore } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-ignore-sort-articles';
 
+import type { CollectionItemsTableColumn } from '../../collection-items/collection-item.types';
 import type {
   CustomFieldValueDef,
   CustomFieldValuesByFieldId,
 } from '../../custom-field-values/custom-field-values.types';
-import type { CollectionItemsTableColumn } from '../collection-item.types';
 import type { GetCollectionDetailsByIdRequestArgsDef } from './get-collection-details-by-id.types';
 
-import { formatCollection } from '../../collections/get-paginated-collections/get-paginated-collections.db-query';
+import { formatCollection } from '../get-paginated-collections/get-paginated-collections.db-query';
 
 export const getCollectionDetailsByIdDbQuery = async ({
   context,

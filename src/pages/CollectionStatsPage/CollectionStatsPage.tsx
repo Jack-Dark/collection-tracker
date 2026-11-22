@@ -3,7 +3,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, useParams } from '@tanstack/react-router';
 
-import { useGetCollectionStatsById } from '#/api/routes/collection-items/get-collection-stats-by-id/get-collection-stats-by-id.react-query';
+import { useGetCollectionStatsById } from '#/api/routes/collections/get-collection-stats-by-id/get-collection-stats-by-id.react-query';
 import { Button } from '#/components/Button';
 import { PageWrapper } from '#/components/PageWrapper';
 
