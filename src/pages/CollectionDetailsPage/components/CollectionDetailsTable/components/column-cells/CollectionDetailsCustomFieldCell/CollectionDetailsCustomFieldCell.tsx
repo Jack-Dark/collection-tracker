@@ -92,7 +92,7 @@ export const CollectionDetailsCustomFieldCell = (
                 fontSize="inherit"
               />
             ) : (
-              (cellValue ?? <EmptyCellValue />)
+              (cellValue?.toLocaleString() ?? <EmptyCellValue />)
             )}
           </>
         );
