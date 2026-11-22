@@ -55,7 +55,7 @@ export const MobileNavMenu = (props: {
   return (
     <Drawer.Root onOpenChange={setOpen} open={open} swipeDirection="left">
       <div className="md:hidden">
-        <Drawer.Trigger className="flex justify-center items-center p-1 text-theme-t1 hover:text-theme-link-hover cursor-pointer">
+        <Drawer.Trigger className="flex justify-center items-center p-1 text-white cursor-pointer">
           <MenuIcon aria-label="Menu" />
         </Drawer.Trigger>
 

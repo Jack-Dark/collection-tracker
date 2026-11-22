@@ -117,8 +117,8 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
               );
             }}
           </Select.Value>
-          <Select.Icon>
-            <ExpandMoreIcon />
+          <Select.Icon className="text-base flex items-center">
+            <ExpandMoreIcon fontSize="inherit" />
           </Select.Icon>
         </Select.Trigger>
         <Select.Portal>
