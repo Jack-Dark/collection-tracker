@@ -200,13 +200,46 @@ export const getCollectionDetailsByIdDbQuery = async ({
     );
     const offset = (page - 1) * limit;
 
+    const orderByCustomFieldValueText = asc(customFieldValuesTable.valueText);
+    const orderByItemName = asc(collectionItemsTable.name);
     const unformattedCollectionItemIds = await tx
-      .selectDistinct({
-        id: collectionItemsTable.id,
-        // ! orderBySql is required to be included for selectDistinct to function
-        orderBySql,
-      })
+      .selectDistinctOn(
+        [
+          customFieldValuesTable.valueText,
+          collectionItemsTable.id,
+          collectionItemsTable.name,
+        ],
+        {
+          id: collectionItemsTable.id,
+          name: collectionItemsTable.name,
+          // ! orderBySql is required to be included for selectDistinct to function
+          orderByCustomFieldValueText,
+          orderByItemName,
+        },
+        //   {
+        //   id: collectionItemsTable.id,
+        //   // // ! orderBySql is required to be included for selectDistinct to function
+        //   // orderBySql,
+        //   // valueBoolean: customFieldValuesTable.valueBoolean,
+        //   // valueNumber: customFieldValuesTable.valueNumber,
+        //   valueText: customFieldValuesTable.valueNumber,
+        // }
+      )
       .from(collectionItemsTable)
+      .innerJoin(
+        collectionItemsToCustomFieldValuesTable,
+        eq(
+          collectionItemsTable.id,
+          collectionItemsToCustomFieldValuesTable.collectionItemId,
+        ),
+      )
+      .innerJoin(
+        customFieldValuesTable,
+        eq(
+          collectionItemsToCustomFieldValuesTable.customFieldValueId,
+          customFieldValuesTable.id,
+        ),
+      )
       .where(
         and(
           eq(collectionItemsTable.collectionId, collectionId),
@@ -215,9 +248,16 @@ export const getCollectionDetailsByIdDbQuery = async ({
           ...formattedFiltersSql,
         ),
       )
-      .orderBy(orderBySql)
+      .orderBy(orderByCustomFieldValueText, orderByItemName)
+      // .orderBy(orderBySql)
       .limit(limit)
       .offset(offset);
+
+    console.clear();
+    console.log(
+      '🚀 ~ getCollectionDetailsByIdDbQuery ~ unformattedCollectionItemIds:',
+      unformattedCollectionItemIds,
+    );
 
     const formattedCollectionItemIds = unformattedCollectionItemIds.map(
       ({ id }) => {
@@ -232,6 +272,9 @@ export const getCollectionDetailsByIdDbQuery = async ({
       orderBy: (table) => {
         return getOrderBy(table[sortingField || 'name']);
       },
+      // orderBy: (_collectionItemsTable) => {
+      //   return orderBySql;
+      // },
       where: {
         AND: [
           {
