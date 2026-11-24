@@ -14,6 +14,7 @@ import {
   between,
   notExists,
 } from 'drizzle-orm';
+import _ from 'lodash';
 
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
@@ -210,7 +211,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
     const orderByCustomFieldValueText = asc(customFieldValuesTable.valueText);
 
-    const getUnformattedCollectionItemIds = tx
+    const distinctCollectionItems = tx
       .selectDistinctOn(
         [
           collectionItemsTable.id,
@@ -235,9 +236,12 @@ export const getCollectionDetailsByIdDbQuery = async ({
       )
       .innerJoin(
         customFieldValuesTable,
-        eq(
-          collectionItemsToCustomFieldValuesTable.customFieldValueId,
-          customFieldValuesTable.id,
+        and(
+          eq(
+            collectionItemsToCustomFieldValuesTable.customFieldValueId,
+            customFieldValuesTable.id,
+          ),
+          eq(customFieldValuesTable.customFieldId, 5),
         ),
       )
       .where(
@@ -248,13 +252,14 @@ export const getCollectionDetailsByIdDbQuery = async ({
           ...formattedFiltersSql,
         ),
       )
-      .orderBy(orderByCustomFieldValueText, orderByCollectionItemName);
-    // .orderBy(orderBySql)
-    // .limit(limit)
-    // .offset(offset);
+      .orderBy(orderByCustomFieldValueText, orderByCollectionItemName)
+      // .orderBy(orderBySql)
+      .limit(limit)
+      .offset(offset);
 
-    const unformattedCollectionItemIds = await getUnformattedCollectionItemIds;
+    const unformattedCollectionItemIds = await distinctCollectionItems;
     console.log('🚀 ~ NUM RESULTS:', unformattedCollectionItemIds.length);
+    console.log('🚀 ~ RESULTS:', unformattedCollectionItemIds);
 
     const formattedCollectionItemIds = unformattedCollectionItemIds.map(
       ({ id }) => {
@@ -266,11 +271,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
       columns: {
         userId: false,
       },
-      orderBy: (table) => {
-        const { orderBy } = getOrderBy(table[sortingField || 'name']);
-
-        return orderBy;
-      },
       where: {
         AND: [
           {
@@ -280,19 +280,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
             },
             userId,
           },
-          trimmedQuery
-            ? searchNotes
-              ? {
-                  notes: {
-                    ilike: ilikeQuery,
-                  },
-                }
-              : {
-                  name: {
-                    ilike: ilikeQuery,
-                  },
-                }
-            : {},
         ],
       },
       with: {
@@ -339,6 +326,10 @@ export const getCollectionDetailsByIdDbQuery = async ({
       },
     );
 
+    const sortedItems = _.sortBy(formattedItems, (item) => {
+      return item.customFieldValues[5]?.valueText;
+    });
+
     const lastUpdatedCollectionItem = await tx.query.collectionItems.findFirst({
       columns: {},
       with: {
@@ -384,7 +375,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
     return {
       collection: formattedCollection,
-      items: formattedItems,
+      items: sortedItems,
       lastAddedCustomFieldValues: lastAddedCustomFieldValuesByCustomFieldId,
       pagination,
     };
