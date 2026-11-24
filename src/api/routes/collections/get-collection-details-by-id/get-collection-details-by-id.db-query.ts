@@ -178,13 +178,16 @@ export const getCollectionDetailsByIdDbQuery = async ({
       const directionFn =
         sort.direction === sortDirectionOptions.desc ? desc : asc;
 
-      return directionFn(
+      const formattedColumn =
         column.dataType === 'string'
           ? ignoreSortArticles
             ? sql`REGEXP_REPLACE(lower(${column}), '^(${sql.raw(articlesToIgnore.join('|'))})\\s+', '', 'i')`
             : sql`lower(${column})`
-          : sql`${column}`,
-      );
+          : sql`${column}`;
+
+      const orderBy = directionFn(formattedColumn);
+
+      return { orderBy, formattedColumn };
     };
 
     const trimmedQuery = search.trim();
@@ -195,35 +198,32 @@ export const getCollectionDetailsByIdDbQuery = async ({
         : ilike(collectionItemsTable.name, ilikeQuery)
       : undefined;
 
-    const orderBySql = getOrderBy(
-      collectionItemsTable[sortingField] || collectionItemsTable.name,
-    );
+    // const orderBySql = getOrderBy(
+    //   collectionItemsTable[sortingField] || collectionItemsTable.name,
+    // );
     const offset = (page - 1) * limit;
 
+    const {
+      orderBy: orderByCollectionItemName,
+      formattedColumn: selectDistinctCollectionItemName,
+    } = getOrderBy(collectionItemsTable.name);
+
     const orderByCustomFieldValueText = asc(customFieldValuesTable.valueText);
-    const orderByItemName = asc(collectionItemsTable.name);
-    const unformattedCollectionItemIds = await tx
+
+    const getUnformattedCollectionItemIds = tx
       .selectDistinctOn(
         [
-          customFieldValuesTable.valueText,
           collectionItemsTable.id,
-          collectionItemsTable.name,
+          customFieldValuesTable.valueText,
+          selectDistinctCollectionItemName,
         ],
         {
           id: collectionItemsTable.id,
           name: collectionItemsTable.name,
-          // ! orderBySql is required to be included for selectDistinct to function
+          // ! all orderBySql is required to be included for selectDistinctOn to function
           orderByCustomFieldValueText,
-          orderByItemName,
+          orderByCollectionItemName,
         },
-        //   {
-        //   id: collectionItemsTable.id,
-        //   // // ! orderBySql is required to be included for selectDistinct to function
-        //   // orderBySql,
-        //   // valueBoolean: customFieldValuesTable.valueBoolean,
-        //   // valueNumber: customFieldValuesTable.valueNumber,
-        //   valueText: customFieldValuesTable.valueNumber,
-        // }
       )
       .from(collectionItemsTable)
       .innerJoin(
@@ -248,16 +248,13 @@ export const getCollectionDetailsByIdDbQuery = async ({
           ...formattedFiltersSql,
         ),
       )
-      .orderBy(orderByCustomFieldValueText, orderByItemName)
-      // .orderBy(orderBySql)
-      .limit(limit)
-      .offset(offset);
+      .orderBy(orderByCustomFieldValueText, orderByCollectionItemName);
+    // .orderBy(orderBySql)
+    // .limit(limit)
+    // .offset(offset);
 
-    console.clear();
-    console.log(
-      '🚀 ~ getCollectionDetailsByIdDbQuery ~ unformattedCollectionItemIds:',
-      unformattedCollectionItemIds,
-    );
+    const unformattedCollectionItemIds = await getUnformattedCollectionItemIds;
+    console.log('🚀 ~ NUM RESULTS:', unformattedCollectionItemIds.length);
 
     const formattedCollectionItemIds = unformattedCollectionItemIds.map(
       ({ id }) => {
@@ -270,11 +267,10 @@ export const getCollectionDetailsByIdDbQuery = async ({
         userId: false,
       },
       orderBy: (table) => {
-        return getOrderBy(table[sortingField || 'name']);
+        const { orderBy } = getOrderBy(table[sortingField || 'name']);
+
+        return orderBy;
       },
-      // orderBy: (_collectionItemsTable) => {
-      //   return orderBySql;
-      // },
       where: {
         AND: [
           {
