@@ -2,12 +2,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
 import { useAppHotkeys, useHotkeys } from '@tanstack/react-hotkeys';
-import {
-  getRouteApi,
-  useBlocker,
-  useParams,
-  useRouterState,
-} from '@tanstack/react-router';
+import { getRouteApi, useBlocker, useParams } from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
 
 import type { CreateCollectionItemsRequestArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
@@ -175,12 +170,6 @@ export const useHandleGetCollectionDetailsById = () => {
   const searchQueries = useSearch();
   const routeParams = useParams();
 
-  const isRouteLoading = useRouterState({
-    select: ({ isLoading }) => {
-      return isLoading;
-    },
-  });
-
   const collectionId = Number(routeParams.id);
 
   const context = useGetCollectionDetailsById({
@@ -198,8 +187,8 @@ export const useHandleGetCollectionDetailsById = () => {
   const { toggleSpinner } = useSpinner();
 
   useLayoutEffect(() => {
-    toggleSpinner(context.isFetching || isRouteLoading);
-  }, [context.isFetching, isRouteLoading]);
+    toggleSpinner(context.isFetching);
+  }, [context.isFetching]);
 
   return context;
 };

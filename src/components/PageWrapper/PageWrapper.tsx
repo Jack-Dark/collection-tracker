@@ -4,13 +4,14 @@ import CoffeeIcon from '@mui/icons-material/Coffee';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import { Suspense } from 'react';
+import { Link, useRouterState } from '@tanstack/react-router';
+import { Suspense, useLayoutEffect } from 'react';
 import { twJoin } from 'tailwind-merge';
 
 import { githubUrl } from '#/constants/githubUrl';
 import { useAuth } from '#/providers/AuthProvider';
 
+import { useSpinner } from '../FullPageLoadingSpinner/useSpinner';
 import { Popover } from '../Popover';
 import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
 import { SiteDesktopNavMenu } from './components/SiteDesktopNavMenu';
@@ -33,6 +34,21 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
   const { user } = useAuth();
 
   const isImpersonating = !!user?.impersonatedBy;
+
+  const isRouteLoading = useRouterState({
+    select: ({ isLoading }) => {
+      return isLoading;
+    },
+  });
+
+  const { hideSpinner, toggleSpinner } = useSpinner();
+
+  useLayoutEffect(() => {
+    toggleSpinner(isRouteLoading);
+
+    // ? safeguard - clear spinner if leaving page
+    return hideSpinner;
+  }, [isRouteLoading]);
 
   return (
     <div className="p-1 md:p-4 width-full h-dvh overflow-hidden grid grid-rows-[auto_1fr] gap-2 md:gap-4">
