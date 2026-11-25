@@ -11,9 +11,9 @@ export const Route = createFileRoute('/_protected/collections/$id')({
   loaderDeps: ({ search }) => {
     return search;
   },
-  loader: async ({ context, deps: searchQueries, params }) => {
+  loader: async ({ context, deps: searchQueries, params: pathParams }) => {
     const queryOptions = getCollectionDetailsByIdQueryOptions({
-      collectionId: Number(params.id),
+      collectionId: Number(pathParams.id),
       params: searchQueries,
     });
 

@@ -1,26 +1,28 @@
 import { useForm } from '@tanstack/react-form';
-import { useNavigate, useSearch } from '@tanstack/react-router';
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 
-import type { RouterPath } from '#/types';
+import type { OAuthCompleteMessageEvent } from '#/routes/_unprotected/auth/popup-callback';
 
-import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
+import { useInvalidateEverything } from '#/api/react-query-hooks/use-invalidate-everything';
 import { useSignInWithEmail } from '#/api/routes/users/sign-in-with-email/sign-in-with-email.react-query';
 import { signInWithEmailRequestSchema } from '#/api/routes/users/sign-in-with-email/sign-in-with-email.schema';
+import { getUserSession } from '#/auth/user-session/get-user-session';
 import { Button } from '#/components/Button';
+import { Dialog } from '#/components/Dialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { InputField } from '#/components/Fields/InputField';
 import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
+import { useAuth } from '#/providers/AuthProvider';
+import { oAuthComplete } from '#/routes/_unprotected/auth/popup-callback';
 
 import { LoginWithGoogleButton } from './components/LoginWithGoogleButton';
 import { ResetPasswordDialog } from './components/PasswordResetDialog';
 
-export const SignInForm = () => {
-  const navigate = useNavigate({ from: '/sign-in' });
-  const searchQueries = useSearch({ from: '/_unprotected/sign-in' });
-
-  const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
+export const SignInForm = (props: {
+  onSuccess?: () => void | Promise<void>;
+}) => {
+  const { onSuccess } = props;
 
   const validationFormOptions = useValidationFormOptions({
     defaultValues: {
@@ -30,15 +32,7 @@ export const SignInForm = () => {
     schema: signInWithEmailRequestSchema,
   });
 
-  const { onSignInWithEmail: onSignIn } = useSignInWithEmail({
-    onSuccess: () => {
-      invalidateGetNavMenuCollections();
-
-      navigate({
-        to: searchQueries.redirect || ('/collections' satisfies RouterPath),
-      });
-    },
-  });
+  const { onSignInWithEmail: onSignIn } = useSignInWithEmail();
 
   const form = useForm({
     ...validationFormOptions,
@@ -63,11 +57,22 @@ export const SignInForm = () => {
     );
   }, []);
 
-  useLayoutEffect(() => {
-    if (searchQueries.resetPassword) {
-      showResetPasswordDialog();
-    }
-  }, [searchQueries.resetPassword]);
+  useEffect(() => {
+    const onMessage = async (
+      event: MessageEvent<OAuthCompleteMessageEvent>,
+    ) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === oAuthComplete) {
+        await onSuccess?.();
+      }
+    };
+
+    window.addEventListener('message', onMessage);
+
+    return () => {
+      return window.removeEventListener('message', onMessage);
+    };
+  }, [onSuccess]);
 
   return (
     <form
@@ -140,4 +145,32 @@ export const SignInForm = () => {
       </div>
     </form>
   );
+};
+
+export const useSignInDialog = () => {
+  const [showSignInDialog, hideSignInDialog] = useDialog(() => {
+    const invalidateEverything = useInvalidateEverything();
+
+    const { user } = useAuth();
+
+    return (
+      <Dialog Header="Sign In" onClose={hideSignInDialog}>
+        <SignInForm
+          onSuccess={async () => {
+            const session = await getUserSession();
+
+            const isSameUser = session && session?.id === user?.id;
+
+            hideSignInDialog();
+
+            if (!isSameUser) {
+              await invalidateEverything({ thenNavigateTo: '/collections' });
+            }
+          }}
+        />
+      </Dialog>
+    );
+  }, []);
+
+  return { showSignInDialog };
 };

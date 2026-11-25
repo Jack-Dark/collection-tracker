@@ -1,9 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { isAPIError } from 'better-auth/api';
+import { ReasonPhrases } from 'http-status-codes';
 import { useLayoutEffect } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications/useNotifications';
+import { useSignInDialog } from '#/pages/SignInPage/components/SignInForm';
 
 import type { UseGenericMutateQueryProps } from './use-generic-mutate-query.types';
 
@@ -51,6 +53,8 @@ export const useGenericMutateQuery = <
   const { hideSpinner, isSpinning, showSpinner } = useSpinner();
   const { notifyError } = useNotifications();
 
+  const { showSignInDialog } = useSignInDialog();
+
   const handleMutationFn = async (
     ...requestArgs: Parameters<typeof mutationFn>
   ) => {
@@ -75,6 +79,10 @@ export const useGenericMutateQuery = <
           : fallbackErrorMessage;
 
       notifyError(message);
+
+      if (message === ReasonPhrases.UNAUTHORIZED) {
+        showSignInDialog();
+      }
 
       await onError?.(message, requestArgs);
     },

@@ -18,6 +18,7 @@ import { SiteDesktopNavMenu } from './components/SiteDesktopNavMenu';
 import { SiteMobileNavMenu } from './components/SiteMobileNavMenu';
 
 type PageWrapperPropsDef = PropsWithChildren<{
+  hideHeader?: boolean;
   suspenseFallback?: ReactNode;
   title?: string;
   wideOnMobile?: boolean;
@@ -26,6 +27,7 @@ type PageWrapperPropsDef = PropsWithChildren<{
 export const PageWrapper = (props: PageWrapperPropsDef) => {
   const {
     children,
+    hideHeader,
     suspenseFallback = 'Loading...',
     title = 'Collection Tracker',
     wideOnMobile,
@@ -51,90 +53,101 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
   }, [isRouteLoading]);
 
   return (
-    <div className="p-1 md:p-4 width-full h-dvh overflow-hidden grid grid-rows-[auto_1fr] gap-2 md:gap-4">
-      <header className="grid gap-2 md:gap-4">
-        {isImpersonating && (
-          <div className="px-2 py-1 bg-amber-400 text-black text-center">
-            Impersonating {user.email}
+    <div
+      className={twJoin(
+        'p-1 md:p-4 width-full h-dvh overflow-hidden grid',
+        hideHeader ? 'grid-rows-1' : 'grid-rows-[auto_1fr]',
+        'gap-2 md:gap-4',
+      )}
+    >
+      {!hideHeader && (
+        <header className="grid gap-2 md:gap-4">
+          {isImpersonating && (
+            <div className="px-2 py-1 bg-amber-400 text-black text-center">
+              Impersonating {user.email}
+            </div>
+          )}
+          <div className="py-1 md:py-0 grid grid-cols-[1fr_auto] gap-2 w-full justify-between text-white">
+            <div className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_auto_1fr] items-center gap-2">
+              <QueryErrorResetBoundary>
+                {({ reset }) => {
+                  return (
+                    <SimpleErrorBoundary onReset={reset}>
+                      <Suspense>
+                        <SiteMobileNavMenu />
+                      </Suspense>
+                    </SimpleErrorBoundary>
+                  );
+                }}
+              </QueryErrorResetBoundary>
+
+              <Link className="hidden md:block text-inherit" to="/">
+                <ListAltIcon
+                  className="text-4xl text-inherit"
+                  fontSize="large"
+                />
+              </Link>
+
+              <Link
+                className="block text-inherit overflow-hidden"
+                to={user?.id ? '/collections' : '/'}
+              >
+                <h1 className="text-inherit text-2xl md:text-3xl block text-ellipsis whitespace-nowrap overflow-hidden w-full">
+                  {title}
+                </h1>
+              </Link>
+            </div>
+
+            <div className="flex gap-2 md:gap-4">
+              <Popover
+                aria-label="Buy me a coffee"
+                Description="Buy me a coffee!"
+                Trigger={() => {
+                  return (
+                    <a
+                      aria-label="Buy me a coffee"
+                      className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
+                      href="https://buymeacoffee.com/collectiontracker"
+                      target="_blank"
+                    >
+                      <CoffeeIcon />
+                    </a>
+                  );
+                }}
+              />
+
+              <Popover
+                aria-label="View GitHub"
+                Description="This project is open source!"
+                Trigger={() => {
+                  return (
+                    <a
+                      aria-label="View GitHub"
+                      className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
+                      href={githubUrl.repo}
+                      target="_blank"
+                    >
+                      <GitHubIcon />
+                    </a>
+                  );
+                }}
+              />
+            </div>
           </div>
-        )}
-        <div className="py-1 md:py-0 grid grid-cols-[1fr_auto] gap-2 w-full justify-between text-white">
-          <div className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_auto_1fr] items-center gap-2">
-            <QueryErrorResetBoundary>
-              {({ reset }) => {
-                return (
-                  <SimpleErrorBoundary onReset={reset}>
-                    <Suspense>
-                      <SiteMobileNavMenu />
-                    </Suspense>
-                  </SimpleErrorBoundary>
-                );
-              }}
-            </QueryErrorResetBoundary>
 
-            <Link className="hidden md:block text-inherit" to="/">
-              <ListAltIcon className="text-4xl text-inherit" fontSize="large" />
-            </Link>
-
-            <Link
-              className="block text-inherit overflow-hidden"
-              to={user?.id ? '/collections' : '/'}
-            >
-              <h1 className="text-inherit text-2xl md:text-3xl block text-ellipsis whitespace-nowrap overflow-hidden w-full">
-                {title}
-              </h1>
-            </Link>
-          </div>
-
-          <div className="flex gap-2 md:gap-4">
-            <Popover
-              aria-label="Buy me a coffee"
-              Description="Buy me a coffee!"
-              Trigger={() => {
-                return (
-                  <a
-                    aria-label="Buy me a coffee"
-                    className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
-                    href="https://buymeacoffee.com/collectiontracker"
-                    target="_blank"
-                  >
-                    <CoffeeIcon />
-                  </a>
-                );
-              }}
-            />
-
-            <Popover
-              aria-label="View GitHub"
-              Description="This project is open source!"
-              Trigger={() => {
-                return (
-                  <a
-                    aria-label="View GitHub"
-                    className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
-                    href={githubUrl.repo}
-                    target="_blank"
-                  >
-                    <GitHubIcon />
-                  </a>
-                );
-              }}
-            />
-          </div>
-        </div>
-
-        <QueryErrorResetBoundary>
-          {({ reset }) => {
-            return (
-              <SimpleErrorBoundary onReset={reset}>
-                <Suspense>
-                  <SiteDesktopNavMenu />
-                </Suspense>
-              </SimpleErrorBoundary>
-            );
-          }}
-        </QueryErrorResetBoundary>
-      </header>
+          <QueryErrorResetBoundary>
+            {({ reset }) => {
+              return (
+                <SimpleErrorBoundary onReset={reset}>
+                  <Suspense>
+                    <SiteDesktopNavMenu />
+                  </Suspense>
+                </SimpleErrorBoundary>
+              );
+            }}
+          </QueryErrorResetBoundary>
+        </header>
+      )}
 
       <main
         className={twJoin(

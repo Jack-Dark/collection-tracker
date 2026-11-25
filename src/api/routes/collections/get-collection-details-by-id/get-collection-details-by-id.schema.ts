@@ -2,7 +2,10 @@ import z from 'zod';
 
 import type { CollectionItemsTableColumn } from '../../collection-items/collection-item.types';
 
-import { getRequiredPaginationQueriesSchema } from '../../../pagination/pagination.schema';
+import {
+  getPaginationQueryDefaults,
+  getRequiredPaginationQueriesSchema,
+} from '../../../pagination/pagination.schema';
 
 export const collectionDetailsFilterValueSchema = z.union([
   z.object({
@@ -34,13 +37,21 @@ export const collectionDetailsFiltersSchema = z.record(
 );
 
 export const collectionDetailsSearchQueriesSchema =
-  getRequiredPaginationQueriesSchema<CollectionItemsTableColumn>('name').and(
-    z.object({
-      filters: collectionDetailsFiltersSchema.optional().default({}),
-      ignoreSortArticles: z.boolean().default(true),
-      searchNotes: z.boolean().default(false),
-    }),
-  );
+  getRequiredPaginationQueriesSchema<CollectionItemsTableColumn>('name')
+    .and(
+      z.object({
+        filters: collectionDetailsFiltersSchema.optional().default({}),
+        ignoreSortArticles: z.boolean().default(true),
+        searchNotes: z.boolean().default(false),
+      }),
+    )
+    .optional()
+    .default({
+      ...getPaginationQueryDefaults('name'),
+      filters: {},
+      ignoreSortArticles: true,
+      searchNotes: false,
+    });
 
 export const getCollectionDetailsByIdSchema = z.object({
   collectionId: z.number(),

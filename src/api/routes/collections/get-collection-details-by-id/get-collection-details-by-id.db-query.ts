@@ -14,6 +14,7 @@ import {
   between,
   notExists,
 } from 'drizzle-orm';
+import { ReasonPhrases } from 'http-status-codes';
 import _ from 'lodash';
 
 import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
@@ -94,6 +95,10 @@ export const getCollectionDetailsByIdDbQuery = async ({
         },
       },
     });
+
+    if (!collection) {
+      throw new Error(ReasonPhrases.NOT_FOUND);
+    }
 
     const formattedCollection = collection && formatCollection(collection);
 

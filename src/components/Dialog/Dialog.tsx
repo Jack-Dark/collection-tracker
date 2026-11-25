@@ -2,14 +2,16 @@ import type { JSXElementConstructor, PropsWithChildren } from 'react';
 
 import { Dialog as MuiDialog } from '@base-ui/react/dialog';
 import CloseIcon from '@mui/icons-material/Close';
+import { twMerge } from 'tailwind-merge';
 
 export type DialogPropsDef = PropsWithChildren<
   {
+    /** Applies to the Popup wrapper. */
+    className?: string;
     disableOnClose?: boolean;
     Footer?: JSXElementConstructor<{}>;
     Header?: JSXElementConstructor<{}> | string;
     isFullScreen?: boolean;
-    maxWidthClassName?: `md:max-w-${string}`;
   } & (
     | {
         hideClose: boolean;
@@ -25,12 +27,12 @@ export type DialogPropsDef = PropsWithChildren<
 export const Dialog = (props: DialogPropsDef) => {
   const {
     children,
+    className,
     disableOnClose,
     Footer,
     Header,
     hideClose,
     isFullScreen,
-    maxWidthClassName = 'md:max-w-100' satisfies DialogPropsDef['maxWidthClassName'],
     onClose,
   } = props;
 
@@ -40,7 +42,14 @@ export const Dialog = (props: DialogPropsDef) => {
         className={`fixed inset-0 flex md:items-center md:justify-center overflow-hidden ${isFullScreen ? '' : 'md:p-6'}`}
       >
         <MuiDialog.Popup
-          className={`relative grid auto-rows-[max-content_1fr_max-content] w-full max-w-full h-full md:min-h-70 max-h-full ${isFullScreen ? '' : `md:w-full ${maxWidthClassName} md:h-auto md:max-h-[90dvh]`} flex-col bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 duration-100 ease-out md:rounded-3xl`}
+          className={twMerge(
+            `relative grid auto-rows-[max-content_1fr_max-content] w-full max-w-full h-full md:min-h-70 max-h-full`,
+            isFullScreen
+              ? ''
+              : `md:w-full md:max-w-100 md:h-auto md:max-h-[90dvh]`,
+            `flex-col bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 duration-100 ease-out md:rounded-3xl`,
+            className,
+          )}
           data-dialog=""
         >
           {(Header || !hideClose) && (
