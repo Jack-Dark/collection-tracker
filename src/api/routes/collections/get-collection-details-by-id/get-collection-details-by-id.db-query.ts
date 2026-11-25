@@ -319,6 +319,14 @@ export const getCollectionDetailsByIdDbQuery = async ({
       sort.data?.customField?.type,
     );
 
+    const getFormattedName = (name: string) => {
+      const formattedName = ignoreSortArticles
+        ? name.toLowerCase().replace(articlesToIgnorePattern, '')
+        : name;
+
+      return formattedName;
+    };
+
     const sortedItems = _.orderBy(
       formattedItems,
       [
@@ -349,15 +357,14 @@ export const getCollectionDetailsByIdDbQuery = async ({
             const columnName = sort.field as keyof typeof item;
 
             return item[columnName];
+          } else {
+            // ? sort by name
+            return getFormattedName(item.name);
           }
         },
         (item) => {
           if (sort.field !== 'name') {
-            const formattedName = ignoreSortArticles
-              ? item.name.toLowerCase().replace(articlesToIgnorePattern, '')
-              : item.name;
-
-            return formattedName;
+            return getFormattedName(item.name);
           }
         },
       ],
