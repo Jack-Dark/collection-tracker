@@ -65,20 +65,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
       : 'name';
 
   return db.transaction(async (tx) => {
-    const totalRecords = await tx.$count(
-      collectionItemsTable,
-      and(
-        eq(collectionItemsTable.collectionId, collectionId),
-        eq(collectionItemsTable.userId, userId),
-      ),
-    );
-
-    const pagination = getPaginationMetadataQuery({
-      currentPage: page,
-      pageSize: limit,
-      totalRecords,
-    });
-
     const collection = await tx.query.collections.findFirst({
       columns: {
         id: true,
@@ -195,10 +181,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
       ignoreSortArticles,
     });
 
-    const {
-      orderBySql: orderByCollectionItemNameSql,
-      selectDistinctOnColumn: selectDistinctCollectionItemName,
-    } = getFormattedOrderBy({
+    const { orderBySql: orderByCollectionItemNameSql } = getFormattedOrderBy({
       column: collectionItemsTable.name,
       direction:
         sortDirectionOptions.asc /* ? enforce asc sorting as this is only used when sorting by custom field value
@@ -210,10 +193,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
       sort.data?.customField?.type,
     );
 
-    const {
-      orderBySql: orderByCustomFieldValue,
-      selectDistinctOnColumn: selectDistinctOnCustomFieldValue,
-    } = customFieldValueSortColumn
+    const { orderBySql: orderByCustomFieldValue } = customFieldValueSortColumn
       ? getFormattedOrderBy({
           column: customFieldValueSortColumn,
           direction: sort.direction,
@@ -221,23 +201,13 @@ export const getCollectionDetailsByIdDbQuery = async ({
         })
       : {};
 
-    const unformattedCollectionItemIds =
-      selectDistinctOnCustomFieldValue && orderByCustomFieldValue
-        ? await tx
-            .selectDistinctOn(
-              [
-                collectionItemsTable.id,
-                selectDistinctOnCustomFieldValue,
-                selectDistinctCollectionItemName,
-              ],
-              {
-                id: collectionItemsTable.id,
-                name: collectionItemsTable.name,
-                // ! all orderBy SQL is required to be included for selectDistinctOn to function
-                orderByCustomFieldValue,
-                orderByCollectionItemNameSql,
-              },
-            )
+    const queryUnformattedCollectionItemIds =
+      orderByCustomFieldValue && sort.data?.customField
+        ? tx
+            .select({
+              id: collectionItemsTable.id,
+              name: collectionItemsTable.name,
+            })
             .from(collectionItemsTable)
             .innerJoin(
               collectionItemsToCustomFieldValuesTable,
@@ -253,11 +223,10 @@ export const getCollectionDetailsByIdDbQuery = async ({
                   collectionItemsToCustomFieldValuesTable.customFieldValueId,
                   customFieldValuesTable.id,
                 ),
-                sort.data?.customField &&
-                  eq(
-                    customFieldValuesTable.customFieldId,
-                    sort.data.customField.id,
-                  ),
+                eq(
+                  customFieldValuesTable.customFieldId,
+                  sort.data.customField.id,
+                ),
               ),
             )
             .where(
@@ -268,10 +237,14 @@ export const getCollectionDetailsByIdDbQuery = async ({
                 ...formattedFiltersSql,
               ),
             )
-            .orderBy(orderByCustomFieldValue, orderByCollectionItemNameSql)
+            .orderBy(
+              orderByCustomFieldValue,
+              orderByCollectionItemNameSql,
+              collectionItemsTable.id,
+            )
             .limit(limit)
             .offset(offset)
-        : await tx
+        : tx
             .select({
               id: collectionItemsTable.id,
             })
@@ -287,6 +260,9 @@ export const getCollectionDetailsByIdDbQuery = async ({
             .orderBy(fallbackOrderBy)
             .limit(limit)
             .offset(offset);
+
+    const unformattedCollectionItemIds =
+      await queryUnformattedCollectionItemIds;
 
     const formattedCollectionItemIds = unformattedCollectionItemIds.map(
       ({ id }) => {
@@ -359,42 +335,46 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
     const sortedItems = _.orderBy(
       formattedItems,
-      (item) => {
-        const formattedName = ignoreSortArticles
-          ? item.name.toLowerCase().replace(articlesToIgnorePattern, '')
-          : item.name;
-        if (
-          // ? if sorting by custom field value
-          sort.data?.customField &&
-          customFieldValueColumnName
-        ) {
-          const customFieldValueForCustomFieldId =
-            item.customFieldValues[sort.data.customField.id]?.[
-              customFieldValueColumnName
-            ];
+      [
+        (item) => {
+          if (
+            // ? if sorting by custom field value
+            sort.data?.customField &&
+            customFieldValueColumnName
+          ) {
+            const customFieldValueForCustomFieldId =
+              item.customFieldValues[sort.data.customField.id]?.[
+                customFieldValueColumnName
+              ];
 
-          return [customFieldValueForCustomFieldId, formattedName];
-        } else if (sort.field === 'createdAt' || sort.field === 'updatedAt') {
-          // ? if sorting by date
+            return customFieldValueForCustomFieldId;
+          } else if (sort.field === 'createdAt' || sort.field === 'updatedAt') {
+            // ? if sorting by date
 
-          const timestamp = item[sort.field];
-          const dateAsMs = new Date(timestamp).getTime();
+            const timestamp = item[sort.field];
+            const dateAsMs = new Date(timestamp).getTime();
 
-          return [dateAsMs, formattedName];
-        } else if (
-          // ? if sorting by something other than name
-          collectionItemsTable.hasOwnProperty(sort.field) &&
-          sort.field !== 'name'
-        ) {
-          const columnName = sort.field as keyof typeof item;
+            return dateAsMs;
+          } else if (
+            // ? if sorting by something other than name
+            collectionItemsTable.hasOwnProperty(sort.field) &&
+            sort.field !== 'name'
+          ) {
+            const columnName = sort.field as keyof typeof item;
 
-          return [item[columnName], formattedName];
-        } else {
-          // ? sort by name
+            return item[columnName];
+          }
+        },
+        (item) => {
+          if (sort.field !== 'name') {
+            const formattedName = ignoreSortArticles
+              ? item.name.toLowerCase().replace(articlesToIgnorePattern, '')
+              : item.name;
 
-          return [formattedName];
-        }
-      },
+            return formattedName;
+          }
+        },
+      ],
       [
         sort.direction,
         // ? if second sort criteria (always 'name'), always sort ascending
@@ -444,6 +424,22 @@ export const getCollectionDetailsByIdDbQuery = async ({
         },
         {},
       );
+
+    // TODO - BUG: UPDATE TOTAL RECORDS TO ACCOUNT FOR FILTERS/SEARCH
+
+    const totalRecords = await tx.$count(
+      collectionItemsTable,
+      and(
+        eq(collectionItemsTable.collectionId, collectionId),
+        eq(collectionItemsTable.userId, userId),
+      ),
+    );
+
+    const pagination = getPaginationMetadataQuery({
+      currentPage: page,
+      pageSize: limit,
+      totalRecords,
+    });
 
     return {
       collection: formattedCollection,
