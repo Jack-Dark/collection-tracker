@@ -9,7 +9,8 @@ export const useCollectionsListSortProps = () => {
     useOnUpdateCollectionsListQueries();
 
   const sortProps = useFormatSortProps<
-    keyof CreateOrUpdateCollectionFormRecordDef
+    keyof CreateOrUpdateCollectionFormRecordDef,
+    never
   >({
     items: [
       {

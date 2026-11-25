@@ -69,9 +69,11 @@ export type GetRowProps<
 export type TablePropsDef<
   TTableFeatures extends TableFeatures,
   TData extends RowData,
+  TSortByField extends string,
+  TSortByData extends Record<any, any>,
 > = Omit<TableOptions<TTableFeatures, TData>, 'features'> &
   Partial<Pick<TableOptions<TTableFeatures, TData>, 'features'>> &
-  TableActionsPropsDef<TData> & {
+  TableActionsPropsDef<TSortByField, TSortByData> & {
     AboveTableComponent?: AboveTableComponentDef<TTableFeatures, TData>;
     disableRowSelection?: boolean;
     getRowProps?: GetRowProps<TTableFeatures, TData>;
@@ -90,11 +92,11 @@ export const defaultTableFeatures = tableFeatures({
 export type TableFeaturesDef = typeof defaultTableFeatures &
   Partial<TableFeatures>;
 
-export interface GetItemsInRangePropsDef<TValue extends any> {
+export type GetItemsInRangePropsDef<TValue extends any> = {
   currentIndex: number;
   items: TValue[];
   prevIndex: number;
-}
+};
 
 export const getItemsInRange = <TValue extends any>(
   props: GetItemsInRangePropsDef<TValue>,
@@ -107,7 +109,11 @@ export const getItemsInRange = <TValue extends any>(
   return items.slice(rangeStart, rangeEnd + 1);
 };
 
-export const Table = <TData extends RowData>({
+export const Table = <
+  TData extends RowData,
+  TSortByField extends string,
+  TSortByData extends Record<any, any>,
+>({
   AboveTableComponent,
   columns,
   data,
@@ -125,7 +131,7 @@ export const Table = <TData extends RowData>({
   showRowSelection,
   sort,
   ...useTableProps
-}: TablePropsDef<TableFeaturesDef, TData>) => {
+}: TablePropsDef<TableFeaturesDef, TData, TSortByField, TSortByData>) => {
   const table = useTable({
     ...useTableProps,
     columns,

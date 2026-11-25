@@ -184,6 +184,11 @@ export const useHandleGetCollectionDetailsById = () => {
     },
     requestArgs: { collectionId, params: searchQueries },
   });
+  const { toggleSpinner } = useSpinner();
+
+  useLayoutEffect(() => {
+    toggleSpinner(context.isFetching);
+  }, [context.isFetching]);
 
   return context;
 };
