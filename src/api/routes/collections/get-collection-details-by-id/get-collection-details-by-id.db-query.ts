@@ -28,7 +28,10 @@ import {
 } from '#/api/db/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
-import { articlesToIgnore } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-ignore-sort-articles';
+import {
+  articlesToIgnore,
+  articlesToIgnorePattern,
+} from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-ignore-sort-articles';
 
 import type { CollectionItemsTableColumn } from '../../collection-items/collection-item.types';
 import type {
@@ -357,6 +360,9 @@ export const getCollectionDetailsByIdDbQuery = async ({
     const sortedItems = _.orderBy(
       formattedItems,
       (item) => {
+        const formattedName = ignoreSortArticles
+          ? item.name.toLowerCase().replace(articlesToIgnorePattern, '')
+          : item.name;
         if (
           // ? if sorting by custom field value
           sort.data?.customField &&
@@ -367,14 +373,14 @@ export const getCollectionDetailsByIdDbQuery = async ({
               customFieldValueColumnName
             ];
 
-          return [customFieldValueForCustomFieldId, item.name];
+          return [customFieldValueForCustomFieldId, formattedName];
         } else if (sort.field === 'createdAt' || sort.field === 'updatedAt') {
           // ? if sorting by date
 
           const timestamp = item[sort.field];
           const dateAsMs = new Date(timestamp).getTime();
 
-          return [dateAsMs, item.name];
+          return [dateAsMs, formattedName];
         } else if (
           // ? if sorting by something other than name
           collectionItemsTable.hasOwnProperty(sort.field) &&
@@ -382,11 +388,11 @@ export const getCollectionDetailsByIdDbQuery = async ({
         ) {
           const columnName = sort.field as keyof typeof item;
 
-          return [item[columnName], item.name];
+          return [item[columnName], formattedName];
         } else {
           // ? sort by name
 
-          return [item.name];
+          return [formattedName];
         }
       },
       [
