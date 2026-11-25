@@ -201,14 +201,25 @@ export const getCollectionDetailsByIdDbQuery = async ({
         })
       : {};
 
+    const baseCollectionItemsQueryWhereSql = and(
+      eq(collectionItemsTable.collectionId, collectionId),
+      eq(collectionItemsTable.userId, userId),
+      searchSql,
+      ...formattedFiltersSql,
+    );
+
+    const baseCollectionItemsQuery = tx
+      .select({
+        id: collectionItemsTable.id,
+      })
+      .from(collectionItemsTable)
+      .where(baseCollectionItemsQueryWhereSql)
+      .limit(limit)
+      .offset(offset);
+
     const queryUnformattedCollectionItemIds =
       orderByCustomFieldValue && sort.data?.customField
-        ? tx
-            .select({
-              id: collectionItemsTable.id,
-              name: collectionItemsTable.name,
-            })
-            .from(collectionItemsTable)
+        ? baseCollectionItemsQuery
             .innerJoin(
               collectionItemsToCustomFieldValuesTable,
               eq(
@@ -229,37 +240,12 @@ export const getCollectionDetailsByIdDbQuery = async ({
                 ),
               ),
             )
-            .where(
-              and(
-                eq(collectionItemsTable.collectionId, collectionId),
-                eq(collectionItemsTable.userId, userId),
-                searchSql,
-                ...formattedFiltersSql,
-              ),
-            )
             .orderBy(
               orderByCustomFieldValue,
               orderByCollectionItemNameSql,
               collectionItemsTable.id,
             )
-            .limit(limit)
-            .offset(offset)
-        : tx
-            .select({
-              id: collectionItemsTable.id,
-            })
-            .from(collectionItemsTable)
-            .where(
-              and(
-                eq(collectionItemsTable.collectionId, collectionId),
-                eq(collectionItemsTable.userId, userId),
-                searchSql,
-                ...formattedFiltersSql,
-              ),
-            )
-            .orderBy(fallbackOrderBy)
-            .limit(limit)
-            .offset(offset);
+        : baseCollectionItemsQuery.orderBy(fallbackOrderBy);
 
     const unformattedCollectionItemIds =
       await queryUnformattedCollectionItemIds;
@@ -425,20 +411,15 @@ export const getCollectionDetailsByIdDbQuery = async ({
         {},
       );
 
-    // TODO - BUG: UPDATE TOTAL RECORDS TO ACCOUNT FOR FILTERS/SEARCH
-
-    const totalRecords = await tx.$count(
+    const matchingRecords = await tx.$count(
       collectionItemsTable,
-      and(
-        eq(collectionItemsTable.collectionId, collectionId),
-        eq(collectionItemsTable.userId, userId),
-      ),
+      baseCollectionItemsQueryWhereSql,
     );
 
     const pagination = getPaginationMetadataQuery({
       currentPage: page,
       pageSize: limit,
-      totalRecords,
+      totalRecords: matchingRecords,
     });
 
     return {
