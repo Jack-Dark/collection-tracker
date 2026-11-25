@@ -8,8 +8,8 @@ import { useEffect, useLayoutEffect } from 'react';
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
-import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
+import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collections/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import {
   useGetPaginatedCollections,

@@ -1,9 +1,9 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, useParams } from '@tanstack/react-router';
 
-import { useGetCollectionStatsById } from '#/api/routes/collection-items/get-collection-stats-by-id/get-collection-stats-by-id.react-query';
+import { useGetCollectionStatsById } from '#/api/routes/collections/get-collection-stats-by-id/get-collection-stats-by-id.react-query';
 import { Button } from '#/components/Button';
 import { PageWrapper } from '#/components/PageWrapper';
 
@@ -32,7 +32,11 @@ export const CollectionStatsPage: RouteComponent = () => {
     <PageWrapper title={`${data.name} - Stats`}>
       <div className="h-full grid grid-rows-[auto_1fr] gap-4">
         <Link className="mr-auto" params={{ id }} to="/collections/$id">
-          <Button icon={<NavigateBeforeIcon />} text="Back" variant="mono" />
+          <Button
+            icon={<ArrowBackIcon fontSize="inherit" />}
+            text="Back"
+            variant="mono"
+          />
         </Link>
 
         <div className="flex justify-center size-full overflow-auto">

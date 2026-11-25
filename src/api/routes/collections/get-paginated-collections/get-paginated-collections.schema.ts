@@ -11,8 +11,6 @@ export const getPaginatedCollectionsSchema = z.object({
 export const collectionsListSearchQueriesSchema =
   getRequiredPaginationQueriesSchema<CollectionTableColumnsDef>('name').and(
     z.object({
-      searchNotes: z
-        .boolean()
-        .default(false),
+      searchNotes: z.boolean().default(false),
     }),
   );

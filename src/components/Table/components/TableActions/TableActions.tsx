@@ -1,5 +1,3 @@
-import type { RowData } from '@tanstack/react-table';
-
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { useMemo } from 'react';
 
@@ -10,8 +8,11 @@ import type { TableActionsPropsDef } from './TableActions.types';
 import { FilterButton } from '../FilterButton';
 import { Search } from '../Search';
 
-export const TableActions = <TData extends RowData>(
-  props: TableActionsPropsDef<TData>,
+export const TableActions = <
+  TSortByField extends string,
+  TSortByData extends Record<any, any>,
+>(
+  props: TableActionsPropsDef<TSortByField, TSortByData>,
 ) => {
   const { filters, search, sort } = props;
 

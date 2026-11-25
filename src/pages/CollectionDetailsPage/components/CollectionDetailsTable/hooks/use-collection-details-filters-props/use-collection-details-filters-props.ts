@@ -4,10 +4,10 @@ import { formOptions } from '@tanstack/react-form';
 import { useSearch } from '@tanstack/react-router';
 import z from 'zod';
 
-import type { collectionDetailsFilterValueSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
+import type { collectionDetailsFilterValueSchema } from '#/api/routes/collections/get-collection-details-by-id/get-collection-details-by-id.schema';
 import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
 
-import { collectionDetailsFiltersSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
+import { collectionDetailsFiltersSchema } from '#/api/routes/collections/get-collection-details-by-id/get-collection-details-by-id.schema';
 
 export type CollectionItemsFilterValueSchemaDef = z.output<
   typeof collectionDetailsFilterValueSchema

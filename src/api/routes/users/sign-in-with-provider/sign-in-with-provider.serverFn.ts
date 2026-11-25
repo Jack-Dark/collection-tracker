@@ -1,8 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
-import type { RouterPath } from '#/types';
-
 import { errorHandlingMiddleware } from '#/api/middleware/error-handling-middleware';
 import { auth } from '#/auth/auth-server';
 
@@ -18,9 +16,6 @@ export const signInWithProviderServerFn = createServerFn({
 
     return auth.api.signInSocial({
       headers,
-      body: {
-        ...data,
-        callbackURL: '/collections' satisfies RouterPath,
-      },
+      body: data,
     });
   });

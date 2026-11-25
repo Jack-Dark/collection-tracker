@@ -13,7 +13,10 @@ export const useInvalidateEverything = () => {
 
   const queryClient = useQueryClient();
 
-  return async (options?: { thenNavigateTo: RouterPath }) => {
+  return async (options?: {
+    thenNavigateTo?: RouterPath;
+    thenNavigateToHref?: string;
+  }) => {
     await router.invalidate();
 
     clearAllNotifications();
@@ -23,6 +26,11 @@ export const useInvalidateEverything = () => {
     if (options?.thenNavigateTo) {
       navigate({
         to: options.thenNavigateTo,
+      });
+    }
+    if (options?.thenNavigateToHref) {
+      navigate({
+        href: options.thenNavigateToHref,
       });
     }
   };

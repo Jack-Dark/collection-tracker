@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router';
 
 import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
-import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collections/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 

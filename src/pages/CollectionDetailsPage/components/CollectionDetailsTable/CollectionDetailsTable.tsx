@@ -2,7 +2,7 @@ import { useForm, useSelector } from '@tanstack/react-form';
 import { useParams, useSearch } from '@tanstack/react-router';
 import { useEffect, useMemo } from 'react';
 
-import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collections/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
 import { Table } from '#/components/Table';
 

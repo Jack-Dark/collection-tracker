@@ -14,7 +14,10 @@ import {
   between,
   notExists,
 } from 'drizzle-orm';
+import { ReasonPhrases } from 'http-status-codes';
+import _ from 'lodash';
 
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
 import { db } from '#/api/db/db';
@@ -26,16 +29,19 @@ import {
 } from '#/api/db/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
-import { articlesToIgnore } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-ignore-sort-articles';
+import {
+  articlesToIgnore,
+  articlesToIgnorePattern,
+} from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props/hooks/use-ignore-sort-articles';
 
+import type { CollectionItemsTableColumn } from '../../collection-items/collection-item.types';
 import type {
   CustomFieldValueDef,
   CustomFieldValuesByFieldId,
 } from '../../custom-field-values/custom-field-values.types';
-import type { CollectionItemsTableColumn } from '../collection-item.types';
 import type { GetCollectionDetailsByIdRequestArgsDef } from './get-collection-details-by-id.types';
 
-import { formatCollection } from '../../collections/get-paginated-collections/get-paginated-collections.db-query';
+import { formatCollection } from '../get-paginated-collections/get-paginated-collections.db-query';
 
 export const getCollectionDetailsByIdDbQuery = async ({
   context,
@@ -54,26 +60,12 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
   const userId = context.user.id;
 
-  const sortingField: CollectionItemsTableColumn =
+  const fallbackSortField: CollectionItemsTableColumn =
     sort.field && collectionItemsTable.hasOwnProperty(sort.field)
       ? (sort.field as CollectionItemsTableColumn)
       : 'name';
 
   return db.transaction(async (tx) => {
-    const totalRecords = await tx.$count(
-      collectionItemsTable,
-      and(
-        eq(collectionItemsTable.collectionId, collectionId),
-        eq(collectionItemsTable.userId, userId),
-      ),
-    );
-
-    const pagination = getPaginationMetadataQuery({
-      currentPage: page,
-      pageSize: limit,
-      totalRecords,
-    });
-
     const collection = await tx.query.collections.findFirst({
       columns: {
         id: true,
@@ -103,6 +95,10 @@ export const getCollectionDetailsByIdDbQuery = async ({
         },
       },
     });
+
+    if (!collection) {
+      throw new Error(ReasonPhrases.NOT_FOUND);
+    }
 
     const formattedCollection = collection && formatCollection(collection);
 
@@ -174,19 +170,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
       return acc;
     }, []);
 
-    const getOrderBy = (column: PgColumn) => {
-      const directionFn =
-        sort.direction === sortDirectionOptions.desc ? desc : asc;
-
-      return directionFn(
-        column.dataType === 'string'
-          ? ignoreSortArticles
-            ? sql`REGEXP_REPLACE(lower(${column}), '^(${sql.raw(articlesToIgnore.join('|'))})\\s+', '', 'i')`
-            : sql`lower(${column})`
-          : sql`${column}`,
-      );
-    };
-
     const trimmedQuery = search.trim();
     const ilikeQuery = `%${trimmedQuery}%`;
     const searchSql = trimmedQuery
@@ -195,29 +178,82 @@ export const getCollectionDetailsByIdDbQuery = async ({
         : ilike(collectionItemsTable.name, ilikeQuery)
       : undefined;
 
-    const orderBySql = getOrderBy(
-      collectionItemsTable[sortingField] || collectionItemsTable.name,
-    );
     const offset = (page - 1) * limit;
 
-    const unformattedCollectionItemIds = await tx
-      .selectDistinct({
+    const { orderBySql: fallbackOrderBy } = getFormattedOrderBy({
+      column: collectionItemsTable[fallbackSortField],
+      direction: sort.direction,
+      ignoreSortArticles,
+    });
+
+    const { orderBySql: orderByCollectionItemNameSql } = getFormattedOrderBy({
+      column: collectionItemsTable.name,
+      direction:
+        sortDirectionOptions.asc /* ? enforce asc sorting as this is only used when sorting by custom field value
+       */,
+      ignoreSortArticles,
+    });
+
+    const customFieldValueSortColumn = getCustomFieldValueSortColumn(
+      sort.data?.customField?.type,
+    );
+
+    const { orderBySql: orderByCustomFieldValue } = customFieldValueSortColumn
+      ? getFormattedOrderBy({
+          column: customFieldValueSortColumn,
+          direction: sort.direction,
+          ignoreSortArticles,
+        })
+      : {};
+
+    const baseCollectionItemsQueryWhereSql = and(
+      eq(collectionItemsTable.collectionId, collectionId),
+      eq(collectionItemsTable.userId, userId),
+      searchSql,
+      ...formattedFiltersSql,
+    );
+
+    const baseCollectionItemsQuery = tx
+      .select({
         id: collectionItemsTable.id,
-        // ! orderBySql is required to be included for selectDistinct to function
-        orderBySql,
       })
       .from(collectionItemsTable)
-      .where(
-        and(
-          eq(collectionItemsTable.collectionId, collectionId),
-          eq(collectionItemsTable.userId, userId),
-          searchSql,
-          ...formattedFiltersSql,
-        ),
-      )
-      .orderBy(orderBySql)
+      .where(baseCollectionItemsQueryWhereSql)
       .limit(limit)
       .offset(offset);
+
+    const queryUnformattedCollectionItemIds =
+      orderByCustomFieldValue && sort.data?.customField
+        ? baseCollectionItemsQuery
+            .innerJoin(
+              collectionItemsToCustomFieldValuesTable,
+              eq(
+                collectionItemsTable.id,
+                collectionItemsToCustomFieldValuesTable.collectionItemId,
+              ),
+            )
+            .innerJoin(
+              customFieldValuesTable,
+              and(
+                eq(
+                  collectionItemsToCustomFieldValuesTable.customFieldValueId,
+                  customFieldValuesTable.id,
+                ),
+                eq(
+                  customFieldValuesTable.customFieldId,
+                  sort.data.customField.id,
+                ),
+              ),
+            )
+            .orderBy(
+              orderByCustomFieldValue,
+              orderByCollectionItemNameSql,
+              collectionItemsTable.id,
+            )
+        : baseCollectionItemsQuery.orderBy(fallbackOrderBy);
+
+    const unformattedCollectionItemIds =
+      await queryUnformattedCollectionItemIds;
 
     const formattedCollectionItemIds = unformattedCollectionItemIds.map(
       ({ id }) => {
@@ -229,9 +265,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
       columns: {
         userId: false,
       },
-      orderBy: (table) => {
-        return getOrderBy(table[sortingField || 'name']);
-      },
       where: {
         AND: [
           {
@@ -241,19 +274,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
             },
             userId,
           },
-          trimmedQuery
-            ? searchNotes
-              ? {
-                  notes: {
-                    ilike: ilikeQuery,
-                  },
-                }
-              : {
-                  name: {
-                    ilike: ilikeQuery,
-                  },
-                }
-            : {},
         ],
       },
       with: {
@@ -300,6 +320,66 @@ export const getCollectionDetailsByIdDbQuery = async ({
       },
     );
 
+    const customFieldValueColumnName = getCustomFieldValueSortColumnName(
+      sort.data?.customField?.type,
+    );
+
+    const getFormattedName = (name: string) => {
+      const formattedName = ignoreSortArticles
+        ? name.toLowerCase().replace(articlesToIgnorePattern, '')
+        : name;
+
+      return formattedName;
+    };
+
+    const sortedItems = _.orderBy(
+      formattedItems,
+      [
+        (item) => {
+          if (
+            // ? if sorting by custom field value
+            sort.data?.customField &&
+            customFieldValueColumnName
+          ) {
+            const customFieldValueForCustomFieldId =
+              item.customFieldValues[sort.data.customField.id]?.[
+                customFieldValueColumnName
+              ];
+
+            return customFieldValueForCustomFieldId;
+          } else if (sort.field === 'createdAt' || sort.field === 'updatedAt') {
+            // ? if sorting by date
+
+            const timestamp = item[sort.field];
+            const dateAsMs = new Date(timestamp).getTime();
+
+            return dateAsMs;
+          } else if (
+            // ? if sorting by something other than name
+            collectionItemsTable.hasOwnProperty(sort.field) &&
+            sort.field !== 'name'
+          ) {
+            const columnName = sort.field as keyof typeof item;
+
+            return item[columnName];
+          } else {
+            // ? sort by name
+            return getFormattedName(item.name);
+          }
+        },
+        (item) => {
+          if (sort.field !== 'name') {
+            return getFormattedName(item.name);
+          }
+        },
+      ],
+      [
+        sort.direction,
+        // ? if second sort criteria (always 'name'), always sort ascending
+        'asc',
+      ],
+    );
+
     const lastUpdatedCollectionItem = await tx.query.collectionItems.findFirst({
       columns: {},
       with: {
@@ -343,9 +423,20 @@ export const getCollectionDetailsByIdDbQuery = async ({
         {},
       );
 
+    const matchingRecords = await tx.$count(
+      collectionItemsTable,
+      baseCollectionItemsQueryWhereSql,
+    );
+
+    const pagination = getPaginationMetadataQuery({
+      currentPage: page,
+      pageSize: limit,
+      totalRecords: matchingRecords,
+    });
+
     return {
       collection: formattedCollection,
-      items: formattedItems,
+      items: sortedItems,
       lastAddedCustomFieldValues: lastAddedCustomFieldValuesByCustomFieldId,
       pagination,
     };
@@ -390,4 +481,69 @@ const getWhereCustomFieldValuesMatch = <
         ),
       ),
   );
+};
+
+const getCustomFieldValueSortColumnName = (
+  customFieldType: CustomFieldTypeDef | undefined,
+) => {
+  switch (customFieldType) {
+    case 'boolean':
+      return 'valueBoolean' satisfies keyof typeof customFieldValuesTable;
+
+    case 'number':
+      return 'valueNumber' satisfies keyof typeof customFieldValuesTable;
+
+    case 'string':
+      return 'valueText' satisfies keyof typeof customFieldValuesTable;
+
+    default:
+      break;
+  }
+};
+const getCustomFieldValueSortColumn = (
+  customFieldType: CustomFieldTypeDef | undefined,
+) => {
+  const columnName = getCustomFieldValueSortColumnName(customFieldType);
+
+  if (columnName) {
+    switch (customFieldType) {
+      case 'boolean':
+        return customFieldValuesTable.valueBoolean;
+
+      case 'number':
+        return customFieldValuesTable.valueNumber;
+
+      case 'string':
+        return customFieldValuesTable.valueText;
+
+      default:
+        break;
+    }
+  }
+};
+
+const getFormattedOrderBy = (props: {
+  column: PgColumn;
+  direction: 'asc' | 'desc';
+  ignoreSortArticles: boolean;
+}) => {
+  const { column, direction, ignoreSortArticles } = props;
+
+  const directionFn = direction === sortDirectionOptions.desc ? desc : asc;
+
+  const selectDistinctOnColumn =
+    column.dataType === 'string'
+      ? ignoreSortArticles
+        ? sql`REGEXP_REPLACE(lower(${column}), '^(${sql.raw(articlesToIgnore.join('|'))})\\s+', '', 'i')`
+        : sql`lower(${column})`
+      : sql`${column}`;
+
+  const orderBySql = directionFn(selectDistinctOnColumn);
+
+  return {
+    /** Same as `formattedColumn`, but with the sort direction applied. */
+    orderBySql,
+    /** Should be passed to the `selectDistinctOn` array. */
+    selectDistinctOnColumn,
+  };
 };
