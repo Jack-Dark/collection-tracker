@@ -1,5 +1,6 @@
 import z from 'zod';
 
+import { customFieldTypeSchema } from '../routes/custom-fields/custom-fields.schema';
 import {
   paginationPropsDefaultValues,
   sortDirectionOptions,
@@ -25,6 +26,14 @@ export const getRequiredPaginationQueriesSchema = <TSortField extends string>(
     search: z.string().optional().default(paginationPropsDefaultValues.search),
     sort: z
       .object({
+        data: z
+          .object({
+            customField: z.object({
+              id: z.number(),
+              type: customFieldTypeSchema,
+            }),
+          })
+          .optional(),
         direction: z
           .union([
             z.literal(sortDirectionOptions.asc),

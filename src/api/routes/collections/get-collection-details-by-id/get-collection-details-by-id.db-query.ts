@@ -16,6 +16,7 @@ import {
 } from 'drizzle-orm';
 import _ from 'lodash';
 
+import type { CustomFieldTypeDef } from '#/api/db/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth.types';
 
 import { db } from '#/api/db/db';
@@ -55,7 +56,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
   const userId = context.user.id;
 
-  const sortingField: CollectionItemsTableColumn =
+  const fallbackSortField: CollectionItemsTableColumn =
     sort.field && collectionItemsTable.hasOwnProperty(sort.field)
       ? (sort.field as CollectionItemsTableColumn)
       : 'name';
@@ -175,22 +176,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
       return acc;
     }, []);
 
-    const getOrderBy = (column: PgColumn) => {
-      const directionFn =
-        sort.direction === sortDirectionOptions.desc ? desc : asc;
-
-      const formattedColumn =
-        column.dataType === 'string'
-          ? ignoreSortArticles
-            ? sql`REGEXP_REPLACE(lower(${column}), '^(${sql.raw(articlesToIgnore.join('|'))})\\s+', '', 'i')`
-            : sql`lower(${column})`
-          : sql`${column}`;
-
-      const orderBy = directionFn(formattedColumn);
-
-      return { orderBy, formattedColumn };
-    };
-
     const trimmedQuery = search.trim();
     const ilikeQuery = `%${trimmedQuery}%`;
     const searchSql = trimmedQuery
@@ -199,67 +184,106 @@ export const getCollectionDetailsByIdDbQuery = async ({
         : ilike(collectionItemsTable.name, ilikeQuery)
       : undefined;
 
-    // const orderBySql = getOrderBy(
-    //   collectionItemsTable[sortingField] || collectionItemsTable.name,
-    // );
     const offset = (page - 1) * limit;
 
+    const { orderBySql: fallbackOrderBy } = getFormattedOrderBy({
+      column: collectionItemsTable[fallbackSortField],
+      direction: sort.direction,
+      ignoreSortArticles,
+    });
+
     const {
-      orderBy: orderByCollectionItemName,
-      formattedColumn: selectDistinctCollectionItemName,
-    } = getOrderBy(collectionItemsTable.name);
+      orderBySql: orderByCollectionItemNameSql,
+      selectDistinctOnColumn: selectDistinctCollectionItemName,
+    } = getFormattedOrderBy({
+      column: collectionItemsTable.name,
+      direction:
+        sortDirectionOptions.asc /* ? enforce asc sorting as this is only used when sorting by custom field value
+       */,
+      ignoreSortArticles,
+    });
 
-    const orderByCustomFieldValueText = asc(customFieldValuesTable.valueText);
+    const customFieldValueSortColumn = getCustomFieldValueSortColumn(
+      sort.data?.customField?.type,
+    );
 
-    const distinctCollectionItems = tx
-      .selectDistinctOn(
-        [
-          collectionItemsTable.id,
-          customFieldValuesTable.valueText,
-          selectDistinctCollectionItemName,
-        ],
-        {
-          id: collectionItemsTable.id,
-          name: collectionItemsTable.name,
-          // ! all orderBySql is required to be included for selectDistinctOn to function
-          orderByCustomFieldValueText,
-          orderByCollectionItemName,
-        },
-      )
-      .from(collectionItemsTable)
-      .innerJoin(
-        collectionItemsToCustomFieldValuesTable,
-        eq(
-          collectionItemsTable.id,
-          collectionItemsToCustomFieldValuesTable.collectionItemId,
-        ),
-      )
-      .innerJoin(
-        customFieldValuesTable,
-        and(
-          eq(
-            collectionItemsToCustomFieldValuesTable.customFieldValueId,
-            customFieldValuesTable.id,
-          ),
-          eq(customFieldValuesTable.customFieldId, 5),
-        ),
-      )
-      .where(
-        and(
-          eq(collectionItemsTable.collectionId, collectionId),
-          eq(collectionItemsTable.userId, userId),
-          searchSql,
-          ...formattedFiltersSql,
-        ),
-      )
-      .orderBy(orderByCustomFieldValueText, orderByCollectionItemName)
-      // .orderBy(orderBySql)
-      .limit(limit)
-      .offset(offset);
+    const {
+      orderBySql: orderByCustomFieldValue,
+      selectDistinctOnColumn: selectDistinctOnCustomFieldValue,
+    } = customFieldValueSortColumn
+      ? getFormattedOrderBy({
+          column: customFieldValueSortColumn,
+          direction: sort.direction,
+          ignoreSortArticles,
+        })
+      : {};
 
-    const unformattedCollectionItemIds = await distinctCollectionItems;
-    console.log('🚀 ~ NUM RESULTS:', unformattedCollectionItemIds.length);
-    console.log('🚀 ~ RESULTS:', unformattedCollectionItemIds);
+    const unformattedCollectionItemIds =
+      selectDistinctOnCustomFieldValue && orderByCustomFieldValue
+        ? await tx
+            .selectDistinctOn(
+              [
+                collectionItemsTable.id,
+                selectDistinctOnCustomFieldValue,
+                selectDistinctCollectionItemName,
+              ],
+              {
+                id: collectionItemsTable.id,
+                name: collectionItemsTable.name,
+                // ! all orderBy SQL is required to be included for selectDistinctOn to function
+                orderByCustomFieldValue,
+                orderByCollectionItemNameSql,
+              },
+            )
+            .from(collectionItemsTable)
+            .innerJoin(
+              collectionItemsToCustomFieldValuesTable,
+              eq(
+                collectionItemsTable.id,
+                collectionItemsToCustomFieldValuesTable.collectionItemId,
+              ),
+            )
+            .innerJoin(
+              customFieldValuesTable,
+              and(
+                eq(
+                  collectionItemsToCustomFieldValuesTable.customFieldValueId,
+                  customFieldValuesTable.id,
+                ),
+                sort.data?.customField &&
+                  eq(
+                    customFieldValuesTable.customFieldId,
+                    sort.data.customField.id,
+                  ),
+              ),
+            )
+            .where(
+              and(
+                eq(collectionItemsTable.collectionId, collectionId),
+                eq(collectionItemsTable.userId, userId),
+                searchSql,
+                ...formattedFiltersSql,
+              ),
+            )
+            .orderBy(orderByCustomFieldValue, orderByCollectionItemNameSql)
+            .limit(limit)
+            .offset(offset)
+        : await tx
+            .select({
+              id: collectionItemsTable.id,
+            })
+            .from(collectionItemsTable)
+            .where(
+              and(
+                eq(collectionItemsTable.collectionId, collectionId),
+                eq(collectionItemsTable.userId, userId),
+                searchSql,
+                ...formattedFiltersSql,
+              ),
+            )
+            .orderBy(fallbackOrderBy)
+            .limit(limit)
+            .offset(offset);
 
     const formattedCollectionItemIds = unformattedCollectionItemIds.map(
       ({ id }) => {
@@ -326,9 +350,51 @@ export const getCollectionDetailsByIdDbQuery = async ({
       },
     );
 
-    const sortedItems = _.sortBy(formattedItems, (item) => {
-      return item.customFieldValues[5]?.valueText;
-    });
+    const customFieldValueColumnName = getCustomFieldValueSortColumnName(
+      sort.data?.customField?.type,
+    );
+
+    const sortedItems = _.orderBy(
+      formattedItems,
+      (item) => {
+        if (
+          // ? if sorting by custom field value
+          sort.data?.customField &&
+          customFieldValueColumnName
+        ) {
+          const customFieldValueForCustomFieldId =
+            item.customFieldValues[sort.data.customField.id]?.[
+              customFieldValueColumnName
+            ];
+
+          return [customFieldValueForCustomFieldId, item.name];
+        } else if (sort.field === 'createdAt' || sort.field === 'updatedAt') {
+          // ? if sorting by date
+
+          const timestamp = item[sort.field];
+          const dateAsMs = new Date(timestamp).getTime();
+
+          return [dateAsMs, item.name];
+        } else if (
+          // ? if sorting by something other than name
+          collectionItemsTable.hasOwnProperty(sort.field) &&
+          sort.field !== 'name'
+        ) {
+          const columnName = sort.field as keyof typeof item;
+
+          return [item[columnName], item.name];
+        } else {
+          // ? sort by name
+
+          return [item.name];
+        }
+      },
+      [
+        sort.direction,
+        // ? if second sort criteria (always 'name'), always sort ascending
+        'asc',
+      ],
+    );
 
     const lastUpdatedCollectionItem = await tx.query.collectionItems.findFirst({
       columns: {},
@@ -420,4 +486,69 @@ const getWhereCustomFieldValuesMatch = <
         ),
       ),
   );
+};
+
+const getCustomFieldValueSortColumnName = (
+  customFieldType: CustomFieldTypeDef | undefined,
+) => {
+  switch (customFieldType) {
+    case 'boolean':
+      return 'valueBoolean' satisfies keyof typeof customFieldValuesTable;
+
+    case 'number':
+      return 'valueNumber' satisfies keyof typeof customFieldValuesTable;
+
+    case 'string':
+      return 'valueText' satisfies keyof typeof customFieldValuesTable;
+
+    default:
+      break;
+  }
+};
+const getCustomFieldValueSortColumn = (
+  customFieldType: CustomFieldTypeDef | undefined,
+) => {
+  const columnName = getCustomFieldValueSortColumnName(customFieldType);
+
+  if (columnName) {
+    switch (customFieldType) {
+      case 'boolean':
+        return customFieldValuesTable.valueBoolean;
+
+      case 'number':
+        return customFieldValuesTable.valueNumber;
+
+      case 'string':
+        return customFieldValuesTable.valueText;
+
+      default:
+        break;
+    }
+  }
+};
+
+const getFormattedOrderBy = (props: {
+  column: PgColumn;
+  direction: 'asc' | 'desc';
+  ignoreSortArticles: boolean;
+}) => {
+  const { column, direction, ignoreSortArticles } = props;
+
+  const directionFn = direction === sortDirectionOptions.desc ? desc : asc;
+
+  const selectDistinctOnColumn =
+    column.dataType === 'string'
+      ? ignoreSortArticles
+        ? sql`REGEXP_REPLACE(lower(${column}), '^(${sql.raw(articlesToIgnore.join('|'))})\\s+', '', 'i')`
+        : sql`lower(${column})`
+      : sql`${column}`;
+
+  const orderBySql = directionFn(selectDistinctOnColumn);
+
+  return {
+    /** Same as `formattedColumn`, but with the sort direction applied. */
+    orderBySql,
+    /** Should be passed to the `selectDistinctOn` array. */
+    selectDistinctOnColumn,
+  };
 };

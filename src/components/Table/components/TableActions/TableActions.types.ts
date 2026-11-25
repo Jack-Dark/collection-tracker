@@ -13,8 +13,9 @@ export type TableActionsPropsDef<TData extends RowData> = {
   };
 };
 
-export type SortItemDef<TField = string> =
+export type SortItemDef<TField = string, TData = Record<any, any>> =
   | {
+      data?: TData;
       direction: SortDirection;
       field: TField;
       id: string;
@@ -22,6 +23,7 @@ export type SortItemDef<TField = string> =
       separator?: never;
     }
   | {
+      data?: TData;
       direction?: never;
       field?: never;
       id?: never;

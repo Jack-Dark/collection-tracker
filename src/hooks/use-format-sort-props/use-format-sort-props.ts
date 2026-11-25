@@ -7,7 +7,10 @@ import type { SortItemDef } from '#/components/Table/components/TableActions/Tab
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 
-type UnformattedSortItemDef<TField extends string> =
+export type UnformattedSortItemDef<
+  TField extends string,
+  TData extends Record<any, any>,
+> =
   | ((
       | {
           bidirectional: true;
@@ -18,6 +21,7 @@ type UnformattedSortItemDef<TField extends string> =
           direction: SortDirection;
         }
     ) & {
+      data?: TData;
       field: TField;
       /** Pass `true` to remove the item from the formatted output. */
       hide?: boolean;
@@ -26,8 +30,11 @@ type UnformattedSortItemDef<TField extends string> =
     })
   | { hide?: boolean; separator: true };
 
-export const useFormatSortProps = <TField extends string>(props: {
-  items: UnformattedSortItemDef<TField>[];
+export const useFormatSortProps = <
+  TField extends string,
+  TData extends Record<any, any>,
+>(props: {
+  items: UnformattedSortItemDef<TField, TData>[];
   onChange: (sort: SortItemDef<TField> | null) => void;
   searchQueries: PaginationQueriesSchemaDef;
 }) => {
@@ -42,7 +49,7 @@ export const useFormatSortProps = <TField extends string>(props: {
       if (separator) {
         return hide ? acc : [...acc, { separator }];
       } else {
-        const { bidirectional, direction, field, label } = item;
+        const { bidirectional, data, direction, field, label } = item;
 
         const getFormattedLabel = (direction: SortDirection) => {
           const prefix =
@@ -62,12 +69,14 @@ export const useFormatSortProps = <TField extends string>(props: {
 
         if (bidirectional) {
           const itemAsc: SortItemDef<TField> = {
+            data,
             direction: sortDirectionOptions.asc,
             field,
             id: getId(sortDirectionOptions.asc),
             label: getFormattedLabel(sortDirectionOptions.asc),
           };
           const itemDesc: SortItemDef<TField> = {
+            data,
             direction: sortDirectionOptions.desc,
             field,
             id: getId(sortDirectionOptions.desc),
@@ -78,6 +87,7 @@ export const useFormatSortProps = <TField extends string>(props: {
         }
 
         const formattedItem: SortItemDef<TField> = {
+          data,
           direction,
           field,
           id: getId(direction),
