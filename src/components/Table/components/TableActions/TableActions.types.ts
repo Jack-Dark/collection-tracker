@@ -1,19 +1,24 @@
-import type { RowData, SortDirection } from '@tanstack/react-table';
+import type { SortDirection } from '@tanstack/react-table';
 
 import type { FiltersButtonPropsDef } from '../FilterButton/FilterButton.types';
 import type { SearchPropsDef } from '../Search/Search.types';
 
-export type TableActionsPropsDef<TData extends RowData> = {
+export type TableActionsPropsDef<
+  TSortByField extends string,
+  TSortByData extends Record<any, any>,
+> = {
   filters?: FiltersButtonPropsDef;
   search?: SearchPropsDef;
   sort?: {
-    items: SortItemDef<keyof TData>[];
-    onChange: (sort: SortItemDef<keyof TData> | null) => void | Promise<void>;
-    value: SortItemDef<keyof TData> | undefined;
+    items: SortItemDef<TSortByField, TSortByData>[];
+    onChange: (
+      sort: SortItemDef<TSortByField, TSortByData> | null,
+    ) => void | Promise<void>;
+    value: SortItemDef<TSortByField, TSortByData> | undefined;
   };
 };
 
-export type SortItemDef<TField = string, TData = Record<any, any>> =
+export type SortItemDef<TField extends string, TData extends Record<any, any>> =
   | {
       data?: TData;
       direction: SortDirection;

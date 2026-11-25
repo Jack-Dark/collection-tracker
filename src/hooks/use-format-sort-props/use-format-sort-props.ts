@@ -9,7 +9,7 @@ import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 
 export type UnformattedSortItemDef<
   TField extends string,
-  TData extends Record<any, any>,
+  TData extends Record<any, any> | never,
 > =
   | ((
       | {
@@ -35,13 +35,13 @@ export const useFormatSortProps = <
   TData extends Record<any, any>,
 >(props: {
   items: UnformattedSortItemDef<TField, TData>[];
-  onChange: (sort: SortItemDef<TField> | null) => void;
+  onChange: (sort: SortItemDef<TField, TData> | null) => void;
   searchQueries: PaginationQueriesSchemaDef;
 }) => {
   const { items, onChange, searchQueries } = props;
 
   const formattedItems = useMemo(() => {
-    const initialItems: SortItemDef<TField>[] = [];
+    const initialItems: SortItemDef<TField, TData>[] = [];
 
     return items.reduce((acc, item) => {
       const { hide, separator } = item;
@@ -68,14 +68,14 @@ export const useFormatSortProps = <
         }
 
         if (bidirectional) {
-          const itemAsc: SortItemDef<TField> = {
+          const itemAsc: SortItemDef<TField, TData> = {
             data,
             direction: sortDirectionOptions.asc,
             field,
             id: getId(sortDirectionOptions.asc),
             label: getFormattedLabel(sortDirectionOptions.asc),
           };
-          const itemDesc: SortItemDef<TField> = {
+          const itemDesc: SortItemDef<TField, TData> = {
             data,
             direction: sortDirectionOptions.desc,
             field,
@@ -86,7 +86,7 @@ export const useFormatSortProps = <
           return [...acc, itemAsc, itemDesc];
         }
 
-        const formattedItem: SortItemDef<TField> = {
+        const formattedItem: SortItemDef<TField, TData> = {
           data,
           direction,
           field,
