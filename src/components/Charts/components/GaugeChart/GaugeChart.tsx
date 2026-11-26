@@ -64,7 +64,7 @@ export const GaugeChart = (props: GaugeChartPropsDef) => {
 
   const gaugeColors = ['var(--ts-chart-1)', 'var(--ts-chart-empty)'] as const;
 
-  return (
+  return formattedItems.length ? (
     <Chart
       ariaLabel={ariaLabel}
       aspectRatio={1}
@@ -105,5 +105,5 @@ export const GaugeChart = (props: GaugeChartPropsDef) => {
       height={200}
       width={200}
     />
-  );
+  ) : null;
 };

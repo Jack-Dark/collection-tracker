@@ -24,7 +24,7 @@ export const HorizontalBarChart = (props: HorizontalBarChartPropsDef) => {
     };
   });
 
-  return (
+  return formattedItems.length ? (
     <Chart
       ariaLabel={ariaLabel}
       definition={defineChart({
@@ -61,5 +61,5 @@ export const HorizontalBarChart = (props: HorizontalBarChartPropsDef) => {
       })}
       height={height}
     />
-  );
+  ) : null;
 };
