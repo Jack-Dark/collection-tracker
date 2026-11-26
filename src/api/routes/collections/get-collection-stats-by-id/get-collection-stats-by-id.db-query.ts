@@ -200,29 +200,43 @@ export const getCollectionStatsByIdDbQuery = async ({
 
     const sortedCustomFields = _.sortBy(formattedCustomFields, ['order']);
 
+    const trueLabel = getBooleanLabel(true);
+    const falseLabel = getBooleanLabel(false);
     const isSpecialEditionByLabel = unformattedItems.reduce<
       Record<string, CustomFieldValueItemDef>
-    >((acc, { isSpecialEdition }) => {
-      const label = getBooleanLabel(isSpecialEdition);
+    >(
+      (acc, { isSpecialEdition }) => {
+        const label = getBooleanLabel(isSpecialEdition);
 
-      const currentQuantity = acc[label]?.value || 0;
+        const currentQuantity = acc[label].value;
 
-      return {
-        ...acc,
-        [label]: {
-          label,
-          value: currentQuantity + 1,
-        } satisfies CustomFieldValueItemDef,
-      };
-    }, {});
+        return {
+          ...acc,
+          [label]: {
+            label,
+            value: currentQuantity + 1,
+          } satisfies CustomFieldValueItemDef,
+        };
+      },
+      {
+        [trueLabel]: {
+          value: 0,
+          label: trueLabel,
+        },
+        [falseLabel]: {
+          value: 0,
+          label: falseLabel,
+        },
+      },
+    );
 
     return {
       name: formattedCollection?.name,
       customFields: sortedCustomFields,
       /** Indexes are in this order: `[trueItem, falseItem]` */
       isSpecialEditionItems: [
-        isSpecialEditionByLabel[getBooleanLabel(true)],
-        isSpecialEditionByLabel[getBooleanLabel(false)],
+        isSpecialEditionByLabel[trueLabel],
+        isSpecialEditionByLabel[falseLabel],
       ] satisfies [CustomFieldValueItemDef, CustomFieldValueItemDef],
       totalItems,
     };
