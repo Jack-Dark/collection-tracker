@@ -19,6 +19,7 @@ import {
 import { useInvalidateGetCollectionStatsById } from '#/api/routes/collections/get-collection-stats-by-id/get-collection-stats-by-id.react-query';
 import { useInvalidateGetFiltersForCollection } from '#/api/routes/collections/get-filters-for-collection/get-filters-for-collection.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
+import { useInvalidateGetCustomFieldValuesByCustomFieldId } from '#/api/routes/custom-field-values/get-custom-field-values-by-collection-id/get-custom-field-values-by-collection-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
@@ -62,6 +63,9 @@ export const useCollectionDetailsForm = () => {
 
   const invalidateGetFiltersForCollection =
     useInvalidateGetFiltersForCollection();
+
+  const invalidateGetCustomFieldValuesByCustomFieldId =
+    useInvalidateGetCustomFieldValuesByCustomFieldId();
 
   const { onCreateCollectionItem } = useCreateCollectionItems({
     onSuccess: (response) => {
@@ -113,10 +117,11 @@ export const useCollectionDetailsForm = () => {
         resetEditingRowIds();
         await onDeleteUnusedCustomFieldValues({ collectionId });
         await Promise.all([
-          await invalidateGetCollectionDetailsById({ id: collectionId }),
-          await invalidateGetCollectionStatsById({ id: collectionId }),
-          await invalidateGetCollectionItemsWithCustomFieldValue(),
-          await invalidateGetFiltersForCollection({ id: collectionId }),
+          invalidateGetCollectionDetailsById({ id: collectionId }),
+          invalidateGetCollectionStatsById({ id: collectionId }),
+          invalidateGetCollectionItemsWithCustomFieldValue(),
+          invalidateGetFiltersForCollection({ id: collectionId }),
+          invalidateGetCustomFieldValuesByCustomFieldId(),
         ]);
       });
     },
